@@ -1,0 +1,8 @@
+application: s-and-box
+version: jiki-0-01
+runtime: python
+api_version: 1
+
+handlers:
+- url: .*
+  script: __main__.py
