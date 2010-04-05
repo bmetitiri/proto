@@ -14,7 +14,7 @@ def _google():
 			'app', os.path.join(ce._path, 'app.data'),
 			os.path.join(ce._path, 'app.log')))
 		dev_appserver_main.main([sys.argv[0], ce._path, '-p', ce.port])
-	ce._main   = _main
+	ce.main   = _main
 	ce._server = _server
 
 def _tornado():
@@ -29,7 +29,7 @@ def _tornado():
 		http_server.listen(ce.port)
 		tornado.ioloop.IOLoop.instance().start()
 
-	ce._main   = _main
+	ce.main   = _main
 	ce._server = _server
 
 platforms = {ce.GOOGLE: _google, ce.TORNADO: _tornado}
@@ -45,7 +45,6 @@ def shell(name):
 
 def main(platform, modules=None, path=None, name='Project', port=8080):
 	"Request handling switcher based on defined platform"
-	if hasattr(ce, '_main'): return ce._main
 	ce.platform = platform
 	ce.port     = port
 	if modules:
@@ -70,4 +69,4 @@ def main(platform, modules=None, path=None, name='Project', port=8080):
 	elif sys.argv[1] == 'server':
 		ce._server()
 		sys.exit(0)
-	return ce._main
+	return ce.main
