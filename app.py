@@ -22,7 +22,7 @@ def _tornado():
 	import tornado.ioloop
 	import tornado.wsgi
 
-	def _main(): print 'Not implemented for Tornado.py'
+	def _main(): pass
 	def _server():
 		http_server = tornado.httpserver.HTTPServer(
 				tornado.wsgi.WSGIContainer(web.wsgi_router))
