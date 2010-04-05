@@ -18,21 +18,8 @@ def main(platform, urls, debug=False, path=None, name='Project'):
 			os.path.join(os.getcwd(), sys.argv[0])))
 
 	if ce.platform == ce.GOOGLE:
-		def _main():
-			"Google request processing"
-			from google.appengine.ext import webapp
-			from google.appengine.ext.webapp.util import run_wsgi_app
-
-			class MainPage(webapp.RequestHandler):
-				def get(self):
-					self.response.headers['Content-Type'] = 'text/plain'
-					self.response.out.write('Hello, webapp World!')
-
-			def x():
-				return MainPage()
-			urls = [('/', x)]
-
-			run_wsgi_app(webapp.WSGIApplication(urls, debug=debug))
+		from google.appengine.ext.webapp.util import run_wsgi_app
+		def _main(): run_wsgi_app(web.wsgi_router)
 		def _server():
 			"Google development server"
 			from google.appengine.api import \
@@ -51,11 +38,8 @@ def main(platform, urls, debug=False, path=None, name='Project'):
 		ce._server = _server
 
 	else:
-		def _main():
-			"Fallback request handling when none is defined"
-			print 'Unhandled request'
-		ce._main = _main
 		print '%s is not a recognized enviroment' % env
+		sys.exit(1)
 
 	if len(sys.argv) == 1:
 		print 'Usage: %s (server|shell)' % sys.argv[0]
