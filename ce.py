@@ -1,3 +1,5 @@
 "The ni Common Environment"
+GOOGLE  = 'Google App Engine'
+TORNADO = 'Tornado.py Asynchronous Server'
 from app import main
-GOOGLE = 'Google App Engine'
+from web import add_url as url
