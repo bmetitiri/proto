@@ -27,26 +27,22 @@ class Handler(object):
 		if value: self.response.headers[name] = value
 		return self.response.headers[name]
 
-def status_404(io):
-	io.status(404)
-	return '404: Not Found'
-
-def status_500(io):
-	io.status(500)
-	return '500: Server Error'
-
-urls = {}
+def error(io, status, message=None):
+	if not message:
+		message = {404: 'Not Found', 500: 'Server Error'}[status]
+	io.status(status)
+	return '%s: %s' % (status, message)
 
 def wsgi_router(env, start):
 	handler = Handler(env)
 	url     = handler.request.path
 	try:
-		if url in urls:
-			body = urls[url](handler)
+		if url in ce.urls:
+			body = ce.urls[url](handler)
 		else:
-			body = status_404(handler)
-	except:
-		body = status_500(handler)
+			body = error(handler, 404)
+	except Exception, e:
+		body = error(handler, 500, e)
 	start(handler.status(), [(k, handler.response.headers[k])
 		for k in handler.response.headers])
 	return [body,]
@@ -54,6 +50,6 @@ def wsgi_router(env, start):
 def add_url(url):
 	"Decorator around a callable which takes a url path"
 	def wrap(fn):
-		urls[url] = fn
+		ce.urls[url] = fn
 		return fn
 	return wrap

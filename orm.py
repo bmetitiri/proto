@@ -4,7 +4,7 @@ def mongo(self, host='localhost', port=27017, collection=None):
 	"Switch data management to mongo"
 	if not collection: collection = ce.name
 	from pymongo import Connection
-	ce.db = Connection(host, port)[database]
+	ce.db = Connection(host, port)[collection]
 
 def _dict_unicode(d):
 	"Utility method to convert dicts to use str keys"
@@ -17,7 +17,7 @@ class Field(object):
 	"Persistable data field"
 	def type_check(self, value):
 		"Default validation against defined type"
-		if not isinstance(value, self.type):
+		if not isinstance(value, self.type) and value != None:
 			raise TypeError('Expected %s: got %s' % (self.type, type(value)))
 	def __init__(self, type, validator=None, default=None):
 		"Takes a built-in Python type, and optionally a default value"
@@ -60,7 +60,7 @@ class Model(object):
 			for f in cls.__dict__:
 				if isinstance(cls.__dict__[f], Field):
 					cls._field_cache[f] = cls.__dict__[f]
-		return cls._field_cache
+		return cls._field_cache.copy()
 
 	def _getter(self, name):
 		def _get(self):
@@ -82,17 +82,13 @@ class Model(object):
 			setattr(self.__class__, f, property(self._getter(f),
 				self._setter(f, validator)))
 			if f in kwargs: setattr(self, f, kwargs[f])
-			elif self.fields[f].value != None:
-				setattr(self, f, self.fields[f].value)
+			else:           setattr(self, f, self.fields[f].value)
 		if '_id' in kwargs: self._id = kwargs['_id']
 
 	def save(self):
 		"Insert/update object into database (based on id)"
-		d = {}
-		for f in self.fields():
-			d[f] = getattr(self, f)
-		if self.id: d['_id'] = self.id
-		self._id = ce.db[self.__class__.__name__.lower()].insert(d)
+		if self.id: self.fields['_id'] = self.id
+		self._id = ce.db[self.__class__.__name__.lower()].insert(self.fields)
 		return self
 
 	def __repr__(self):

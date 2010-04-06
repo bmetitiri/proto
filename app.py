@@ -1,4 +1,4 @@
-import sys, os.path, ce, web
+import sys, os.path, ce, web, orm
 
 def _google():
 	from google.appengine.ext.webapp.util import run_wsgi_app
@@ -32,7 +32,15 @@ def _tornado():
 	ce.main   = _main
 	ce._server = _server
 
-platforms = {ce.GOOGLE: _google, ce.TORNADO: _tornado}
+def _mongo():
+	if not hasattr(ce, 'db'):
+		orm.mongo(ce.name)
+
+def _tornado_mongo():
+	_tornado()
+	_mongo()
+
+platforms = {ce.GOOGLE: _google, ce.TORNADO_MONGO: _tornado_mongo}
 
 def shell(name):
 	"Generic shell (Uses IPython if available)"
@@ -43,7 +51,7 @@ def shell(name):
 		import code
 		code.interact('%s (Shell)' % name)
 
-def main(platform, modules=None, path=None, name='Project', port=8080):
+def main(platform, modules=None, path=None, name='ni.ce project', port=8080):
 	"Request handling switcher based on defined platform"
 	ce.platform = platform
 	ce.port     = port
@@ -59,8 +67,8 @@ def main(platform, modules=None, path=None, name='Project', port=8080):
 	ce._path = path
 	try:
 		platforms[ce.platform]()
-	except:
-		print '%s is not a recognized enviroment' % platform
+	except Exception, e:
+		print 'Couldn\'t initialize %s: %s' % (platform, e)
 		sys.exit(1)
 	if len(sys.argv) == 1:
 		print 'Usage: %s (server|shell)' % sys.argv[0]
