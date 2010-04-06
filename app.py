@@ -47,6 +47,7 @@ def main(platform, modules=None, path=None, name='Project', port=8080):
 	"Request handling switcher based on defined platform"
 	ce.platform = platform
 	ce.port     = port
+	ce.name     = name
 	if modules:
 		ce._modules = {}
 		if hasattr(modules, '__iter__'):
@@ -64,7 +65,7 @@ def main(platform, modules=None, path=None, name='Project', port=8080):
 	if len(sys.argv) == 1:
 		print 'Usage: %s (server|shell)' % sys.argv[0]
 	elif sys.argv[1] == 'shell':
-		shell(name)
+		shell(ce.name)
 		sys.exit(0)
 	elif sys.argv[1] == 'server':
 		ce._server()
