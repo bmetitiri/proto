@@ -3,8 +3,8 @@ import ce
 class Request(object):
 	GET, POST = 'get', 'post'
 	def __init__(self, env):
-		self.method = env.get('REQUEST_METHOD')
-		if self.method: self.method.lower()
+		self.method   = env.get('REQUEST_METHOD')
+		if self.method: self.method = self.method.upper()
 		self.agent    = env.get('HTTP_USER_AGENT')
 		self.path     = env.get('PATH_INFO')
 		self.query    = env.get('QUERY_STRING')
@@ -26,6 +26,8 @@ class Handler(object):
 	def header(self, name, value=None):
 		if value: self.response.headers[name] = value
 		return self.response.headers[name]
+	def mime(self, value=None):
+		return self.header('Content-Type', value)
 
 def error(io, status, message=None):
 	if not message:
@@ -41,8 +43,14 @@ def wsgi_router(env, start):
 			body = ce.urls[url](handler)
 		else:
 			body = error(handler, 404)
-	except Exception, e:
-		body = error(handler, 500, e)
+	except:
+		if not ce.debug: body = error(handler, 500)
+		elif ce.debug == ce._RAISE: raise
+		else:
+			import sys, cgitb
+			body = cgitb.html(sys.exc_info())
+			handler.mime('text/html')
+			handler.status(500)
 	start(handler.status(), [(k, handler.response.headers[k])
 		for k in handler.response.headers])
 	return [body,]

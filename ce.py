@@ -1,7 +1,9 @@
 "The ni Common Environment"
 
-GOOGLE  = 'Google App Engine'
+GOOGLE        = 'Google App Engine'
 TORNADO_MONGO = 'Tornado Web Server with MongoDB'
+
+_RAISE        = 'Raise WSGI Exceptions'
 
 from app import main
 from web import add_url as url

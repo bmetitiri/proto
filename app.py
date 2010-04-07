@@ -51,11 +51,21 @@ def shell(name):
 		import code
 		code.interact('%s (Shell)' % name)
 
-def main(platform, modules=None, path=None, name='ni.ce project', port=8080):
+def main(platform, modules=None, path=None,
+		name='ni.ce project', port=8080, debug=False):
 	"Request handling switcher based on defined platform"
 	ce.platform = platform
 	ce.port     = port
 	ce.name     = name
+	ce.debug    = debug
+
+	if ce.debug:
+		try:
+			import web
+			from werkzeug import DebuggedApplication
+			web.wsgi_router = DebuggedApplication(web.wsgi_router, evalex=True)
+			ce.debug = ce._RAISE
+		except: pass
 	if modules:
 		ce._modules = {}
 		if hasattr(modules, '__iter__'):
