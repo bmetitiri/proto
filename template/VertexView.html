@@ -1,0 +1,9 @@
+{% extends 'BaseHandler.html' %}
+{% block name %}{{vertex.name}}{% endblock %}
+{% block content %}
+<div class="vertex">
+	<a class="edit" href="{{vertex.edit_url}}">Edit</a>
+	<h1 class="name">{{vertex.name}}</h1>
+	<p class="content">{{vertex.content}}</p>
+</div>
+{% endblock %}

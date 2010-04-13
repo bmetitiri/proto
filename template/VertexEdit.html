@@ -1,0 +1,12 @@
+{% extends 'BaseHandler.html' %}
+{% block name %}Editing: {{vertex.name}}{% endblock %}
+{% block content %}
+<form method="POST" class="vertex">
+	<h1 class="name"><a href="{{vertex.url}}">{{vertex.name}}</a></h1>
+	<label for="name">Name</label>
+	<input type="text" id="name" name="name" value="{{vertex.name}}" />
+	<br /><label for="content">Content</label>
+	<textarea name="content" id="content">{{vertex.content}}</textarea>
+	<br /><input type="submit" value="Update">
+</form>
+{% endblock %}

@@ -1,0 +1,13 @@
+*{font-family:monospace; margin:0; padding:0;}
+h1 {background:#fff; border-bottom:1px solid #000; padding-left:30px;}
+input, textarea {border:1px solid #000; clear:right;
+	float:left; margin-top:5px; width:200px;}
+input[type="submit"] {margin-left:150px; width:100px;}
+label {clear:left; float:left; margin:5px 10px 0 0;
+	text-align:right; width:140px;}
+textarea {height:200px;}
+.content {margin:15px;}
+.edit {float:right;}
+.vertex {background:#68c; border-left:1px solid #000;
+	border-right:1px solid #000; height:100%; left:50%;
+	position:absolute; width:400px;}
