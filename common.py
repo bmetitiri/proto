@@ -4,4 +4,4 @@ def serialize(fn):
 		return fn(*args[0:-1])
 	return inner
 
-SERIAL_URL = '\.?(?P<ext>\w+)?'
+SERIAL_URL = '\.?(?P<ext>html|json|xml)?$'

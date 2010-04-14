@@ -49,7 +49,6 @@ class VertexView(BaseHandler):
 		self.render({'vertex': vertex})
 
 class VertexEdit(BaseHandler):
-	@common.serialize
 	def get (self, url):
 		vertex = Vertex.get_by_key_name(url) or Vertex(url)
 		self.render({'vertex': vertex})
