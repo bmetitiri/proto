@@ -11,7 +11,7 @@ class Vertex(db.Model):
 		kargs['key_name'] = url
 		super(Vertex, self).__init__(*args, **kargs)
 		if not self.name:
-			if not url: self.name = '(index)'
+			if url == '/': self.name = '(index)'
 			else: self.name = url.replace('/', '').replace('-', ' ').title()
 		if not self.content: self.content = '(text here)'
 	@property
