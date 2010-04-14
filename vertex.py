@@ -26,10 +26,11 @@ class Vertex(db.Model):
 	def edit_url(self):
 		return '/edit%s' % self.url
 	def put(self, *a, **kw):
+		self.html = common.parse(self.content)
 		super(Vertex, self).save(*a, **kw)
 	@property
 	def url(self):
-		return '%s'      % self.key().name()
+		return '%s' % self.key().name()
 
 	########## Views ##########
 class BaseHandler(webapp.RequestHandler):

@@ -1,4 +1,4 @@
-*{font-family:monospace; margin:0; padding:0;}
+* {font-family:monospace; margin:0; padding:0;}
 h1 {background:#fff; border-bottom:1px solid #000; padding-left:30px;}
 input, textarea {border:1px solid #000; clear:right;
 	float:left; margin-top:5px; width:200px;}
