@@ -1,17 +1,17 @@
 *{font-family:monospace; margin:0; padding:0;}
 a {color:#4a5c7d; text-decoration:none;}
 body {background:#e6e6e0;}
-form {padding:10px; width:280px;}
-h1 {margin:142px -130px 0 0; overflow:hidden; position:absolute; right:50%;
-	white-space:nowrap; width:300px; z-index:-1; -moz-transform:rotate(-90deg);}
-input, p, textarea {background:#fff; border:1px solid #000;}
-input {width:200px;}
-label {display:block; float:left; width:80px;}
-input[type="submit"] {margin:5px 0 0 80px; width:100px;}
+form {padding:15px 5px; height:270px; width:290px;}
+h1 {margin:135px -120px 0 0; overflow:hidden; position:absolute; right:50%;
+	white-space:nowrap; width:280px; z-index:-1; -moz-transform:rotate(-90deg);}
+input, p, textarea {background:#fff; border:1px solid #000; margin-left:10px;}
+input {width:150px;}
+input[type="submit"] {margin:10px 0 0 65px;}
+label {display:block; float:left; width:60px;}
 p {margin:5px -5px; padding:5px;}
-textarea {width:280px; height:200px;}
+textarea {width:270px; height:200px;}
+.body {min-height:300px;}
 .body, form, h1{background:#b9cecd; border:1px solid #000;}
-.body, form {margin:5px; min-height:320px;}
-.body {max-width:300px;}
+.body, form {margin:5px; max-width:300px;}
 .edit{background:#b9cecd; border:1px solid #000; float:left; margin:10px 5px 0;}
 .vertices{margin-left:50%;}
