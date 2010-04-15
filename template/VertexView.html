@@ -3,9 +3,9 @@
 {% block content %}
 <div class="vertices">
 <div class="vertex">
-	<h1 class="name">{{vertex.name}}</h1>
+	<h1 class="name"><a href="{{vertex.url}}">{{vertex.name}}</a></h1>
 	<a class="edit" href="{{vertex.edit_url}}">Edit</a>
-	<div class="content">{{vertex.html}}</div>
+	<div class="body">{{vertex.html}}</div>
 </div>
 </div>
 {% endblock %}

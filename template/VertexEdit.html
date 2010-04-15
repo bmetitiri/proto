@@ -3,13 +3,12 @@
 {% block content %}
 <div class="vertices">
 <h1 class="name"><a href="{{vertex.url}}">{{vertex.name}}</a></h1>
-<form method="POST" class="vertex">
+<form method="POST">
 	<label for="name">Name</label>
 	<input type="text" id="name" name="name" value="{{vertex.name}}" />
 	<br /><label for="content">Content</label>
 	<textarea name="content" id="content">{{vertex.content}}</textarea>
 	<br /><input type="submit" value="Update">
-<div class="clear"></div>
 </form>
 </div>
 {% endblock %}
