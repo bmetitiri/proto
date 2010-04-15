@@ -3,7 +3,8 @@ a {color:#4a5c7d; text-decoration:none;}
 body {background:#e6e6e0;}
 form {padding:15px 5px; height:270px; width:290px;}
 h1 {margin:135px -120px 0 0; overflow:hidden; position:absolute; right:50%;
-	white-space:nowrap; width:280px; z-index:-1; -moz-transform:rotate(-90deg);}
+	transform:rotate(-90deg); white-space:nowrap; width:280px;
+	-moz-transform:rotate(-90deg);}
 input, p, textarea {background:#fff; border:1px solid #000; margin-left:10px;}
 input {width:150px;}
 input[type="submit"] {margin:10px 0 0 65px;}
