@@ -1,0 +1,17 @@
+* {margin:0; padding:0;}
+a {color:#4a5c7d; text-decoration:none;}
+body {background:#e6e6e0;}
+br {content:""}
+form {padding:10px 10px; height:280px; margin:5px; max-width:280px;}
+h1 {font-size:24px; margin:135px -120px 0 0; overflow:hidden; position:absolute;
+	right:50%; transform:rotate(-90deg); white-space:nowrap; width:280px;
+	-moz-transform:rotate(-90deg); -webkit-transform:rotate(-90deg);}
+input, p, textarea {background:#fff; border:1px solid #000;}
+input, textarea {float:left; width:100%;}
+input[type="submit"] {display:block; margin-top:6px; width:70px;}
+p {margin:5px -5px; padding:5px;}
+textarea {display:block; height:200px;}
+.body {margin:5px; max-width:300px; min-height:300px;}
+.body, form, h1{background:#b9cecd; border:1px solid #000;}
+.edit {background:#b9cecd; border:1px solid #000; float:left; margin:10px 5px;}
+.vertices {margin-left:50%; min-width:100px;}
