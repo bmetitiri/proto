@@ -3,7 +3,12 @@
 	<head>
 		<title>{% block name %}Base Handler{% endblock %}</title>
 		<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-		<link rel="stylesheet" type="text/css" href="/static/simplex.css?1" />
+		<link href="/static/screen.css?1" media="screen"
+			rel="stylesheet" type="text/css" />
+		<link href="/static/print.css?1" media="print"
+			rel="stylesheet" type="text/css" />
+		<link href="/static/handheld.css?1" media="screen and(max-device-width:480px)"
+			rel="stylesheet" type="text/css" />
 	</head>
 	<body>{% block content %}(empty content){% endblock %}</body>
 </html>
