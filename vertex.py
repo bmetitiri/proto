@@ -49,7 +49,9 @@ class RedirectView(webapp.RequestHandler):
 class VertexView(BaseHandler):
 	@common.serialize
 	def get(self, url):
-		vertex = Vertex.get_by_key_name(url) or Vertex(url)
+		vertex = Vertex.get_by_key_name(url)
+		if not vertex:
+			self.redirect('/edit'+url)
 		self.render({'vertex': vertex})
 
 class VertexEdit(BaseHandler):
