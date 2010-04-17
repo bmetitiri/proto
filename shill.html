@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+	<head>
+		<title>shill({{key}})</title>
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+		<link href="/static/screen.css?1" media="screen"
+			rel="stylesheet" type="text/css" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	</head>
+	<body>
+		<form method="post">
+			<fieldset>
+				<legend>Code</legend>
+				<label for="input">Module</label>
+				<textarea id="input" name="input" cols="80" rows="24">{{input}}</textarea><br />
+			</fieldset>
+			<fieldset>
+				<legend>Run</legend>
+				<label>Output</label>
+				<div id="output">{{output}}</div>
+				<label for="interact">Input</label>
+				<input id="interact" type="text"   name="interact" /><br />
+			</fieldset>
+			<input type="submit" value="update" />
+		</form>
+	</body>
+</html>

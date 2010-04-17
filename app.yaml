@@ -1,0 +1,10 @@
+application: s-and-box
+version: shill-00-1-nex
+runtime: python
+api_version: 1
+
+handlers:
+- url: /static
+  static_dir: static
+- url: /.*
+  script: shill.py
