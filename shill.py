@@ -8,19 +8,21 @@ class Shill(db.Model, webapp.RequestHandler):
 		self.render({'key':key})
 	def post(self, key):
 		world    = {'__builtins__':__builtin__, 'db':db}
-		input    = self.request.get('input').replace('\r\n', '\n')
-		interact = self.request.get('interact').replace('\r\n', '\n')
-		exec input in world
-		if interact.strip():
-			output   = eval(interact, world)
+		module    = self.request.get('module').replace('\r\n', '\n')
+		input = self.request.get('input').replace('\r\n', '\n')
+		exec module in world
+		if input.strip():
+			output   = eval(input, world)
 			if isinstance(output, unicode):
 				output = "u'%s'" % output
 			elif isinstance(output, basestring):
 				output = "'%s'" % output
 			else:
 				output = str(output)
-		output   = '&gt;&gt;&gt; ' + interact + '<br />' + output
-		self.render({'key':key, 'input':input, 'output':output})
+			output     = '&gt;&gt;&gt; ' + input + '<br />' + output
+		else:
+			output     = '&gt;&gt;&gt;'
+		self.render({'key':key, 'module':module, 'output':output})
 	def render(self, values=None):
 		if not values: values={}
 		self.response.headers['Content-Type'] = 'text/html'

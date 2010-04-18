@@ -1,15 +1,15 @@
 * {margin:0; padding:0;}
 br {display:none;}
-form {margin:auto; max-width:490px;}
+form {margin:auto; max-width:484px;}
 fieldset {float:left; height:200px; margin:10px;
 	padding:0 10px 10px; width:200px}
-fieldset, input, legend, textarea, #output {
+fieldset, input, legend, textarea {
 	background-color:#fff; border:1px solid #000;}
-input, textarea {width:100%;}
+input, textarea {display:block; width:100%;}
 input[type="submit"] {clear:left; display:block; margin:auto; width:60px;}
-input[type="submit"], #output {background-color:#cdf;}
+input[type="submit"], #output {background-color:#000; color:#fff;}
 label, textarea, #output {display:block; font-size:10px;}
 legend {margin-left:5%;}
 textarea {height:160px;}
-#output {height:130px;}
+#output {border:1px solid #000; height:130px;}
 #output br {display:block;}
