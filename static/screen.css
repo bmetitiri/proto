@@ -8,8 +8,8 @@ fieldset, input, legend, textarea {
 input, textarea {display:block; width:100%;}
 input[type="submit"] {clear:left; display:block; margin:auto; width:60px;}
 input[type="submit"], #output {background-color:#000; color:#fff;}
-label, textarea, #output {display:block; font-size:10px;}
+label, textarea, #output {display:block;}
 legend {margin-left:5%;}
 textarea {height:160px;}
-#output {border:1px solid #000; height:130px;}
+#output {border:1px solid #000; height:130px; overflow:auto;}
 #output br {display:block;}
