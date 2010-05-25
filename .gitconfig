@@ -1,0 +1,9 @@
+[user]
+	name  = arkie
+	email = email@joncaldwell.com
+[alias]
+	st = status
+[color]
+	diff   = auto
+	status = auto
+	branch = auto
