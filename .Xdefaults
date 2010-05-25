@@ -1,0 +1,7 @@
+URxvt*depth:       32
+URxvt*background:  [60]black
+URxvt*foreground:  white
+URxvt*scrollBar:   false
+URxvt*saveLines:   32767
+URxvt*cursorBlink: false
+#URxvt*geometry:   80x36
