@@ -1,6 +1,10 @@
-[alias] 
+[user]
+	name  = arkie
+	email = email@joncaldwell.com
+[alias]
 	st = status
 	ci = commit
-[user]
-	name = Jon Caldwell
-	email = email@joncaldwell.com
+[color]
+	diff   = auto
+	status = auto
+	branch = auto
