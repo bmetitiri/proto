@@ -1,3 +1,6 @@
 [alias] 
 	st = status
 	ci = commit
+[user]
+	name = Jon Caldwell
+	email = email@joncaldwell.com
