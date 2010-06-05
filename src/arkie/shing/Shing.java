@@ -16,7 +16,7 @@ public class Shing extends Activity
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.main);
 		Typeface uni = Typeface.createFromAsset(
-				getAssets(), "fonts/Unibody_8.ttf");
+				getAssets(), "fonts/alterebro-pixel-font.ttf");
 		((TextView)findViewById(R.id.handle)).setTypeface(uni);
     }
 }
