@@ -1,7 +1,10 @@
 package arkie.shing;
 
 import android.app.Activity;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.view.Window;
+import android.widget.TextView;
 
 public class Shing extends Activity
 {
@@ -10,6 +13,10 @@ public class Shing extends Activity
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.main);
+		Typeface uni = Typeface.createFromAsset(
+				getAssets(), "fonts/Unibody_8.ttf");
+		((TextView)findViewById(R.id.handle)).setTypeface(uni);
     }
 }
