@@ -8,15 +8,15 @@ import android.widget.TextView;
 
 public class Shing extends Activity
 {
-    /** Called when the activity is first created. */
-    @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
-        super.onCreate(savedInstanceState);
+	/** Called when the activity is first created. */
+	@Override
+	public void onCreate(Bundle savedInstanceState)
+	{
+		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.main);
+		setContentView(R.layout.main);
 		Typeface uni = Typeface.createFromAsset(
 				getAssets(), "fonts/alterebro-pixel-font.ttf");
 		((TextView)findViewById(R.id.handle)).setTypeface(uni);
-    }
+	}
 }
