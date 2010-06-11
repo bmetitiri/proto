@@ -4,17 +4,26 @@ import android.content.Context;
 import android.graphics.*; //Canvas, Color, Paint
 import android.view.View;
 
+import arkie.sprockets.*;
+
 public class SpriteView extends View {
-	/*Paint white = new Paint();
+	SpriteMap map;
+	Paint white = new Paint();
 	public SpriteView(Context context){
 		super(context);
 		white.setColor(Color.WHITE);
 	}
-	@Override protected void onSizeChanged(int w, int h, int exw, int exh){
-		super.onSizeChanged(w, h, exw, exh);
-	} */
+	public SpriteView(Context context, SpriteMap map){
+		this(context);
+		this.map = map;
+	}
 	@Override protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
-//		canvas.drawRect(getWidth()/2, getHeight()/2, getWidth(), getHeight(), white);
+		int[][] m = map.getMap();
+		for (int x = 0; x < m.length; x++){
+			for (int y = 0; y < m[0].length; y++){
+				canvas.drawText(""+m[x][y], x*10, y*10, white);
+			}
+		}
 	}
 }
