@@ -8,25 +8,25 @@ import arkie.sprockets.Sprite;
 public class CharSprite implements Sprite {
 	public enum Direction {UP, RIGHT, DOWN, LEFT}
 	Bitmap bitmap;
-	int height, width, rows, columns, row;
+	int height, width, frame;
 	Direction direction;
-	public CharSprite(Bitmap bitmap, int rows, int columns){
-		this.setBitmap(bitmap, rows, columns);
+	public CharSprite(Bitmap bitmap){
+		this.setBitmap(bitmap);
 		this.setDirection(Direction.DOWN);
+		this.frame = 1;
 	}
-	public CharSprite(Context context, int bitmap, int rows, int columns){
-		this(BitmapFactory.decodeResource(context.getResources(),
-					bitmap), rows, columns);
-	}
+	public CharSprite(Context context, int bitmap){
+		this(BitmapFactory.decodeResource(context.getResources(), bitmap));}
 	public void draw(Canvas canvas, Rect rect){
+		int x = this.frame*this.width;
 		int y = offset(this.direction)*this.height;
 		canvas.drawBitmap(this.bitmap, new Rect(
-					0, y, this.width, y+this.height), rect, null);
+					x, y, x+this.width, y+this.height), rect, null);
 	}
-	public void setBitmap(Bitmap bitmap, int rows, int columns){
+	public void setBitmap(Bitmap bitmap){
 		this.bitmap = bitmap;
-		this.height = bitmap.getHeight()/rows;
-		this.width = bitmap.getWidth()/columns;
+		this.height = bitmap.getHeight()/4;
+		this.width = bitmap.getWidth()/3;
 	}
 	public int getHeight(){return this.height;}
 	public int getWidth(){return this.width;}

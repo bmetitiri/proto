@@ -22,7 +22,8 @@ public class SpriteView extends View {
 		int w = map.getSpriteWidth(), h = map.getSpriteHeight();
 		for (int x = 0; x < map.width; x++){
 			for (int y = 0; y < map.height; y++){
-				m[x][y].draw(canvas, new Rect(x*w, y*h, x*w+w, y*h+h));
+				if (m[x][y] != null)
+					m[x][y].draw(canvas, new Rect(x*w, y*h, x*w+w, y*h+h));
 			}
 		}
 	}
