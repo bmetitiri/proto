@@ -52,3 +52,5 @@ let NERDTreeIgnore=['\.vim$', '\.pyc$']
  
  
 :highlight OverColLimit term=bold cterm=bold
+
+:colorscheme desert
