@@ -3,6 +3,7 @@
 	email = email@joncaldwell.com
 [alias]
 	st = status
+	ci = commit
 [color]
 	diff   = auto
 	status = auto
