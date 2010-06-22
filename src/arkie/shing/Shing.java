@@ -10,10 +10,15 @@ public class Shing extends Activity {
 	@Override public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		Sprite sprite = new CharSprite(this, R.drawable.poke);
-		Sprite[][] map = new Sprite[10][10];
-		map[5][5] = sprite;
-		SpriteMap main = new SpriteMap(map, sprite);
+		ChipSprite c = new ChipSprite(this, R.drawable.chip, 16, 16);
+		c.setDefault(5,5);
+		Player p = new Player(this, R.drawable.poke);
+		Sprite[][] map = new Sprite[][]{
+			{c,c,c},
+			{c,c,c},
+			{c,c,c},
+		};
+		SpriteMap main = new SpriteMap(map, c);
 		setContentView(new SpriteView(this, main));
 	}
 }

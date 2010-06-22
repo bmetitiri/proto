@@ -1,35 +1,31 @@
 package arkie.sprockets;
 
 import android.content.Context;
-import android.graphics.*; //Bitmap, BitmapFactory, Canvas, Rect
+import android.graphics.*; //Bitmap, BitmapFactory, Canvas, Rect, RectF
 
-import arkie.sprockets.Sprite;
+import arkie.sprockets.*;
 
-public class CharSprite implements Sprite {
+public class CharSprite extends Sprite {
 	public enum Direction {UP, RIGHT, DOWN, LEFT}
-	Bitmap bitmap;
-	int height, width, frame;
-	Direction direction;
-	public CharSprite(Bitmap bitmap){
-		this.setBitmap(bitmap);
-		this.setDirection(Direction.DOWN);
-		this.frame = 1;
-	}
+	int frame = 1, type = 1;
+	Direction direction = Direction.DOWN;
+	public CharSprite(){}
+	public CharSprite(Bitmap bitmap){super(bitmap);}
 	public CharSprite(Context context, int bitmap){
-		this(BitmapFactory.decodeResource(context.getResources(), bitmap));}
-	public void draw(Canvas canvas, Rect rect){
+		super(context, bitmap);
+	}
+	public void draw(Canvas canvas, float xout, float yout){
 		int x = this.frame*this.width;
 		int y = offset(this.direction)*this.height;
 		canvas.drawBitmap(this.bitmap, new Rect(
-					x, y, x+this.width, y+this.height), rect, null);
+					x, y, x+this.width, y+this.height), new RectF(
+					xout, yout, xout+this.width, yout+this.height), null);
 	}
 	public void setBitmap(Bitmap bitmap){
 		this.bitmap = bitmap;
 		this.height = bitmap.getHeight()/4;
 		this.width = bitmap.getWidth()/3;
 	}
-	public int getHeight(){return this.height;}
-	public int getWidth(){return this.width;}
 	public Direction getDirection(){return this.direction;}
 	public void setDirection(Direction direction){
 		this.direction = direction;}

@@ -8,6 +8,12 @@ package arkie.sprockets;
 public class SpriteMap {
 	Sprite[][] map;
 	int height, width, spriteHeight, spriteWidth;
+	public SpriteMap(Sprite[][] map){
+		this.setMap(map);
+		if (this.map.length>0 && this.map[0].length>0 &&
+				this.map[0][0] != null)
+			this.setSprite(map[0][0]);
+	}
 	public SpriteMap(Sprite[][] map, Sprite sprite){
 		this.setMap(map);
 		this.setSprite(sprite);
