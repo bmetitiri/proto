@@ -6,11 +6,9 @@ import android.graphics.*; //Bitmap, BitmapFactory, Canvas, Rectangle
 public class Sprite {
 	Bitmap bitmap;
 	int height, width, type = 0;
-	public Sprite(){}
 	public Sprite(Context context, int bitmap){
 		this.setBitmap(context, bitmap);
 	}
-	public Sprite(Bitmap bitmap){this.setBitmap(bitmap);}
 	public void draw(Canvas canvas, float x, float y){
 		canvas.drawBitmap(this.bitmap, x, y, null);
 	}

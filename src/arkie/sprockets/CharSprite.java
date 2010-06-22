@@ -9,8 +9,6 @@ public class CharSprite extends Sprite {
 	public enum Direction {UP, RIGHT, DOWN, LEFT}
 	int frame = 1, type = 1;
 	Direction direction = Direction.DOWN;
-	public CharSprite(){}
-	public CharSprite(Bitmap bitmap){super(bitmap);}
 	public CharSprite(Context context, int bitmap){
 		super(context, bitmap);
 	}
