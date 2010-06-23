@@ -1,25 +1,23 @@
-package arkie.sprockets;
+package arkie.sprocket;
 
 import java.util.HashMap;
 import android.content.Context;
 import android.graphics.*; //Bitmap, BitmapFactory, Canvas, Rect
 import android.view.View;
 
-import arkie.sprockets.*;
+import arkie.sprocket.Sprocket;
 
-public class SprocketView extends View {
+public class Tileset implements Sprocket {
 	Bitmap chipset;
 	HashMap<Short, Short> map = new HashMap<Short, Short>();
 	Short fallback;
 	int columns=30, rows=16, mapWidth=20, mapHeight=20,
 		spriteWidth=16, spriteHeight=16;
-	public SprocketView(Context context, int chipset){
-		super(context);
+	public Tileset(Context context, int chipset){
 		this.chipset = BitmapFactory.decodeResource(
 				context.getResources(), chipset);
 	}
-	@Override protected void onDraw(Canvas canvas) {
-		super.onDraw(canvas);
+	public void draw(Canvas canvas){
 		for (int x = 0; x < mapWidth; x++)
 			for (int y = 0; y < mapWidth; y++){
 				Short s = map.get(x*mapWidth+y);
@@ -42,7 +40,7 @@ public class SprocketView extends View {
 	public void setFallback(Short fallback){this.fallback = fallback;}
 	public void setGrid(int columns, int rows){
 		this.columns = columns; this.rows = rows;
-		spriteWidth = chipset.getWidth()/columns;
+		spriteWidth  = chipset.getWidth()/columns;
 		spriteHeight = chipset.getHeight()/rows;
 	}
 	public void setSize(int width, int height){
