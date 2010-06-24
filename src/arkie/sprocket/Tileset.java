@@ -9,18 +9,19 @@ import arkie.sprocket.Sprocket;
 
 public class Tileset implements Sprocket {
 	Bitmap tileset;
-	HashMap<Short, Short> map = new HashMap<Short, Short>();
+	Short[][] map;
 	Short fallback;
-	int columns=30, rows=16, mapWidth=20, mapHeight=20,
-		spriteWidth=16, spriteHeight=16;
+	int columns, rows, spriteWidth, spriteHeight;
 	public Tileset(Context context, int tileset){
 		this.tileset = BitmapFactory.decodeResource(
 				context.getResources(), tileset);
+		setGrid(30, 16); // This is the default for RPGMaker ...
+		map = new Short[10][10]; // TODO: Default map size, move along
 	}
 	public void draw(Canvas canvas){
-		for (int x = 0; x < mapWidth; x++)
-			for (int y = 0; y < mapWidth; y++){
-				Short s = map.get(x*mapWidth+y);
+		for (int x = 0; x < map.length; x++)
+			for (int y = 0; y < map[0].length; y++){
+				Short s = map[x][y];
 				if (s == null)
 					s = fallback;
 				if (s != null){
@@ -34,19 +35,19 @@ public class Tileset implements Sprocket {
 				}
 			}
 	}
-	public void setFallback(int x, int y){
-		setFallback((short)(x*columns+y));
-	}
+	public int getHeight(){return spriteHeight * rows;}
+	public int getWidth(){return spriteWidth * columns;}
+	public void setFallback(int x, int y){setFallback((short)(x*columns+y));}
 	public void setFallback(Short fallback){this.fallback = fallback;}
+	// Call setSpriteSize OR setGrid
+	public void setSpriteSize(int width, int height){
+		spriteWidth = width; spriteHeight = height;
+		columns     = tileset.getWidth()/spriteWidth;
+		rows        = tileset.getHeight()/spriteHeight;
+	}
 	public void setGrid(int columns, int rows){
 		this.columns = columns; this.rows = rows;
 		spriteWidth  = tileset.getWidth()/columns;
 		spriteHeight = tileset.getHeight()/rows;
 	}
-	public void setSize(int width, int height){
-		if (width*height < Short.MAX_VALUE){ // Just do it, kay?
-			this.mapWidth = width; this.mapHeight = height;
-		}
-	}
 }
-
