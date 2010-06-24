@@ -8,14 +8,14 @@ import android.view.View;
 import arkie.sprocket.Sprocket;
 
 public class Tileset implements Sprocket {
-	Bitmap chipset;
+	Bitmap tileset;
 	HashMap<Short, Short> map = new HashMap<Short, Short>();
 	Short fallback;
 	int columns=30, rows=16, mapWidth=20, mapHeight=20,
 		spriteWidth=16, spriteHeight=16;
-	public Tileset(Context context, int chipset){
-		this.chipset = BitmapFactory.decodeResource(
-				context.getResources(), chipset);
+	public Tileset(Context context, int tileset){
+		this.tileset = BitmapFactory.decodeResource(
+				context.getResources(), tileset);
 	}
 	public void draw(Canvas canvas){
 		for (int x = 0; x < mapWidth; x++)
@@ -26,7 +26,7 @@ public class Tileset implements Sprocket {
 				if (s != null){
 					int xi = s/columns*spriteWidth;
 					int yi = s%columns*spriteHeight;
-					canvas.drawBitmap(chipset,
+					canvas.drawBitmap(tileset,
 						new Rect(xi, yi, xi+spriteWidth, yi+spriteHeight),
 					   	new Rect(x*spriteWidth, y*spriteHeight,
 							x*spriteWidth+spriteWidth,
@@ -40,11 +40,11 @@ public class Tileset implements Sprocket {
 	public void setFallback(Short fallback){this.fallback = fallback;}
 	public void setGrid(int columns, int rows){
 		this.columns = columns; this.rows = rows;
-		spriteWidth  = chipset.getWidth()/columns;
-		spriteHeight = chipset.getHeight()/rows;
+		spriteWidth  = tileset.getWidth()/columns;
+		spriteHeight = tileset.getHeight()/rows;
 	}
 	public void setSize(int width, int height){
-		if (width*height < Short.MAX_VALUE){ // Just don't do it, kay?
+		if (width*height < Short.MAX_VALUE){ // Just do it, kay?
 			this.mapWidth = width; this.mapHeight = height;
 		}
 	}

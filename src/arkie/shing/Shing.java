@@ -12,6 +12,8 @@ public class Shing extends Activity {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		Tileset tile = new Tileset(this, R.drawable.chip);
 		tile.setFallback(5,5);
-		setContentView(new SprocketView());
+		SprocketView view = new SprocketView(this);
+		view.addSprocket(tile);
+		setContentView(view);
 	}
 }
