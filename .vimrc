@@ -39,18 +39,25 @@ map <silent> <C-l> <C-w>l
 "map <silent> <C-i> <C-w>+
 "map <silent> <C-o> <C-w><
 
+function! SmartHome()
+	let s:col = col(".")
+	normal! ^
+	if s:col == col(".")
+		normal! 0
+	endif
+endfunction
+nnoremap <silent> <Home> :call SmartHome()<CR>
+inoremap <silent> <Home> <C-O>:call SmartHome()<CR>
+
+
 map <C-t> :NERDTreeToggle<cr>
+
+let NERDTreeIgnore=['\.vim$', '\.pyc$']
+ 
+:colorscheme desert
+
+"highlight OverLength ctermbg=darkred ctermfg=white
+"match OverLength /\%81v.*/
 
 :highlight OverColLimit term=bold cterm=bold
 :au BufRead,BufNewFile * match OverColLimit '\%>80v.\+'
- 
-"highlight OverLength ctermbg=darkred ctermfg=white
-"match OverLength /\%81v.*/
- 
-let NERDTreeIgnore=['\.vim$', '\.pyc$']
- 
- 
- 
-:highlight OverColLimit term=bold cterm=bold
-
-:colorscheme desert
