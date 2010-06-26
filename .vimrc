@@ -45,7 +45,7 @@ imap <Home> <C-o><Home>
 map <C-t> :NERDTreeToggle<cr>
 
 let NERDTreeIgnore=['\.vim$', '\.pyc$']
- 
+
 :colorscheme desert
 
 "highlight OverLength ctermbg=darkred ctermfg=white
@@ -53,3 +53,8 @@ let NERDTreeIgnore=['\.vim$', '\.pyc$']
 
 :highlight OverColLimit term=bold cterm=bold
 :au BufRead,BufNewFile * match OverColLimit '\%>80v.\+'
+
+let g:JavaImpSortPkgSep = 0
+let g:JavaImpPaths = '/opt/android-sdk/platforms/android-1.5/'
+let g:JavaImpDataDir = $HOME . '/.vim/JavaImp' 
+map <silent> <C-i> :JavaImpSilent<cr>:JIS<cr>
