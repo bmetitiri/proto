@@ -10,12 +10,9 @@ public class Tileset implements Sprocket {
 	Bitmap tileset;
 	Short[][] map;
 	Short fallback;
-	int columns, rows, spriteWidth, spriteHeight;
-	public Tileset(Context context, int tileset){
-		this.tileset = BitmapFactory.decodeResource(
-				context.getResources(), tileset);
-		setGrid(30, 16); // TODO: This is the default for RPGMaker ...
-		map = new Short[10][10]; // TODO: Default map size, move along
+	int columns, rows, tileWidth, tileHeight;
+	public Tileset(Bitmap bitmap){
+		this.tileset = bitmap;
 	}
 	public void draw(Canvas canvas){
 		for (int x = 0; x < map.length; x++)
@@ -24,29 +21,34 @@ public class Tileset implements Sprocket {
 				if (s == null)
 					s = fallback;
 				if (s != null){
-					int xi = s/columns*spriteWidth;
-					int yi = s%columns*spriteHeight;
+					int xi = s/columns*tileWidth;
+					int yi = s%columns*tileHeight;
 					canvas.drawBitmap(tileset,
-						new Rect(xi, yi, xi+spriteWidth, yi+spriteHeight),
-						new Rect(x*spriteWidth, y*spriteHeight,
-							x*spriteWidth+spriteWidth,
-							y*spriteHeight+spriteHeight), null);
+						new Rect(xi, yi, xi+tileWidth, yi+tileHeight),
+						new Rect(x*tileWidth, y*tileHeight,
+							x*tileWidth+tileWidth,
+							y*tileHeight+tileHeight), null);
 				}
 			}
 	}
-	public int getHeight(){return spriteHeight * map[0].length;}
-	public int getWidth(){return spriteWidth * map.length;}
+	public int getHeight(){return tileHeight * map[0].length;}
+	public int getWidth(){return tileWidth * map.length;}
 	public void setFallback(int x, int y){setFallback((short)(x*columns+y));}
 	public void setFallback(Short fallback){this.fallback = fallback;}
-	// Call setSpriteSize OR setGrid
-	public void setSpriteSize(int width, int height){
-		spriteWidth = width; spriteHeight = height;
-		columns     = tileset.getWidth()/spriteWidth;
-		rows        = tileset.getHeight()/spriteHeight;
+	// Call setTileSize OR setGrid
+	public void setTileSize(int width, int height){
+		tileWidth = width; tileHeight = height;
+		columns     = tileset.getWidth()/tileWidth;
+		rows        = tileset.getHeight()/tileHeight;
 	}
 	public void setGrid(int columns, int rows){
 		this.columns = columns; this.rows = rows;
-		spriteWidth  = tileset.getWidth()/columns;
-		spriteHeight = tileset.getHeight()/rows;
+		tileWidth  = tileset.getWidth()/columns;
+		tileHeight = tileset.getHeight()/rows;
 	}
+	public void setMapSize(int width, int height){
+		map = new Short[width][height];
+	}
+	public void setMap(Short[][] map){this.map = map;}
+	public boolean update(){return false;}
 }

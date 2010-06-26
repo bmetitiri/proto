@@ -8,8 +8,15 @@ import android.view.View;
 import arkie.sprocket.Sprocket;
 
 public class SprocketView extends View {
-	Collection<Sprocket> sprockets = new ArrayList<Sprocket>();
-	public SprocketView (Context context){super(context);}
+	Collection<Sprocket> sprockets;
+	public SprocketView (Context context){
+		super(context);
+		sprockets = new ArrayList<Sprocket>();
+	}
+	public SprocketView (Context context, Collection sprockets){
+		super(context);
+		this.sprockets = sprockets;
+	}
 	public void addSprocket(Sprocket sprocket){sprockets.add(sprocket);}
 	@Override protected void onDraw(Canvas canvas) {
 		for (Sprocket sprocket: sprockets)

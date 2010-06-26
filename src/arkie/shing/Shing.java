@@ -10,10 +10,11 @@ public class Shing extends Activity {
 	@Override public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		Tileset tile = new Tileset(this, R.drawable.chip);
-		tile.setFallback(5,5);
-		SprocketView view = new SprocketView(this);
-		view.addSprocket(tile);
-		setContentView(view);
+		Controller main = new Controller(this);
+		setContentView(main.getView());
+
+		// TODO: Persistencize
+		Tileset tile = main.createTileset(R.drawable.chip, 5, 5);
+		main.getView().addSprocket(tile);
 	}
 }
