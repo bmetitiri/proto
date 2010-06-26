@@ -39,16 +39,8 @@ map <silent> <C-l> <C-w>l
 "map <silent> <C-i> <C-w>+
 "map <silent> <C-o> <C-w><
 
-function! SmartHome()
-	let s:col = col(".")
-	normal! ^
-	if s:col == col(".")
-		normal! 0
-	endif
-endfunction
-nnoremap <silent> <Home> :call SmartHome()<CR>
-inoremap <silent> <Home> <C-O>:call SmartHome()<CR>
-
+noremap  <expr> <Home> (col('.') == matchend(getline('.'), '^\s*')+1 ? '0'  : '^')
+imap <Home> <C-o><Home>
 
 map <C-t> :NERDTreeToggle<cr>
 
