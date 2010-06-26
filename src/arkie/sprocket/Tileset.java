@@ -1,33 +1,39 @@
 package arkie.sprocket;
 
-import java.util.HashMap;
 import android.content.Context;
-import android.graphics.*; //Bitmap, BitmapFactory, Canvas, Rect
-
-import arkie.sprocket.Sprocket;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Rect;
+import java.util.HashMap;
 
 public class Tileset implements Sprocket {
-	Bitmap tileset;
-	Short[][] map;
-	Short fallback;
-	int columns, rows, tileWidth, tileHeight;
-	public Tileset(Bitmap bitmap){
+	Bitmap tileset; Controller main;
+	Short[][] map; Short fallback;
+	float x, y; int columns, rows, tileWidth, tileHeight;
+	public Tileset(Controller main, Bitmap bitmap){
+		this.main = main;
 		this.tileset = bitmap;
 	}
 	public void draw(Canvas canvas){
+		Rect camera = main.getCamera();
 		for (int x = 0; x < map.length; x++)
 			for (int y = 0; y < map[0].length; y++){
-				Short s = map[x][y];
-				if (s == null)
-					s = fallback;
-				if (s != null){
-					int xi = s/columns*tileWidth;
-					int yi = s%columns*tileHeight;
-					canvas.drawBitmap(tileset,
-						new Rect(xi, yi, xi+tileWidth, yi+tileHeight),
-						new Rect(x*tileWidth, y*tileHeight,
-							x*tileWidth+tileWidth,
-							y*tileHeight+tileHeight), null);
+				int viewX = x*tileWidth - camera.left;
+				int viewY = y*tileHeight - camera.top;
+				if (viewX+tileWidth > camera.left &&
+						viewX < camera.right &&
+						viewY+tileHeight > camera.top &&
+						viewY < camera.bottom){
+					Short s = map[x][y];
+					if (s == null) s = fallback;
+					if (s != null){
+						int xi = s/columns*tileWidth;
+						int yi = s%columns*tileHeight;
+						canvas.drawBitmap(tileset,
+							new Rect(xi, yi, xi+tileWidth, yi+tileHeight),
+							new Rect(viewX, viewY, viewX+tileWidth,
+								viewY+tileHeight), null);
+					}
 				}
 			}
 	}
@@ -35,16 +41,10 @@ public class Tileset implements Sprocket {
 	public int getWidth(){return tileWidth * map.length;}
 	public void setFallback(int x, int y){setFallback((short)(x*columns+y));}
 	public void setFallback(Short fallback){this.fallback = fallback;}
-	// Call setTileSize OR setGrid
 	public void setTileSize(int width, int height){
 		tileWidth = width; tileHeight = height;
 		columns     = tileset.getWidth()/tileWidth;
 		rows        = tileset.getHeight()/tileHeight;
-	}
-	public void setGrid(int columns, int rows){
-		this.columns = columns; this.rows = rows;
-		tileWidth  = tileset.getWidth()/columns;
-		tileHeight = tileset.getHeight()/rows;
 	}
 	public void setMapSize(int width, int height){
 		map = new Short[width][height];
