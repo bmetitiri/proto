@@ -3,7 +3,6 @@ package arkie.sprocket;
 import java.util.HashMap;
 import android.content.Context;
 import android.graphics.*; //Bitmap, BitmapFactory, Canvas, Rect
-import android.view.View;
 
 import arkie.sprocket.Sprocket;
 
@@ -15,7 +14,7 @@ public class Tileset implements Sprocket {
 	public Tileset(Context context, int tileset){
 		this.tileset = BitmapFactory.decodeResource(
 				context.getResources(), tileset);
-		setGrid(30, 16); // This is the default for RPGMaker ...
+		setGrid(30, 16); // TODO: This is the default for RPGMaker ...
 		map = new Short[10][10]; // TODO: Default map size, move along
 	}
 	public void draw(Canvas canvas){
@@ -29,14 +28,14 @@ public class Tileset implements Sprocket {
 					int yi = s%columns*spriteHeight;
 					canvas.drawBitmap(tileset,
 						new Rect(xi, yi, xi+spriteWidth, yi+spriteHeight),
-					   	new Rect(x*spriteWidth, y*spriteHeight,
+						new Rect(x*spriteWidth, y*spriteHeight,
 							x*spriteWidth+spriteWidth,
 							y*spriteHeight+spriteHeight), null);
 				}
 			}
 	}
-	public int getHeight(){return spriteHeight * rows;}
-	public int getWidth(){return spriteWidth * columns;}
+	public int getHeight(){return spriteHeight * map[0].length;}
+	public int getWidth(){return spriteWidth * map.length;}
 	public void setFallback(int x, int y){setFallback((short)(x*columns+y));}
 	public void setFallback(Short fallback){this.fallback = fallback;}
 	// Call setSpriteSize OR setGrid
