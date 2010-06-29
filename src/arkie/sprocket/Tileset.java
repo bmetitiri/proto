@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.view.MotionEvent;
+import android.view.View;
 import java.util.HashMap;
 
 public class Tileset implements Sprocket {
@@ -51,4 +53,5 @@ public class Tileset implements Sprocket {
 	}
 	public void setMap(Short[][] map){this.map = map;}
 	public boolean update(){return false;}
+	public boolean onTouch(View view, MotionEvent event){return false;}
 }

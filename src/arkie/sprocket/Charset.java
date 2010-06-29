@@ -5,11 +5,13 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.view.MotionEvent;
+import android.view.View;
 
 public class Charset implements Sprocket {
 	Bitmap bitmap; Controller main; Direction direction;
 	boolean animate; int frame, width, height, columns, rows, x, y;
-	int[] frame_order = new int[]{1,2,1,0};
+	int[] frame_order = new int[]{1,1,2,2,1,1,0,0};
 	public enum Direction {UP, RIGHT, DOWN, LEFT}
 	public Charset(Controller main, Bitmap bitmap){
 		this.main = main; this.bitmap = bitmap;
@@ -17,7 +19,7 @@ public class Charset implements Sprocket {
 	}
 	public void draw(Canvas canvas){
 		Rect camera = main.getCamera();
-		int fromX = this.frame_order[frame%4]*this.width;
+		int fromX = this.frame_order[frame%8]*this.width;
 		int fromY = offset(this.direction)*this.height;
 		int toX = x - camera.left;
 		int toY = y - camera.top;
@@ -50,4 +52,5 @@ public class Charset implements Sprocket {
 			default: return 2;
 		}
 	}
+	public boolean onTouch(View view, MotionEvent event){return false;}
 }
