@@ -15,8 +15,8 @@ public class Player extends Charset {
 	}
 	public void setDestination(int x, int y){
 		Rect camera = main.getCamera();
-		destination.x = camera.left+x;
-		destination.y = camera.top+y;
+		destination.x = camera.left+x-getWidth()/2;
+		destination.y = camera.top+y-getHeight()/2;
 	}
 	public boolean onTouch(View view, MotionEvent event){
 		setDestination((int)event.getX(), (int)event.getY());
