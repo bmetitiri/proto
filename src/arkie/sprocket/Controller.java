@@ -53,11 +53,10 @@ public class Controller implements Runnable, View.OnTouchListener{
 		chr.setTileSize(charWidth, charHeight);
 		return chr;
 	}
-	public Tileset createTileset(int bitmap, int fallbackX, int fallbackY){
+	public Tileset createTileset(int bitmap, short[][] map){
 		Tileset tile = new Tileset(this, loadBitmap(bitmap));
-		tile.setMapSize(mapWidth, mapHeight);
+		tile.setMap(map);
 		tile.setTileSize(tileWidth, tileHeight);
-		tile.setFallback(fallbackX, fallbackY);
 		return tile;
 	}
 	public Context getContext(){return this.context;}
