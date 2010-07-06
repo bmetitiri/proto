@@ -33,7 +33,7 @@ public class Charset implements Sprocket {
 	public int getHeight(){return height;}
 	public int getWidth(){return width;}
 	public Point getPosition(){return new Point(x, y);}
-	public void setPosition(Point p){x = p.x; y = p.y;}
+	public void setPosition(int x, int y){this.x = x; this.y = y;}
 	public void setTileSize(int width, int height){
 		this.width = width; this.height = height;
 		columns = bitmap.getWidth()/width;
