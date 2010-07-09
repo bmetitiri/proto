@@ -30,9 +30,9 @@ public class Charset implements Sprocket {
 					new Rect(toX, toY, toX+this.width, toY+this.height), null);
 		}
 	}
-	public int getHeight(){return height;}
-	public int getWidth(){return width;}
-	public Point getPosition(){return new Point(x, y);}
+	public Rect getRect(){
+		return new Rect(x, y, x+width, y+height);
+	}
 	public void setPosition(int x, int y){this.x = x; this.y = y;}
 	public void setTileSize(int width, int height){
 		this.width = width; this.height = height;
