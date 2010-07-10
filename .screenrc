@@ -92,7 +92,8 @@ bind I login on
 bind O login off
 bind } history
 
-backtick 1 10 0 Batt
+#backtick 1 10 0 Batt
 
-hardstatus lastline '%w%=%c:%s   %1`'
+#hardstatus lastline '%w%=%c:%s   %1`'
+hardstatus lastline '%w%=%c:%s'
 #hardstatus alwayslastline '%=%n %t%=(%l) %c:%s%='
