@@ -58,3 +58,6 @@ let g:JavaImpSortPkgSep = 0
 let g:JavaImpPaths = '/opt/android-sdk/platforms/android-1.5/'
 let g:JavaImpDataDir = $HOME . '/.vim/JavaImp' 
 map <silent> <C-i> :JavaImpSilent<cr>:JIS<cr>
+
+vmap > >gv
+vmap < <gv
