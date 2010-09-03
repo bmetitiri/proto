@@ -1,3 +1,7 @@
+# Data
+[see example.js]
+
+# Lore
 Glomp is unsuitable for human consumption.
 Glomp has been known to cause cancer in oranges.
 Glomp consistently performs above average.
