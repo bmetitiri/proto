@@ -63,3 +63,5 @@ set tw=80
 
 vmap > >gv
 vmap < <gv
+
+filetype plugin indent on
