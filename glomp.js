@@ -1,36 +1,35 @@
 #!/usr/bin/node
-var http = require('http');
-function render(dict, node, values, attrs){
+var http = require('http'), fs = require('fs');
+
+// Internal functions
+function render(dict, node){
+	var values = [], attrs = []
 	for (n in dict){
-		if (n == '$'){values.push(dict[n]);}
-		else if(n[0] == '$'){attrs.push(' '+n.slice(1)+'="'+dict[n]+'"')}
-		else if (typeof(dict[n]) == 'object'){
-			values.push(render(dict[n], n, [], []));
-		} else values.push('<'+n+'>'+dict[n]+'</'+n+'>');
+		var cur = dict[n];
+		if (n == '$'){values.push(cur);}
+		else if(n[0] == '$'){attrs.push(' '+n.slice(1)+'="'+cur+'"')}
+		else if (typeof(cur) == 'object'){
+			if (cur instanceof Array)
+				for (i in cur)
+					values.push(render(cur[i]));
+			else values.push(render(cur, n));
+		} else values.push('<'+n+'>'+cur+'</'+n+'>');
 	}
 	if (node){values.unshift('<'+node+attrs+'>'); values.push('</'+node+'>');}
-	ret = values.join('')
-	return ret
+	return values.join('')
 }
-exports.route = function (urls, io){
-	if (io.url in urls) urls[io.url](io);
-	else {
-		io.code = 404;
-		io.end('Resource not found')
-	}
-}
-exports.port = process.argv[2]
-exports.go = function(urls){
+
+function serve(){
 	if (!exports.port) exports.port = 80
-	http.createServer(
+	server = http.createServer(
 		function(req, res){
-			_code = 200
+			var _code = 200
 			function headers(io){
 				if (!res._header) res.writeHead(_code, io.headers);
 			}
 			io = { 'end': function(){res.end();}
 			, 'headers': {'Content-Type':'text/plain'}
-			, 'url': req.url,
+			, 'url': req.url
 			}
 			io.end = function(data){headers(io); res.end(data); return io;}
 			io.html = function(data){
@@ -48,10 +47,52 @@ exports.go = function(urls){
 				else return code
 			}
 			io.template = function(dict){
-				io.html(render(dict, null, [], []));
+				io.html(render(dict));
 			}
-			exports.route(urls, io);
+			exports.route(io);
 			res.end();
-		}).listen(exports.port, "0.0.0.0");
+		});
+	server.listen(exports.port, "0.0.0.0");
+}
+
+// Internal variables
+var urls = {}, server;
+
+global.running = 0;
+
+// Exports
+exports.debug = function(){
+	var runner = process.mainModule;
+	fs.unwatchFile(runner.filename);
+	fs.watchFile(runner.filename, function(cur, prev){
+		if (cur.mtime.toString() == prev.mtime.toString()) return; //TODO:???
+		delete(module.moduleCache[runner.filename]);
+		require(runner.filename);
+		console.log(runner.filename + ' reloaded at ' + cur.mtime);
+	});
+	if (!global.running){
+		global.running = 1;
+		serve();
+		console.log('glomp is debug at ' + exports.port + '!');
+	}
+}
+exports.go = function(){
+	serve();
 	console.log('glomp is go at ' + exports.port + '!');
+	return exports
+}
+exports.route = function (io){
+	if (io.url in urls) urls[io.url](io);
+	else {
+		io.code = 404;
+		io.end('404: Thank you visitor, but ['+io.url+'] is in another server')
+	}
+}
+exports.port = process.argv[2];
+exports.urls = function(key, value){
+	if (value) urls[key] = value;
+	else if (key)
+		for (k in key) urls[k] = key[k];
+	else return urls;
+	return exports;
 }
