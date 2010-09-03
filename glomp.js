@@ -68,7 +68,7 @@ exports.debug = function(){
 		if (cur.mtime.toString() == prev.mtime.toString()) return; //TODO:???
 		delete(module.moduleCache[runner.filename]);
 		require(runner.filename);
-		console.log(runner.filename + ' reloaded at ' + cur.mtime);
+		console.log(runner.filename.split('/').pop() + ' reloaded at ' + cur.mtime);
 	});
 	if (!global.running){
 		global.running = 1;
