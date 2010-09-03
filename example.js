@@ -2,7 +2,7 @@
 
 var glomp = require('./glomp.js');
 
-template = {html:{head:{style:{$type:'text/css',
+var template = {html:{head:{style:{$type:'text/css',
 	$:'body {background:#00f; text-align:center}'}},body:[
 	{h1:{$style:'color:#0f0;',$:'Hello World!'}},
 	{h1:{$style:'color:#ff0;',$:'Hello World!'}},
@@ -13,6 +13,7 @@ template = {html:{head:{style:{$type:'text/css',
 
 glomp.urls({
 	'/' : function(io){
+		template.html.body.push({h1:'What\'s up?'})
 		io.template(template);
 	}
 }).debug();
