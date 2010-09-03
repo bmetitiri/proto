@@ -1,6 +1,8 @@
 #!/usr/bin/node
 var http = require('http'), fs = require('fs');
 
+RELOAD_GLOMP = true // Reload glomp on main reload (glomp development only)
+
 // Internal functions
 function render(dict, node){
 	var values = [], attrs = []
@@ -67,6 +69,11 @@ exports.debug = function(){
 	fs.watchFile(runner.filename, function(cur, prev){
 		if (cur.mtime.toString() == prev.mtime.toString()) return; //TODO:???
 		delete(module.moduleCache[runner.filename]);
+		if (RELOAD_GLOMP){
+			global.running = 0;
+			server.close();
+			delete(module.moduleCache[__filename]);
+		}
 		require(runner.filename);
 		console.log(runner.filename.split('/').pop() + ' reloaded at ' + cur.mtime);
 	});
