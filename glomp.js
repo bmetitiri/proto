@@ -22,6 +22,7 @@ function render(dict, node){
 }
 
 function serve(){
+	global.running = 1;
 	if (!exports.port) exports.port = 80
 	server = http.createServer(
 		function(req, res){
@@ -64,26 +65,26 @@ global.running = 0;
 
 // Exports
 exports.debug = function(){
-	var runner = process.mainModule;
-	fs.unwatchFile(runner.filename);
-	fs.watchFile(runner.filename, function(cur, prev){
+	var runner = process.mainModule.filename;
+	fs.unwatchFile(runner);
+	fs.watchFile(runner, function(cur, prev){
 		if (cur.mtime.toString() == prev.mtime.toString()) return; //TODO:???
-		delete(module.moduleCache[runner.filename]);
+		delete(module.moduleCache[runner]);
 		if (RELOAD_GLOMP){
 			global.running = 0;
 			server.close();
 			delete(module.moduleCache[__filename]);
 		}
-		require(runner.filename);
-		console.log(runner.filename.split('/').pop() + ' reloaded at ' + cur.mtime);
+		require(runner);
+		console.log(runner.split('/').pop() + ' reloaded at ' + cur.mtime);
 	});
 	if (!global.running){
-		global.running = 1;
 		serve();
 		console.log('glomp is debug at ' + exports.port + '!');
 	}
 }
 exports.go = function(){
+	fs.unwatchFile(process.mainModule.filename)
 	serve();
 	console.log('glomp is go at ' + exports.port + '!');
 	return exports
