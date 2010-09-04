@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-require('./glomp.js').urls({
+require('./glomp.js').templates(['index.html']).urls({
 	'/' : function(io){
-		var template = {html:{head:{style:{$type:'text/css',
+/*		var template = {html:{head:{style:{$type:'text/css',
 			$:'body {background:#00f; text-align:center}'}},
 			meta:{'$http-equiv':'refresh',$content:1},body:[
 			{h1:{$style:'color:#0f0;',$:'Hello World!'}},
@@ -13,6 +13,7 @@ require('./glomp.js').urls({
 			]}}
 
 		template.html.body.push({h6:'What\'s up?'})
-		io.template(template);
+		io.render(template);*/
+		io.template('index.html');
 	}
 }).debug();
