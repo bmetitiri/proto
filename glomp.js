@@ -86,7 +86,7 @@ exports.debug = function(){
 	var runner = process.mainModule.filename;
 	fs.unwatchFile(runner);
 	fs.watchFile(runner, function(cur, prev){
-		if (cur.mtime.toString() == prev.mtime.toString()) return; //TODO:???
+		if (+cur.mtime == +prev.mtime) return; //TODO:???
 		/* if (RELOAD_GLOMP){
 			global.running = 0;
 			server.close();
