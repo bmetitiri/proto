@@ -60,3 +60,7 @@ let g:JavaImpDataDir = $HOME.'/.vim/JavaImp'
 map <silent> <C-i> :JavaImpSilent<cr>:JIS<cr>
 
 set tw=80
+set spell
+
+vmap > >gv
+vmap < <gv
