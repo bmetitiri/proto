@@ -64,3 +64,4 @@ set spell
 
 vmap > >gv
 vmap < <gv
+syntax on
