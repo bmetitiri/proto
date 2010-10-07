@@ -66,3 +66,4 @@ vmap > >gv
 vmap < <gv
 
 filetype plugin indent on
+syntax on
