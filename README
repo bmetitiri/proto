@@ -3,6 +3,12 @@ This repo contains a number of disparate code sketches -- largely to cut down on
 baad
  - Webkit with transparency
 
+jiki
+ - example ni (see below) project for a simple wiki-like site.
+
+ni
+ - (abandoned) Web framework development, yeah! Reinventing the wheel, yeah! (Supports appengine, tornado.py)
+
 simplex
  - (abandoned) Simple node-based (read wiki) site for Google App Engine
 
