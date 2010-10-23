@@ -1,4 +1,4 @@
-CONNECTION_ID  = '1' + '.';
+CONNECTION_ID  = '+';
 OBJECT_COUNT   = 1;
 ROTATION_SPEED = .005;
 THRUSTER_SPEED = .1;
@@ -34,9 +34,10 @@ game = {
 
 	ship : function(id, data){//id, x, y
 		// Thrusters
-		this.port      = data.port || false;
+		this.port      = data.port      || false;
 		this.starboard = data.starboard || false;
-		this.aft       = data.aft || false;
+		this.aft       = data.aft       || false;
+		this.fire      = data.fire      || false;
 
 		this.id = id;
 		this.x = data.x || 100; this.deltax = data.deltax || 0;
@@ -79,11 +80,6 @@ game = {
 			}
 			ctx.restore();
 		}
-		this.fire = function(){
-			var shot = new game.bullet(CONNECTION_ID + OBJECT_COUNT++,
-				{x:this.x, y:this.y, deltax:this.deltax, deltay:this.deltay, r:this.r});
-			world[shot.id] = shot
-		}
 		this.update = function(){
 			if (this.port) this.deltar += ROTATION_SPEED;
 			if (this.starboard) this.deltar -= ROTATION_SPEED;
@@ -91,6 +87,17 @@ game = {
 			if (this.aft){
 				this.deltax += Math.cos(this.r) * THRUSTER_SPEED;
 				this.deltay += Math.sin(this.r) * THRUSTER_SPEED;
+			}
+			if (this.fire){
+/*				if (PLAYER_ID = this.id)
+					send(CONNECTION_ID + OBJECT_COUNT++,
+						{x:this.x, y:this.y, deltax:this.deltax,
+						deltay:this.deltay, r:this.r, type:'bullet'});*/
+				shot = new game.bullet('0.'+OBJECT_COUNT++,
+						{x:this.x, y:this.y, deltax:this.deltax,
+						deltay:this.deltay, r:this.r});
+				world[shot.id] = shot;
+				this.fire = false;
 			}
 			this.x += this.deltax;
 			this.y += this.deltay;
@@ -101,10 +108,8 @@ game = {
 			if (this.y > cvs.height) this.y = 0;
 			if (this.y < 0) this.y = cvs.height; */
 
-			if (this.x > cvs.width) this.deltax = -this.deltax;
-			if (this.x < 0) this.deltax = -this.deltax;
-			if (this.y > cvs.height) this.deltay = -this.deltay;
-			if (this.y < 0) this.deltay = -this.deltay;
+			if (this.x > cvs.width || this.x < 0)  this.deltax = -this.deltax;
+			if (this.y > cvs.height || this.y < 0) this.deltay = -this.deltay;
 		}
 	}
 }
@@ -131,48 +136,30 @@ function receive(data){
 function send(id, data){
 	var env = {}; env[id] = data;
 	receive(JSON.stringify(env));
-//	receive(data);
 }
+keys = {'wad+shift':{65:'starboard', 68:'port', 87:'aft', 16:'fire'},
+		'arrows+ctrl':{37:'starboard', 39:'port', 38:'aft', 17:'fire'}}
 window.onload = function(){
 	cvs = document.getElementById('canvas');
 	cvs.width  = window.innerWidth;
 	cvs.height = window.innerHeight;
 	ctx = cvs.getContext('2d');
 
-	PLAYER_ID = CONNECTION_ID+OBJECT_COUNT++;
-	send(PLAYER_ID, {type:'ship'});
+	for (type in keys){
+		send(CONNECTION_ID+type, {type:'ship'});
+	}
 	window.onkeyup = window.onkeydown = function(e){
-		keys   = {65:'starboard', 68:'port', 87:'aft'}
-		action = keys[e.keyCode];
-		if (action){
-			state = e.type == 'keydown';
-			if (world[PLAYER_ID][action] != state){
-				env = {}; env[action] = state;
-				send(PLAYER_ID, env);
+		action = {}
+		for (type in keys){
+			action = keys[type][e.keyCode];
+			if (action){
+				state = e.type == 'keydown';
+				if (world[CONNECTION_ID+type][action] != state){
+					env = {}; env[action] = state;
+					send(CONNECTION_ID+type, env);
+				}
 			}
 		}
-		//if (e.type == 'keydown') alert(e.keyCode);
-		/*switch(e.keyCode){
-			case 65: // a
-				state = e.type == 'keydown'
-				if (player.starboard != state)
-				send(player.id, {starboard:state});
-				break;
-			case 68: // d
-				send(player.id, {port:e.type == 'keydown'});
-				break;
-			case 87: // w
-				send(player.id, {aft:e.type == 'keydown'});
-				break;
-			case 16: // shift
-				if (e.type == 'keydown') player.fire();
-				break;
-			/* Alternate controls
-			case 37: // left
-			case 39: // right
-			case 38: // up
-			case 17: // control */
-		//}
 	}
 	init();
 }
