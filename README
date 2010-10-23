@@ -3,6 +3,9 @@ This repo contains a number of disparate code sketches -- largely to cut down on
 baad
  - Webkit with transparency
 
+glomp
+ - Node playground (destination: microframework?)
+
 jiki
  - example ni (see below) project for a simple wiki-like site.
 
