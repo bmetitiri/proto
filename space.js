@@ -5,7 +5,7 @@ THRUSTER_SPEED = .1;
 BULLET_SPEED   = 10;
 world          = {}
 
-game = {
+exports = {
 	bullet : function(id, data){//id, x, y, deltax, deltay, r
 		this.id = id; this.x = data.x; this.y = data.y; this.r = data.r;
 		this.deltax = data.deltax; this.deltay = data.deltay;
@@ -33,6 +33,7 @@ game = {
 	},
 
 	ship : function(id, data){//id, x, y
+		this.type      = 'ship';
 		// Thrusters
 		this.port      = data.port      || false;
 		this.starboard = data.starboard || false;
@@ -93,7 +94,7 @@ game = {
 					send(CONNECTION_ID + OBJECT_COUNT++,
 						{x:this.x, y:this.y, deltax:this.deltax,
 						deltay:this.deltay, r:this.r, type:'bullet'});*/
-				shot = new game.bullet('0.'+OBJECT_COUNT++,
+				shot = new exports.bullet('0.'+OBJECT_COUNT++,
 						{x:this.x, y:this.y, deltax:this.deltax,
 						deltay:this.deltay, r:this.r});
 				world[shot.id] = shot;
@@ -122,35 +123,54 @@ function main(){
 }
 function init(){
 	setInterval(main, 33);
+	setInterval(function(){
+		id = CONNECTION_ID+'wad+shift';
+		send(id, world[id]);
+	}, 1000);
 }
 function receive(data){
-	console.log(data);
-	var data = JSON.parse(data);
-	for (k in data){
-		if (k in world)
-			for (v in data[k]) world[k][v] = data[k][v];
-		else if (data[k]['type'])
-			world[k] = new game[data[k]['type']](k, data[k]);
+//	var data = JSON.parse(data);
+	for (var k in data){
+		if (k in world){
+			if (data[k] == 'delete') delete world[k];
+			else for (var v in data[k]) world[k][v] = data[k][v];
+		} else if (data[k]['type'])
+			world[k] = new exports[data[k]['type']](k, data[k]);
 	}
 }
 function send(id, data){
 	var env = {}; env[id] = data;
-	receive(JSON.stringify(env));
+	socket.send(data);
+	receive(env);
+//	receive(JSON.stringify(env));
 }
 keys = {'wad+shift':{65:'starboard', 68:'port', 87:'aft', 16:'fire'},
 		'arrows+ctrl':{37:'starboard', 39:'port', 38:'aft', 17:'fire'}}
+
 window.onload = function(){
+	socket = new io.Socket(null, {port: 8080});
+	socket.on('message', function(data){
+		receive(data);
+		console.log(data);
+	});
+	socket.connect();
+
 	cvs = document.getElementById('canvas');
-	cvs.width  = window.innerWidth;
-	cvs.height = window.innerHeight;
+	cvs.width  = 400;
+	cvs.height = 400;
+	cvs.style.cssText = 'border:1px solid #000';
+//	cvs.width  = window.innerWidth;
+//	cvs.height = window.innerHeight;
 	ctx = cvs.getContext('2d');
 
-	for (type in keys){
+//	for (var type in keys){
+	type = 'wad+shift';
 		send(CONNECTION_ID+type, {type:'ship'});
-	}
+//	}
 	window.onkeyup = window.onkeydown = function(e){
 		action = {}
-		for (type in keys){
+//		for (var type in keys){
+		type = 'wad+shift';
 			action = keys[type][e.keyCode];
 			if (action){
 				state = e.type == 'keydown';
@@ -159,7 +179,7 @@ window.onload = function(){
 					send(CONNECTION_ID+type, env);
 				}
 			}
-		}
+//		}
 	}
 	init();
 }
