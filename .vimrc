@@ -57,7 +57,7 @@ let NERDTreeIgnore=['\.vim$', '\.pyc$']
 let g:JavaImpSortPkgSep = 0
 let g:JavaImpPaths = '/opt/android-sdk/platforms/android-1.5/,'.$HOME.'/ext/shing/src'
 let g:JavaImpDataDir = $HOME.'/.vim/JavaImp' 
-map <silent> <C-i> :JavaImpSilent<cr>:JIS<cr>
+map <silent> <C-o> :JavaImpSilent<cr>:JIS<cr>
 
 set tw=80
 set spell

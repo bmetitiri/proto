@@ -2,4 +2,7 @@ alias ls="ls -G"
 alias la="ls -a"
 alias ll="ls -l"
 alias l="ls -la"
+
+alias pstree="pstree -g 2"
+
 PS1="\[\033[34m\]\W\[\033[0m\] "
