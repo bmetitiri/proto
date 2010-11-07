@@ -54,10 +54,10 @@ let NERDTreeIgnore=['\.vim$', '\.pyc$']
 :highlight OverColLimit term=bold cterm=bold
 :au BufRead,BufNewFile * match OverColLimit '\%>80v.\+'
 
-let g:JavaImpSortPkgSep = 0
-let g:JavaImpPaths = '/opt/android-sdk/platforms/android-1.5/,'.$HOME.'/ext/shing/src'
-let g:JavaImpDataDir = $HOME.'/.vim/JavaImp' 
-map <silent> <C-o> :JavaImpSilent<cr>:JIS<cr>
+"let g:JavaImpSortPkgSep = 0
+"let g:JavaImpPaths = '/opt/android-sdk/platforms/android-1.5/,'.$HOME.'/ext/shing/src'
+"let g:JavaImpDataDir = $HOME.'/.vim/JavaImp' 
+"map <silent> <C-o> :JavaImpSilent<cr>:JIS<cr>
 
 set tw=80
 set spell
