@@ -67,3 +67,5 @@ vmap < <gv
 
 filetype plugin indent on
 syntax on
+
+map q :w<cr>:exe ':!%' <cr>
