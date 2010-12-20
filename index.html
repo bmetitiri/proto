@@ -1,0 +1,75 @@
+<html><head><style type="text/css">
+	canvas {float:left;}
+	.inner {overflow:hidden; height:100px; width:100px;}
+	.inner:hover {background:#fff; border:1px solid #000;
+		font-size:large; height:222px; left:-61px; overflow:auto;
+		position:relative; top:-61px; width:222px;}
+	.message {border:1px solid #000; font-size:xx-small; float:left;
+		height:100px; margin:10px; width:100px;}
+</style>
+<script src="http://cdn.socket.io/stable/socket.io.js" type="text/javascript"></script>
+<script type="text/javascript">
+	window.onload=function(){
+		var content   = document.getElementById('content'),
+			socket    = new io.Socket(),
+			messages  = [],
+			dead      = 0;
+		var message   = function(data){
+			this.data = data;
+			this.max  = this.time = 50;
+			if (dead){
+				for (var e in content.childNodes){
+					e = content.childNodes[e];
+					if (!e.innerHTML){
+						this.div = e; dead--; break;
+					}
+				}
+			} else {
+				this.div  = document.createElement('div');
+				content.appendChild(this.div);
+				this.div.setAttribute('class', 'message');
+			}
+			this.div.innerHTML = [
+				'<div class="inner"><canvas width="40" height="40"></canvas>',
+				'<a href="http://twitter.com/', data.screen, '">',
+				this.data.name, '</a> ', this.data.text, '</div>'].join('');
+			this.display = this.div.firstChild.firstChild.getContext('2d');
+			this.timeout = function(){
+				if (this.time-- < 2){
+					dead++; this.div.innerHTML = '';
+					return true;
+				}
+				with (this.display){
+					beginPath();
+					clearRect(0, 0, 40, 40); lineTo(20, 20);
+					arc(20, 20, 10, 0, (2*this.time/this.max-2)*Math.PI);
+					closePath(); fill();
+					strokeStyle = '#fff';
+					strokeText(Math.floor(this.time/10), 14, 24);
+				}
+			}
+			this.timeout();
+			this.div.childNodes[0].par = this;
+			this.div.childNodes[0].onclick = function(){
+				this.par.max = this.par.time += 200};
+		}
+		socket.on('message', function(data){
+			messages.push(new message(data));}).connect();
+		setInterval(function(){
+			var removed = false;
+			for (var i=0; i<messages.length; i++)
+				if (messages[i].timeout()){
+					messages.splice(i,1); removed = true;
+				}
+			if (removed)
+				for (var i = content.childNodes.length - 1; i >= 0; i--){
+					var e = content.childNodes[i];
+					if (!e.innerHTML){
+						content.removeChild(e); dead--;
+					} else break;
+				}
+		}, 100);
+	}
+</script></head><body>
+	<div id="content"></div>
+</body></html>
