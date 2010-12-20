@@ -41,7 +41,10 @@ var stream  = function(url){
 					data = JSON.parse(data);
 					if (data.user){
 						socket.broadcast({name:data.user.name,
-							screen:data.user.screen_name, text:data.text})
+							screen:data.user.screen_name, text:data.text,
+							followers:data.user.followers_count,
+							background:data.user.profile_background_color,
+							image:data.user.profile_image_url})
 					}
 				}
 			})
