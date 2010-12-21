@@ -40,11 +40,28 @@ var stream  = function(url){
 					buf  = buf.slice(cr);
 					data = JSON.parse(data);
 					if (data.user){
-						socket.broadcast({name:data.user.name,
-							screen:data.user.screen_name, text:data.text,
+						var message = {name:data.user.name,
+							screen:data.user.screen_name,
 							followers:data.user.followers_count,
 							background:data.user.profile_background_color,
-							image:data.user.profile_image_url})
+							image:data.user.profile_image_url};
+						for (var url in data.entities.urls){
+							url = data.entities.urls[url];
+							switch(url.url.slice(7, url.url.indexOf('/', 8))){
+								case 'yfrog.com':
+									message.media = {type:'image',
+										source : url.url+':iphone',
+										thumb  : url.url+':small',
+										link   : url.url};
+									break;
+							}
+							data.text = [data.text.slice(0, url.indices[0]),
+								'<a href="', url.expanded_url || url.url, '">',
+								url.url, '</a>', data.text.slice(url.indices[1])
+							].join('')
+						}
+						message.text = data.text;
+						socket.broadcast(message);
 					}
 				}
 			})
@@ -52,5 +69,5 @@ var stream  = function(url){
 	).end()
 };
 
-stream('/1/statuses/sample.json');
-//stream('/1/statuses/filter.json?track=twitter');
+//stream('/1/statuses/sample.json');
+stream('/1/statuses/filter.json?track=yfrog');

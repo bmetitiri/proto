@@ -1,13 +1,23 @@
 <html><head><style type="text/css">
 	canvas {height:100%; left:0; opacity:.2; position:absolute;
-		top:0; width:100%; z-index:-1000;}
-	.inner {height:100px; overflow:hidden; position:relative; width:100px;}
-	.inner:hover {background:rgba(255, 255, 255, .8); border:1px solid #000;
-		font-size:large; height:222px; left:-61px;
+		top:0; width:100%; z-index:-500;}
+	.image, .image a {color: transparent;}
+	.image canvas {opacity:1}
+	.image:hover canvas {opacity:.2}
+	.inner, .media {border:1px solid #000;
+		-webkit-box-shadow: 0 0px 5px #888;}
+	.inner {height:100px; overflow:hidden; position:relative; width:100px;
+		-webkit-transition: height .1s, left .1s, top .1s, width .1s;}
+	.inner:hover {background:rgba(255, 255, 255, .8) !important;
+		color:#000; font-size:large; height:222px; left:-61px;
 		overflow:auto; top:-61px; width:222px; z-index:1;}
-	.message {border:1px solid #000; font-size:xx-small; float:left;
-		height:100px; margin:10px; width:100px;}
-	.profile {float:left;}
+	.inner:hover a {color:#00f;}
+	.media {display:none;}
+	.message {font-size:xx-small; float:left; height:100px; margin:10px; width:100px;}
+	.message:hover .media {display:block; left:181px;
+		position:relative; top:-285px; z-index:2;}
+	.profile {float:left; border-right:1px #000 solid; border-bottom:1px #000 solid;}
+	#content {padding:50px 525px 50px 50px;}
 </style>
 <script src="http://cdn.socket.io/stable/socket.io.js"
 	type="text/javascript"></script>
@@ -16,40 +26,54 @@
 		var live = 'message', dead = 'message dead';
 		var content = document.getElementById('content');
 		new io.Socket().on('message', function(data){
-			var div = content.getElementsByClassName('dead')[0];
+			var div = content.querySelector('.dead');
 			if (!div){
 				div = document.createElement('div');
 				content.appendChild(div);
 			}
 			div.className = 'message';
-			div.innerHTML = ['<div class="inner">',
-				'<canvas width="100" height="100"></canvas>',
-				'<img class="profile" src="', data.image,'" />',
+			var message = ['<div class="inner ', data.media.type, '"'];
+			if (data.media.type == 'image')
+				message = message.concat([' style="background: url(',
+					data.media.thumb,') no-repeat center center"']);
+			message = message.concat([
+				'><canvas width="100" height="100"></canvas>',
 				'<a href="http://twitter.com/', data.screen, '">',
-				data.name, '[', data.followers, ']</a> ', data.text, '</div>'
-			].join('');
+				'<img class="profile" src="', data.image,'" />',
+				data.name, '[', data.followers, ']</a> ', data.text, '</div>']);
+			if (data.media.type == 'image')
+				message = message.concat(
+					['<a href="', data.media.link, '"><img class="media" src="',
+						data.media.source, '" /></a>']);
+			div.innerHTML = message.join('');
 			div.background = data.background;
-			div.max = div.time = Math.floor(Math.sqrt(data.followers/10))*10+20;
-			div.display = div.firstChild.firstChild.getContext('2d');
+			div.max = (div.time = Math.floor(
+				Math.sqrt(data.followers/10))*10+20)+1;
 			div.onclick = function(){
-				this.max = this.time += 200; this.className = live;
+				this.max = (this.time += 200) + 1; this.className = live;
+			}
+			div.display = div.firstChild.firstChild.getContext('2d');
+			div.draw = function(){
+				with (div.display){
+					beginPath();
+					clearRect(0, 0, 100, 100); lineTo(50, 50);
+					arc(50, 50, 100, 0, (2*div.time/div.max-2)*Math.PI, false);
+					closePath();
+					fillStyle = div.background; fill();
+				//	lineWidth = 1; stroke();
+				//	strokeStyle = '#000';
+				//	strokeText(Math.floor(e.time/10), 14, 24);
+				}
 			}
 		}).connect();
 		setInterval(function(){
-			var messages = content.getElementsByClassName('message'), seq = true;
+			var messages = content.childNodes, seq = true;
 			for (var i = messages.length-1; i >= 0; i--){
-				var e = messages[i]; if (e.firstChild)
-				if (e.time >= 2){ seq = false; e.time--;
-					with (e.display){
-						beginPath();
-						clearRect(0, 0, 100, 100); lineTo(50, 50);
-						arc(50, 50, 100, 0, (2*e.time/e.max-2)*Math.PI, false);
-						closePath();
-						fillStyle = e.background; fill();
-					//	lineWidth = 1; stroke();
-					//	strokeStyle = '#000';
-					//	strokeText(Math.floor(e.time/10), 14, 24);
-					}
+				var e = messages[i];
+				if (e == content.querySelector('.message:hover')){
+					seq = false; e.className = live; e.draw();
+				} else if (e.time >= 2){
+					seq = false; e.time--; e.draw();
 				} else {
 					if (e.className == live){
 						e.className = dead;
