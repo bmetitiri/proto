@@ -25,6 +25,7 @@ var socket = io.listen(server);
 
 var auth    = 'Basic ' + new Buffer(user + ':' + pass).toString('base64'),
 	buf     = Buffer('');
+//	log     = [];
 
 var twitter = http.createClient(80, 'stream.twitter.com');
 var stream  = function(url){
@@ -47,27 +48,61 @@ var stream  = function(url){
 							image:data.user.profile_image_url};
 						for (var url in data.entities.urls){
 							url = data.entities.urls[url];
-							switch(url.url.slice(7, url.url.indexOf('/', 8))){
+							uri = url.expanded_url || url.url;
+							var slice = uri.indexOf('/', 8);
+							var host  = uri.slice(7, slice);
+							switch(host){
 								case 'yfrog.com':
 									message.media = {type:'image',
-										source : url.url+':iphone',
-										thumb  : url.url+':small',
-										link   : url.url};
+										source : uri+':iphone',
+										thumb  : uri+':small',
+										link   : uri};
 									break;
+								case 'twitpic.com':
+									message.media = {type:'image',
+									//	source : ['http://', host, '/show/full/',
+										source : ['http://', host, '/show/large/',
+											uri.slice(slice)].join(''),
+										thumb  : ['http://', host, '/show/thumb/',
+											uri.slice(slice)].join(''),
+										link   : uri};
+									break;
+								case 'youtu.be':
+									var youtube = uri.slice(16, uri.lastIndexOf('?'))
+								case 'youtube.com':
+								case 'www.youtube.com':
+									if (!youtube && uri.indexOf('watch')+1)
+										youtube = uri.slice(uri.indexOf('=')+1,
+											uri.indexOf('&'));
+									if (youtube)
+										message.media = {type:'youtube',
+											source : youtube,
+											thumb  : ['http://img.youtube.com/vi/',
+												youtube,'/1.jpg'].join(''),
+											link   : uri};
+									break;
+//								default:
+//									console.log('Missed:', uri);
+//									break;
 							}
+							//TODO: Handle >1 url
 							data.text = [data.text.slice(0, url.indices[0]),
-								'<a href="', url.expanded_url || url.url, '">',
-								url.url, '</a>', data.text.slice(url.indices[1])
+								'<a href="', uri, '">', url.url, '</a>',
+								data.text.slice(url.indices[1])
 							].join('')
 						}
 						message.text = data.text;
+//						if (log.length > 20)
+//							log.shift();
+//						log.push(message);
 						socket.broadcast(message);
 					}
 				}
 			})
-		else console.log(res)}
+		else console.log('Code:', res.statusCode)}
 	).end()
 };
 
-//stream('/1/statuses/sample.json');
-stream('/1/statuses/filter.json?track=yfrog');
+stream('/1/statuses/sample.json');
+//stream('/1/statuses/filter.json?track=yfrog,twitpic');
+//stream('/1/statuses/filter.json?track=youtube');
