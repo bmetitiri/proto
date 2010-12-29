@@ -10,7 +10,7 @@ var index = fs.readFileSync(cwd+'index.html')
 fs.watchFile(cwd+'index.html', function(){
 	fs.readFile(cwd+'index.html', function(e, data){index = data;})});
 
-var user = process.argv[2], pass = process.argv[3]; //Fill in details here.
+var user = process.env.TWITTER_USERNAME, pass = process.env.TWITTER_PASSWORD;
 
 // Server
 
@@ -18,7 +18,7 @@ server = http.createServer(function(req, res){
 	res.writeHead(200, {'Content-Type': 'text/html'});
 	res.end(index);
 });
-server.listen(8080);
+server.listen(process.env.PORT||8080);
 var socket = io.listen(server);
 
 // Twitter
