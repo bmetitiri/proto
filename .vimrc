@@ -69,3 +69,6 @@ filetype plugin indent on
 syntax on
 
 map q :w<cr>:exe ':!%' <cr>
+
+set statusline=%f%m%=%c%V\ %l/%L\ \ \ \ %{strftime(\"%H:%M\")}\ \ \ \ 
+set laststatus=2
