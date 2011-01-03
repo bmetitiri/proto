@@ -6,11 +6,11 @@ import os
 
 class Page(webapp.RequestHandler):
 	def get(self): self.out()
-	def login(self, uri=None):
-		return users.create_login_url(uri or self.request.uri)
+	def login(self, path=None): #TODO: Switch for uri?
+		return users.create_login_url(path or self.request.path)
 #		federated_identity='gmail.com')
-	def logout(self, uri=None):
-		return users.create_logout_url(uri or self.request.uri)
+	def logout(self, path=None):
+		return users.create_logout_url(path or self.request.path)
 	def out(self, template_file=None, **kwargs):
 		self.response.headers['Content-Type'] = 'text/html'
 		template_file = template_file or os.path.join('templates',

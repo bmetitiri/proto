@@ -1,24 +1,37 @@
 {% extends 'base.html' %}
 {% block content %}
+{% if prev %}<div class="prev">
+	<a href="?p={{prev}}">&laquo;</a></div>{% endif %}
+{% if next %}<div class="next">
+	<a href="?p={{next}}">&raquo;</a></div>{% endif %}
+
 <ul class="resolutions">
 	{% for r in resolutions %}
-	<li>
-		<h3>{{r.name}}
-			{% if user %}<span class="public">
+	<li class="resolution">
+		<h3>
+			{{r.name}}
+			{% if user %}
+			<span class="small">
 				{% if r.public %}(Public){% else %}
-				(Private){% endif %}</span>{% endif %}
+				(Private){% endif %}</span>
+			{% endif %}
 		</h3>
+		{% if user %}
+			<form method="POST">
+				<input name="method" type="submit" value="Give Up" />
+				<input name="id" type="hidden" value="{{r.key}}" />
+			</form>
+		{% endif %}
 	</li>
 	{% endfor %}
 </ul>
 {% if user %}
-<form method="POST">
+<form class="add" method="POST">
 	<label for="name">Resolve to</label>
 	<input id="name" name="name" type="text" />
 	(<label for="public">publicly</label>
 	<input id="public" name="public" type="checkbox" checked="checked" />)
-	<input type="submit" value="Add" />
-	<input name="method" type="hidden" value="add" />
+	<input name="method" type="submit" value="Add" />
 </form>
 {% endif %}
 {% endblock %}

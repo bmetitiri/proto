@@ -2,16 +2,25 @@
 <html>
 	<head>
 		<style type="text/css">
-			a {text-decoration:none;}
-			form {text-align:center;}
+			a {color:#00f; text-decoration:none;}
 			h1 {font-variant:small-caps;margin:0;}
+			.add {text-align:center;}
 			.content {background:#ddf; border:1px solid #000;
-				margin:100px auto; max-width:400px; padding:20px;}
-			.public {font-size:small; font-weight:normal;}
+				-webkit-box-shadow: 0 5px 10px #333;
+				margin:0 auto; max-width:400px; padding:20px;}
+			.next, .prev {font-size:x-large; margin-top:13px;}
+			.next {float:right;}
+			.prev {float:left;}
+			.resolution form {display:none;}
+			.resolution:hover form {display:block;}
+			.small {font-size:small; font-weight:normal;}
 			.user {border-bottom:1px solid #000; float:right}
 		</style>
+		<title>Resolvent</title>
 	</head>
 	<body>
+		<div class="center_hack1">
+		<div class="center_hack2">
 		<div class="content">
 		<div class="user">{% if user %}
 			<a href="{{c.logout}}">logout</a>
@@ -19,9 +28,13 @@
 			{% else %}
 			<a href="{{c.login}}">login</a>{% endif %}
 		</div>
-		<h1>Resolvent</h1>
+		<h1><a href="/resolvent/">Resolvent</a>
+			<div class="small">{% if user %}Current
+				{% else %}Most Recent{% endif %}</div></h1>
 		{% block content %}
 		{% endblock %}
+		</div>
+		</div>
 		</div>
 	</body>
 <html>
