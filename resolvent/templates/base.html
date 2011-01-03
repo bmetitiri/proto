@@ -6,8 +6,10 @@
 			h1 {font-variant:small-caps;margin:0;}
 			.add {text-align:center;}
 			.content {background:#ddf; border:1px solid #000;
-				-webkit-box-shadow: 0 5px 10px #333;
-				margin:0 auto; max-width:400px; padding:20px;}
+				margin:0 auto; max-width:400px; padding:20px;
+				box-shadow: 0 5px 10px #333;
+				-moz-box-shadow: 0 5px 10px #333;
+				-webkit-box-shadow: 0 5px 10px #333;}
 			.next, .prev {font-size:x-large; margin-top:13px;}
 			.next {float:right;}
 			.prev {float:left;}
@@ -19,8 +21,6 @@
 		<title>Resolvent</title>
 	</head>
 	<body>
-		<div class="center_hack1">
-		<div class="center_hack2">
 		<div class="content">
 		<div class="user">{% if user %}
 			<a href="{{c.logout}}">logout</a>
@@ -33,8 +33,6 @@
 				{% else %}Most Recent{% endif %}</div></h1>
 		{% block content %}
 		{% endblock %}
-		</div>
-		</div>
 		</div>
 	</body>
 <html>
