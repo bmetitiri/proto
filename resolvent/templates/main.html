@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+<ul class="resolutions">
+	{% for r in resolutions %}
+	<li>
+		<h3>{{r.name}}
+			{% if user %}<span class="public">
+				{% if r.public %}(Public){% else %}
+				(Private){% endif %}</span>{% endif %}
+		</h3>
+	</li>
+	{% endfor %}
+</ul>
+{% if user %}
+<form method="POST">
+	<label for="name">Resolve to</label>
+	<input id="name" name="name" type="text" />
+	(<label for="public">publicly</label>
+	<input id="public" name="public" type="checkbox" checked="checked" />)
+	<input type="submit" value="Add" />
+	<input name="method" type="hidden" value="add" />
+</form>
+{% endif %}
+{% endblock %}

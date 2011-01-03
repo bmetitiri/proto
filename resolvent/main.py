@@ -1,29 +1,22 @@
-from google.appengine.api import users
-from google.appengine.ext import webapp
-from google.appengine.ext.webapp import template, util
+import common, logging
 
-import os
+class Resolution(common.db.Model):
+	user   = common.db.UserProperty(auto_current_user_add=True)
+	name   = common.db.StringProperty()
+	date   = common.db.DateTimeProperty(auto_now_add=True)
+	public = common.db.BooleanProperty()
 
-def userise(fn):
-	def request(self, *args, **kwargs):
-		self.user = users.get_current_user()
-		if self.user: fn(self, *args, **kwargs)
-		else: self.redirect(users.create_login_url(self.request.uri))
-	return request
+class Main(common.Page):
+	url = '/.*'
+	def get(self):
+		if self.user: resolutions=Resolution.all().filter('user =', self.user)
+		else: resolutions=Resolution.all().filter('public =', True)
+		self.out(resolutions=resolutions)
+	def post(self):
+		if self.user:
+			if self.request.get('method') == 'add':
+				self.process(Resolution()).save()
+		self.redirect('')
 
-class Page(webapp.RequestHandler):
-	def out(self, **kwargs):
-		self.response.headers['Content-Type'] = 'text/html'
-		template_file = os.path.join(os.path.dirname(__file__),
-			self.__class__.__name__.lower()+'.html')
-		kwargs['user'] = users.get_current_user()
-		self.response.out.write(template.render(template_file, kwargs))
-	def get(self): self.out()
-
-class Main(Page):
-	@userise
-	def get(self): self.out()
-
-application = webapp.WSGIApplication([('/', Main)], debug=True)
-def main(): util.run_wsgi_app(application)
+main = common.setup(Main)
 if __name__ == '__main__': main()

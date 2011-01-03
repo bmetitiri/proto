@@ -1,0 +1,27 @@
+<?docytpe html>
+<html>
+	<head>
+		<style type="text/css">
+			a {text-decoration:none;}
+			form {text-align:center;}
+			h1 {font-variant:small-caps;margin:0;}
+			.content {background:#ddf; border:1px solid #000;
+				margin:100px auto; max-width:400px; padding:20px;}
+			.public {font-size:small; font-weight:normal;}
+			.user {border-bottom:1px solid #000; float:right}
+		</style>
+	</head>
+	<body>
+		<div class="content">
+		<div class="user">{% if user %}
+			<a href="{{c.logout}}">logout</a>
+			{{user.nickname}}
+			{% else %}
+			<a href="{{c.login}}">login</a>{% endif %}
+		</div>
+		<h1>Resolvent</h1>
+		{% block content %}
+		{% endblock %}
+		</div>
+	</body>
+<html>

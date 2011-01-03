@@ -4,5 +4,9 @@ runtime: python
 api_version: 1
 
 handlers:
-- url: /.*
+- url: /resolvent/static
+  static_dir: resolvent/static
+- url: /resolvent/.*
   script: resolvent/main.py
+- url: /
+  script: index.py
