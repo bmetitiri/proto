@@ -1,5 +1,5 @@
-application: brave-new-world-001
-version: 1
+application: jon-caldwell
+version: brave-new-world-001
 runtime: python
 api_version: 1
 
@@ -10,3 +10,6 @@ handlers:
   script: resolvent/main.py
 - url: /
   script: index.py
+
+inbound_services:
+- warmup
