@@ -2,22 +2,26 @@
 <html><head><style type="text/css">
 	canvas {height:100%; left:0; opacity:.2; position:absolute;
 		top:0; width:100%; z-index:-500;}
+	.clear {clear:both;}
 	.container, .container a {color: transparent;}
 	.container canvas {opacity:1}
 	.container:hover canvas {opacity:.2}
-	.inner, .media {border:1px solid #000;
-		-webkit-box-shadow: 0 0px 5px #888;}
+	.inner, .media {border:1px solid #000; box-shadow: 0 0px 5px #888;
+		-moz-box-shadow: 0 0px 5px #888; -webkit-box-shadow: 0 0px 5px #888;}
 	.inner {height:100px; overflow:hidden; position:relative; width:100px;
+		transition: height .1s, left .1s, top .1s, width .1s;
 		-webkit-transition: height .1s, left .1s, top .1s, width .1s;}
 	.inner:hover {background:rgba(255, 255, 255, .8) !important;
 		color:#000; font-size:large; height:222px; left:-61px;
 		overflow:auto; top:-61px; width:222px; z-index:1;}
 	.inner:hover a {color:#00f;}
 	.media {display:none; max-width:500px;}
-	.message {font-size:xx-small; float:left; height:100px; margin:10px; width:100px;}
+	.message {font-size:xx-small; float:left;
+		height:100px; margin:10px; width:100px;}
 	.message:hover .media {display:block; left:181px;
 		position:relative; top:-285px; z-index:2;}
-	.profile {float:left; border-right:1px #000 solid; border-bottom:1px #000 solid; max-width:48px;}
+	.profile {float:left; border-right:1px #000 solid;
+		border-bottom:1px #000 solid; max-width:48px;}
 	#content {padding:50px 550px 50px 50px;}
 </style>
 <script src="http://cdn.socket.io/stable/socket.io.js"
@@ -93,4 +97,5 @@
 	}
 </script></head><body>
 	<div id="content"></div>
+	<div class="clear"></div>
 </body></html>
