@@ -30,33 +30,13 @@
 	window.onload=function(){
 		var live = 'message', dead = 'message dead';
 		var content = document.getElementById('content');
-		new io.Socket().on('message', function(data){
-			var div = content.querySelector('.dead');
-			if (!div){
-				div = document.createElement('div');
-				content.appendChild(div);
-			}
-			div.className = 'message';
-			var message = ['<div class="inner ']
-			if (data.media){
-				message = message.concat(
-					['container" style="background: url(',
-					data.media.thumb,') no-repeat center center']);
-			}
-			message = message.concat([
-				'"><canvas width="100" height="100"></canvas>',
-				'<a href="http://twitter.com/', data.screen, '">',
-				'<img class="profile" src="', data.image,'" />',
-				data.name, '[', data.followers, ']</a> ', data.text, '</div>']);
-			if (data.media)
-				if (data.media.type == 'image')
-					message = message.concat(['<a href="', data.media.link,
-							'"><img class="media" src="', data.media.source, '" /></a>']);
-				else message = message.concat(['<iframe class=" media youtube-player"',
-						'type="text/html" width="640" height="385"',
-						'src="http://www.youtube.com/embed/', data.media.source,
-						'" frameborder="0"></iframe>']);
-			div.innerHTML = message.join('');
+
+		var format_twitter = function(data){/*placeholder*/}
+		var script_twitter = function(div, data){
+			if (!data) 
+				try {data = JSON.parse(
+					div.getAttribute('data-twitter').replace(/`/g, '"'));
+				} catch(e){console.log(e); return}
 			div.background = data.background;
 			div.max = (div.time = Math.floor(
 				Math.sqrt(data.followers/10))*10+20)+1;
@@ -76,6 +56,20 @@
 				//	strokeText(Math.floor(e.time/10), 14, 24);
 				}
 			}
+		}
+
+		var proto = content.childNodes;
+		for (var div in proto) script_twitter(proto[div]);
+
+		new io.Socket().on('message', function(data){
+			var div = content.querySelector('.dead');
+			if (!div){
+				div = document.createElement('div');
+				content.appendChild(div);
+			}
+			div.className = 'message';
+			div.innerHTML = format_twitter(data);
+			script_twitter(div, data);
 		}).connect();
 		setInterval(function(){
 			var messages = content.childNodes, seq = true;
