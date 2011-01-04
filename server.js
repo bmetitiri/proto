@@ -7,8 +7,8 @@ var cwd   = process.argv[1];
 	cwd   = cwd.slice(0, cwd.lastIndexOf('/')+1);
 var index = fs.readFileSync(cwd+'index.html')
 
-fs.watchFile(cwd+'index.html', function(){
-	fs.readFile(cwd+'index.html', function(e, data){index = data;})});
+//fs.watchFile(cwd+'index.html', function(){
+//	fs.readFile(cwd+'index.html', function(e, data){index = data;})});
 
 var user = process.env.TWITTER_USERNAME, pass = process.env.TWITTER_PASSWORD;
 
@@ -100,7 +100,7 @@ var stream  = function(url){
 				}
 			})
 		else console.log('Code:', res.statusCode)}
-	).end()
+	).end();
 };
 
 stream('/1/statuses/sample.json');
