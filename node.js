@@ -11,9 +11,9 @@ server = http.createServer(
 			fs.readFile('index.html', function(err, data){
 				res.end(data);
 			});
-		} else if (req.url == '/space.js'){
+		} else if (req.url == '/dungeon.js'){
 			res.writeHead(200, {'Content-Type':'text/javascript'});
-			fs.readFile('space.js', function(err, data){
+			fs.readFile('dungeon.js', function(err, data){
 				res.end(data);
 			});
 		} else {
