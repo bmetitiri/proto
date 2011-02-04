@@ -1,11 +1,4 @@
-OBJECT_COUNT   = 1;
-ROTATION_SPEED = .005;
-THRUSTER_SPEED = .1;
-THRUSTER_COLOR = '#fa3';
-BULLET_SPEED   = 10;
-
-KEYS = {65:'starboard', 68:'port', 87:'aft', 16:'fire',
-		37:'starboard', 39:'port', 38:'aft', 17:'fire'}
+KEYS = {65:'left', 68:'right', 87:'up', 83: 'down', 16:'attack'}
 
 world = {}
 
@@ -17,93 +10,66 @@ function shape(){
 		ctx.lineTo(arguments[i], arguments[i+1]);
 	ctx.fill();
 }
+
 exports = {
-	bullet : function(id, data){
-		this.collide = [];
-		this.id = id; this.x = data.x; this.y = data.y; this.r = data.r;
-		this.deltax = data.deltax; this.deltay = data.deltay;
-		this.deltax += Math.cos(this.r) * BULLET_SPEED;
-		this.deltay += Math.sin(this.r) * BULLET_SPEED;
-		this.draw = function(){
-			ctx.save();
-			ctx.translate(this.x, this.y);
-			ctx.rotate(this.r);
-			/* Blaster graphic
-			ctx.fillStyle = '#3af'
-			ctx.fillRect(0, -1, 5, -2);
-			ctx.fillRect(0, 1, 5, 2); */
-			ctx.fillRect(-2, -2, 2, 2);
-			ctx.restore();
-		}
-		this.update = function(){
-			this.x += this.deltax;
-			this.y += this.deltay;
-			if (this.x > cvs.width || this.x < 0
-					|| this.y > cvs.height || this.y < 0){
-				delete world[id]
-			}
-		}
-		this.bounds = function(){
-			return {left:this.x-2, top:this.y-2,
-				right:this.x+2, bottom:this.y+2}
-		}
-	},
-	ship : function(id, data){
-		this.type      = 'ship';
+	player : function(id, data){
+		this.type      = 'player';
 		this.collide   = [];
-		this.port      = data.port      || false;
-		this.starboard = data.starboard || false;
-		this.aft       = data.aft       || false;
-		this.fire      = data.fire      || false;
+		this.speed     = 10;
+		this.left      = data.left   || false;
+		this.right     = data.right  || false;
+		this.up        = data.up     || false;
+		this.attack    = data.attack || false;
 
 		this.id = id;
-		this.x = data.x || 100; this.deltax = data.deltax || 0;
-		this.y = data.y || 100; this.deltay = data.deltay || 0;
-		this.r = data.r || 0;   this.deltar = data.deltar || 0;
+		//Start position
+		this.x = data.x || 100;
+		this.y = data.y || 100; 
 		this.draw = function(){
 			ctx.save();
 			ctx.translate(this.x, this.y);
-			ctx.rotate(this.r);
+//			ctx.rotate(this.r);
 			var color = (this.collide.length)?'#f00':'#000';
 			shape(color, 10, 0, -10, 8, 0, 0, -10, -8);
-			if (this.starboard) shape(THRUSTER_COLOR, 8, 2, 5, 7, 11, 7);
-			if (this.port)      shape(THRUSTER_COLOR, 8, -2, 5, -7, 11, -7);
-			if (this.aft)       shape(THRUSTER_COLOR, -4, 0, -8, -4, -8, 4);
 			ctx.restore();
 		}
 		this.update = function(){
-			if (this.port) this.deltar += ROTATION_SPEED;
-			if (this.starboard) this.deltar -= ROTATION_SPEED;
-			this.r += this.deltar;
-			if (this.aft){
-				this.deltax += Math.cos(this.r) * THRUSTER_SPEED;
-				this.deltay += Math.sin(this.r) * THRUSTER_SPEED;
-			}
-			if (this.fire){
-				shot = new exports.bullet('0.'+OBJECT_COUNT++,
-						{x:this.x, y:this.y, deltax:this.deltax,
-						deltay:this.deltay, r:this.r});
-				world[shot.id] = shot;
-				this.fire = false;
-			}
-			this.x += this.deltax;
-			this.y += this.deltay;
-
-			/* Wraparound
-			if (this.x > cvs.width) this.x = 0;
-			if (this.x < 0) this.x = cvs.width;
-			if (this.y > cvs.height) this.y = 0;
-			if (this.y < 0) this.y = cvs.height; */
-
-			if (this.x > cvs.width || this.x < 0)  this.deltax = -this.deltax;
-			if (this.y > cvs.height || this.y < 0) this.deltay = -this.deltay;
+			speed = this.speed;
+			if ((this.left||this.right)&&(this.up||this.down))
+				speed = .7 * speed;
+			if (this.left) this.x -= speed;
+			if (this.right) this.x += speed;
+			if (this.up) this.y -= speed;
+			if (this.down) this.y += speed;
 		}
 		this.bounds = function(){
 			return {left:this.x-5, top:this.y-5,
 				right:this.x+5, bottom:this.y+5}
 		}
+	},
+
+	monster : function(id, data){
+		this.x = data.x; 
+		this.y = data.y; 
+		this.collide   = [];
+		this.draw = function(){
+			ctx.save();
+			ctx.translate(this.x, this.y);
+			ctx.fillRect(-5, -5, 5, 5);
+			ctx.restore();
+		},
+		this.bounds = function(){
+			return {left:this.x-5, top:this.y-5,
+				right:this.x+5, bottom:this.y+5}
+		}
+		this.update = function(){
+			this.x -= (this.x-world['^'].x)/10
+			this.y -= (this.y-world['^'].y)/10
+		}
 	}
+
 }
+
 function main(){
 	ctx.clearRect(0, 0, cvs.width, cvs.height);
 	for (var o in world){
@@ -116,7 +82,7 @@ function main(){
 						r1.left < r2.right && r2.left < r1.right)
 					world[o].collide.push(world[oo]);
 			}
-		world[o].update();
+		if (world[o].update) world[o].update();
 		if (world[o]) world[o].draw();
 	}
 }
@@ -147,7 +113,12 @@ window.onload = function(){
 	cvs.height = document.height;
 	ctx = cvs.getContext('2d');
 
-	send('^', {type:'ship'});
+	send('^', {type:'player'});
+	l = {}
+	for (var x = 0; x < 10; x++)
+	for (var y = 0; y < 10; y++)
+		l['tile-'+x+'-'+y] = {type:'monster', x:x*10, y:y*10};
+	receive(l);
 	window.onkeyup = window.onkeydown = function(e){
 		action = {}
 		action = KEYS[e.keyCode];
