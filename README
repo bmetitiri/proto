@@ -17,5 +17,8 @@ shill
  - Google App Engine based interactive shell (Although potentially generic ± some models)
    Ideally, with persistence per url, maybe with a key of some sort?
 
+shing
+ - (abandoned) Minor tile engine for Android-based RPG engine
+
 simplex
  - (abandoned) Simple node-based (read wiki) site for Google App Engine
