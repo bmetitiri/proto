@@ -1,5 +1,6 @@
 KEYS = {65:'left', 68:'right', 87:'up', 83: 'down', 16:'attack'}
 
+
 world = {}
 
 function shape(){
@@ -11,25 +12,26 @@ function shape(){
 	ctx.fill();
 }
 
+
+
 exports = {
 	player : function(id, data){
-		this.type      = 'player';
-		this.collide   = [];
-		this.speed     = 10;
-		this.left      = data.left   || false;
-		this.right     = data.right  || false;
-		this.up        = data.up     || false;
-		this.attack    = data.attack || false;
+		this.type       = 'player';
+		this.id         = id;
+		this.collisions = [];
+		this.speed      = 5;
+		this.left       = data.left   || false;
+		this.right      = data.right  || false;
+		this.up         = data.up     || false;
+		this.attack     = data.attack || false;
 
-		this.id = id;
 		//Start position
 		this.x = data.x || 100;
 		this.y = data.y || 100; 
 		this.draw = function(){
 			ctx.save();
 			ctx.translate(this.x, this.y);
-//			ctx.rotate(this.r);
-			var color = (this.collide.length)?'#f00':'#000';
+			var color = (this.collisions.length)?'#f00':'#000';
 			shape(color, 10, 0, -10, 8, 0, 0, -10, -8);
 			ctx.restore();
 		}
@@ -49,9 +51,12 @@ exports = {
 	},
 
 	monster : function(id, data){
-		this.x = data.x; 
-		this.y = data.y; 
-		this.collide   = [];
+		this.type       = 'monster';
+		this.id         = id;
+		this.x          = data.x; 
+		this.y          = data.y; 
+		this.collisions = [];
+		this.speed      = 2;
 		this.draw = function(){
 			ctx.save();
 			ctx.translate(this.x, this.y);
@@ -63,29 +68,78 @@ exports = {
 				right:this.x+5, bottom:this.y+5}
 		}
 		this.update = function(){
-			this.x -= (this.x-world['^'].x)/10
-			this.y -= (this.y-world['^'].y)/10
+			if (this.collisions.length == 0){
+				speed = this.speed;
+				if ((this.x < world['player'].x||this.x >
+					world['player'].x)&&(this.y <
+					world['player']||this.y>world['player'].y)){
+					speed = .7 * speed;	
+				}
+				if (this.x < world['player'].x){
+					this.x += speed;
+				}
+				if (this.x > world['player'].x){
+					this.x -= speed;
+				}
+				if (this.y < world['player'].y){
+					this.y += speed;
+				}
+				if (this.y > world['player'].y){
+					this.y -= speed;
+				}
+			}
+			else{
+				speed = 0;
+				this.collisions = [];
+			}
 		}
 	}
 
 }
 
-function main(){
-	ctx.clearRect(0, 0, cvs.width, cvs.height);
-	for (var o in world){
-		world[o].collide = [];
-		for (var oo in world) //TODO: O(n2) => O(nlogn)
-			if (o != oo){
-				var r1 = world[o].bounds()
-				var r2 = world[oo].bounds()
-				if (r1.top < r2.bottom && r2.top < r1.bottom &&
-						r1.left < r2.right && r2.left < r1.right)
-					world[o].collide.push(world[oo]);
+function collision_detection(obj){
+	var r1 = world[obj].bounds()
+	for (var oobj in world){
+		if (obj != oobj){
+			var r2 = world[oobj].bounds()
+			if (r1.top < r2.bottom && r2.top < r1.bottom && 
+				r1.left < r2.right && r2.left < r1.right) {
+					world[obj].collisions.push(world[oobj].id);
 			}
-		if (world[o].update) world[o].update();
-		if (world[o]) world[o].draw();
+		}
 	}
 }
+
+function update_world(){
+	ctx.clearRect(0, 0, cvs.width, cvs.height);
+	for (var obj in world){
+		collision_detection(obj);
+		if (world[obj].update) world[obj].update();
+		if (world[obj].draw) world[obj].draw();
+	}
+}
+
+function draw_grid(){
+	for (x = 0; x < SCREEN_WIDTH; x+=32){
+		ctx.moveTo(x,0);
+		ctx.lineTo(x, SCREEN_HEIGHT);
+	}
+	for (y = 0; y < SCREEN_HEIGHT; y+=32){
+		ctx.moveTo(0,y);
+		ctx.lineTo(SCREEN_WIDTH, y);
+	}
+
+	ctx.strokeStyle = "#eee";
+	ctx.stroke();
+
+}
+
+function main(){
+	update_world();
+	draw_grid();
+}
+
+
 function receive(data){
 	for (var k in data){
 		if (k in world){
@@ -96,42 +150,83 @@ function receive(data){
 		}
 	}
 }
+
 function send(id, data){
 	socket.send(data);
 	var env = {}; env[id] = data;
 	receive(env);
 }
+
+function touchMove(e){
+	e.preventDefault();
+	//var touch = e.touches[0];
+	//ctx.save();
+	//ctx.translate(touch.pageX, touch.pageY);
+	//ctx.fillRect(-45, -45, 45, 45);
+	//ctx.restore();
+}
+
+function touchStart(e){
+	e.preventDefault();
+	var touch = e.touches[0];
+	action = {};
+	if (touch.pageX > SCREEN_WIDTH/2){
+		action = 'right';
+	}
+	if (touch.pageX < SCREEN_WIDTH/2){
+		action = 'left';
+	}
+	if (action){
+		state = e.type == 'touchstart';
+		if (world['player'][action] != state){
+			env = {}; env[action] = state;
+			send('player', env);
+		}
+	}
+}
+
 window.onload = function(){
+	TOUCHSTART = 'ontouchstart' in document.documentElement;
+
 	socket = new io.Socket(null, {port: 8080});
 	socket.on('message', function(data){
 		receive(data);
 	});
 	socket.connect();
 
+	SCREEN_WIDTH  = document.body.clientWidth;
+	SCREEN_HEIGHT = document.body.clientHeight;
+
 	cvs = document.getElementById('canvas');
-	cvs.width  = document.width;
-	cvs.height = document.height;
+	cvs.width  = SCREEN_WIDTH; 	
+	cvs.height = SCREEN_HEIGHT;
 	ctx = cvs.getContext('2d');
 
-	send('^', {type:'player'});
-	l = {}
-	for (var x = 0; x < 10; x++)
-	for (var y = 0; y < 10; y++)
-		l['tile-'+x+'-'+y] = {type:'monster', x:x*10, y:y*10};
-	receive(l);
-	window.onkeyup = window.onkeydown = function(e){
-		action = {}
-		action = KEYS[e.keyCode];
-		if (action){
-			state = e.type == 'keydown';
-			if (world['^'][action] != state){
-				env = {}; env[action] = state;
-				send('^', env);
+	send('player', {type:'player'});
+	enemies = {}
+	for (var i = 0; i < 5; i++)
+		enemies['monster-'+i] = {type:'monster',
+		x:Math.floor(Math.random()*SCREEN_WIDTH), y:Math.floor(Math.random()*SCREEN_HEIGHT)};
+	receive(enemies);
+	if (TOUCHSTART == false){
+		window.onkeyup = window.onkeydown = function(e){
+			action = {}
+			action = KEYS[e.keyCode];
+			if (action){
+				state = e.type == 'keydown';
+				if (world['player'][action] != state){
+					env = {}; env[action] = state;
+					send('player', env);
+				}
 			}
 		}
 	}
+	else {
+		canvas.addEventListener('touchmove', touchMove, false);	
+		canvas.addEventListener('touchstart', touchStart, false);	
+	}
 	setInterval(main, 33);
 	setInterval(function(){
-		send('^', world['^']);
+		send('player', world['player']);
 	}, 1000);
 }
