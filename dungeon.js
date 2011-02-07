@@ -120,11 +120,11 @@ function update_world(){
 }
 
 function draw_grid(){
-	for (x = 0; x < SCREEN_WIDTH; x+=32){
+	for (x = 0; x < SCREEN_WIDTH; x+=64){
 		ctx.moveTo(x,0);
 		ctx.lineTo(x, SCREEN_HEIGHT);
 	}
-	for (y = 0; y < SCREEN_HEIGHT; y+=32){
+	for (y = 0; y < SCREEN_HEIGHT; y+=64){
 		ctx.moveTo(0,y);
 		ctx.lineTo(SCREEN_WIDTH, y);
 	}
@@ -205,9 +205,9 @@ window.onload = function(){
 	send('player', {type:'player'});
 	enemies = {}
 	for (var i = 0; i < 5; i++)
-		enemies['monster-'+i] = {type:'monster',
-		x:Math.floor(Math.random()*SCREEN_WIDTH), y:Math.floor(Math.random()*SCREEN_HEIGHT)};
-	receive(enemies);
+		send('monster-'+i, {type:'monster',
+		x:Math.floor(Math.random()*SCREEN_WIDTH),
+		y:Math.floor(Math.random()*SCREEN_HEIGHT)});
 	if (TOUCHSTART == false){
 		window.onkeyup = window.onkeydown = function(e){
 			action = {}
