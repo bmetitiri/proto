@@ -50,22 +50,21 @@ types.zone = function(id, data){
 
 	this.x     = data.x;
 	this.y     = data.y;
-	this.z     = -1;
+	this.z     = 10;
 	this.color = data.color;
 	this.draw = function(){
 		ctx.save();
 		ctx.translate(this.x, this.y);
-		ctx.setStrokeColor(this.color);
-		ctx.strokeRect(-100, -100, 200, 200);
-		if (!this.collisions.hero){
-			ctx.fillStyle = this.color;
-			ctx.fillRect(-100, -100, 200, 200);
-		}
+		if (this.collisions.hero)
+			ctx.fillStyle = 'rgba('+this.color+',.2)';
+		else
+			ctx.fillStyle = 'rgb('+this.color+')';
+		ctx.fillRect(-200, -200, 400, 400);
 		ctx.restore();
 	}
 	this.bounds = function(){
-		return {left:this.x-100, top:this.y-100,
-			right:this.x+100, bottom:this.y+100}
+		return {left:this.x-300, top:this.y-300,
+			right:this.x+300, bottom:this.y+300}
 	}
 	this.update = function(){}
 }
@@ -76,8 +75,8 @@ exports.init = function(){
 		zones = {}
 		for (var x = -10; x <= 10; x++)
 			for (var y = -10; y <= 10; y++)
-				zones ['z'+gid++] = {type:'zone', x:x*210, y:y*210,
-					color:((x+y)%2)?'#000':'#f00'};
+				zones ['z'+gid++] = {type:'zone', x:x*410, y:y*410,
+					color:((x+y)%2)?'0,0,0':'255,0,0'};
 		exports.receive(zones);
 	}
 	setInterval(exports.main, 33);
