@@ -50,6 +50,7 @@ types.zone = function(id, data){
 
 	this.x     = data.x;
 	this.y     = data.y;
+	this.z     = -1
 	this.color = data.color;
 	this.draw = function(){
 		ctx.save();
@@ -107,8 +108,8 @@ exports.main = function (){
 		ctx.save();
 		ctx.translate(cvs.width/2-player.x, cvs.height/2-player.y);
 	}
-	for (var o in exports.world){
-		var o = exports.world[o];
+	for (var i in list){
+		var o = exports.world[list[i]];
 		o.update();
 		if (cvs) o.draw();
 		o.collisions = {};
@@ -132,6 +133,7 @@ exports.receive = function(data){
 		} else if (data[k]['type']){
 			exports.world[k] = new types[data[k]['type']](k, data[k]);
 			list.push(k);
+			list.sort(function(a,b){return (a.z||0)-(b.z||0)});
 		}
 	}
 }
