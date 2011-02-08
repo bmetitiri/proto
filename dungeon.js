@@ -1,4 +1,5 @@
 keys = {65:'left', 68:'right', 87:'up', 83: 'down', 16:'attack'}
+cvs  = null;
 
 if (typeof(exports)=='undefined') exports = {}
 
@@ -44,8 +45,7 @@ exports.init = function(){
 }
 
 exports.main = function (){
-	if (typeof(ctx)!='undefined')
-		ctx.clearRect(0, 0, cvs.width, cvs.height);
+	if (cvs) ctx.clearRect(0, 0, cvs.width, cvs.height);
 	for (var i = 0; i<list.length; i++){
 		var o = exports.world[list[i]];
 		var r1 = o.bounds()
@@ -59,17 +59,17 @@ exports.main = function (){
 			}
 		}
 	}
+	if (cvs){
+		ctx.save();
+		ctx.translate(cvs.width/2-player.x, cvs.height/2-player.y);
+	}
 	for (var o in exports.world){
-		o = exports.world[o];
+		var o = exports.world[o];
 		o.update();
-		if (typeof(ctx)!='undefined'){
-			ctx.save();
-			ctx.translate(cvs.width/2-player.x, cvs.height/2-player.y);
-			o.draw();
-			ctx.restore();
-		}
+		if (cvs) o.draw();
 		o.collisions = [];
 	}
+	if (cvs) ctx.restore();
 }
 
 exports.receive = function(data){
@@ -92,17 +92,23 @@ exports.receive = function(data){
 	}
 }
 
+function draw(){
+	ctx.save();
+	ctx.translate(cvs.width/2-player.x, cvs.height/2-player.y);
+	for (var o in exports.world){
+	var o = exports.world[o];
+		o.draw();
+	}
+	ctx.restore();
+}
+
 function send(id, data){
 	socket.send(data);
 	var env = {}; env[id] = data;
 	exports.receive(env);
 }
 
-if (typeof(window)!='undefined'){
-	window.onresize = function(){
-		cvs.width  = window.innerWidth;
-		cvs.height = window.innerHeight;
-	}
+if (typeof(window)!='undefined')
 	window.onload = function(){
 		socket = new io.Socket(null, {port: 8080});
 		socket.on('message', function(data){
@@ -111,11 +117,17 @@ if (typeof(window)!='undefined'){
 		socket.connect();
 
 		cvs = document.getElementById('canvas');
-		window.onresize();
 		ctx = cvs.getContext('2d');
-
 		send('@', {type:'hero'});
 		player = exports.world['@'];
+
+		window.onresize = function(){
+			cvs.width  = window.innerWidth;
+			cvs.height = window.innerHeight;
+			draw();
+		}
+		window.onresize();
+
 		window.onkeyup = window.onkeydown = function(e){
 			var action = {}
 			action = keys[e.keyCode];
@@ -129,4 +141,3 @@ if (typeof(window)!='undefined'){
 		}
 		exports.init();
 	}
-}
