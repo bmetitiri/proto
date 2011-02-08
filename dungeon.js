@@ -50,7 +50,7 @@ types.zone = function(id, data){
 
 	this.x     = data.x;
 	this.y     = data.y;
-	this.z     = -1
+	this.z     = -1;
 	this.color = data.color;
 	this.draw = function(){
 		ctx.save();
