@@ -86,10 +86,10 @@ exports.init = function(){
 exports.main = function (){
 	if (cvs) ctx.clearRect(0, 0, cvs.width, cvs.height);
 	for (var i = 0; i<list.length; i++){
-		var o = exports.world[list[i]];
+		var o = list[i];
 		var r1 = o.bounds()
 		for (var ii = i+1; ii < list.length; ii++){
-			var oo = exports.world[list[ii]];
+			var oo = list[ii];
 			var r2 = oo.bounds()
 			if (r1.top < r2.bottom && r2.top < r1.bottom &&
 					r1.left < r2.right && r2.left < r1.right){
@@ -109,7 +109,7 @@ exports.main = function (){
 		ctx.translate(cvs.width/2-player.x, cvs.height/2-player.y);
 	}
 	for (var i in list){
-		var o = exports.world[list[i]];
+		var o = list[i];
 		o.update();
 		if (cvs) o.draw();
 		o.collisions = {};
@@ -122,7 +122,7 @@ exports.receive = function(data){
 		if (k in exports.world){
 			if (data[k] == 'delete'){
 				for (i in list)
-					if (list[i] == k){
+					if (list[i].id == k){
 					   	list.splice(i, 1);
 						break;
 					}
@@ -132,7 +132,7 @@ exports.receive = function(data){
 				exports.world[k][v] = data[k][v];
 		} else if (data[k]['type']){
 			exports.world[k] = new types[data[k]['type']](k, data[k]);
-			list.push(k);
+			list.push(exports.world[k]);
 			list.sort(function(a,b){return (a.z||0)-(b.z||0)});
 		}
 	}
