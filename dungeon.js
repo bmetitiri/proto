@@ -61,9 +61,9 @@ exports.main = function (){
 	}
 	for (var o in exports.world){
 		o = exports.world[o];
-		o.collisions = [];
 		o.update();
 		if (typeof(ctx)!='undefined') o.draw();
+		o.collisions = [];
 	}
 }
 
@@ -112,8 +112,9 @@ window.onload = function(){
 		action = keys[e.keyCode];
 		if (action){
 			state = e.type == 'keydown';
-			if (exports.world['@'][action] != state){
-				env = {}; env[action] = state;
+			player = exports.world['@'];
+			if (player[action] != state){
+				env = {x:player.x, y:player.y}; env[action] = state;
 				send('@', env);
 			}
 		}
