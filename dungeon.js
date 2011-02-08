@@ -8,7 +8,7 @@ exports.world = {}, list = [], types = {};
 types.hero = function(id, data){
 	this.type       = 'hero';
 	this.id         = id;
-	this.collisions = [];
+	this.collisions = {};
 	this.speed      = 5;
 	this.left       = data.left   || false;
 	this.right      = data.right  || false;
@@ -21,7 +21,7 @@ types.hero = function(id, data){
 	this.draw = function(){
 		ctx.save();
 		ctx.translate(this.x, this.y);
-		ctx.fillStyle = (this.collisions.length)?'#f00':'#000';
+		ctx.fillStyle = (this.collisions.hero)?'#f00':'#000';
 		ctx.fillRect(-10, -10, 20, 20);
 		ctx.restore();
 	}
@@ -54,8 +54,14 @@ exports.main = function (){
 			var r2 = oo.bounds()
 			if (r1.top < r2.bottom && r2.top < r1.bottom &&
 					r1.left < r2.right && r2.left < r1.right){
-				o.collisions.push(oo);
-				oo.collisions.push(o);
+				if (o.collisions[oo.type])
+					o.collisions[oo.type].push(oo);
+				else
+					o.collisions[oo.type] = [oo];
+				if (oo.collisions[o.type])
+					oo.collisions[o.type].push(o);
+				else
+					oo.collisions[o.type] = [o];
 			}
 		}
 	}
@@ -67,7 +73,7 @@ exports.main = function (){
 		var o = exports.world[o];
 		o.update();
 		if (cvs) o.draw();
-		o.collisions = [];
+		o.collisions = {};
 	}
 	if (cvs) ctx.restore();
 }
