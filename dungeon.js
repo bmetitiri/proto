@@ -62,7 +62,12 @@ exports.main = function (){
 	for (var o in exports.world){
 		o = exports.world[o];
 		o.update();
-		if (typeof(ctx)!='undefined') o.draw();
+		if (typeof(ctx)!='undefined'){
+			ctx.save();
+			ctx.translate(cvs.width/2-player.x, cvs.height/2-player.y);
+			o.draw();
+			ctx.restore();
+		}
 		o.collisions = [];
 	}
 }
@@ -93,31 +98,35 @@ function send(id, data){
 	exports.receive(env);
 }
 
-if (typeof(window)!='undefined')
-window.onload = function(){
-	socket = new io.Socket(null, {port: 8080});
-	socket.on('message', function(data){
-		exports.receive(data);
-	});
-	socket.connect();
+if (typeof(window)!='undefined'){
+	window.onresize = function(){
+		cvs.width  = window.innerWidth;
+		cvs.height = window.innerHeight;
+	}
+	window.onload = function(){
+		socket = new io.Socket(null, {port: 8080});
+		socket.on('message', function(data){
+			exports.receive(data);
+		});
+		socket.connect();
 
-	cvs = document.getElementById('canvas');
-	cvs.width  = document.width;
-	cvs.height = document.height;
-	ctx = cvs.getContext('2d');
+		cvs = document.getElementById('canvas');
+		window.onresize();
+		ctx = cvs.getContext('2d');
 
-	send('@', {type:'hero'});
-	window.onkeyup = window.onkeydown = function(e){
-		action = {}
-		action = keys[e.keyCode];
-		if (action){
-			state = e.type == 'keydown';
-			player = exports.world['@'];
-			if (player[action] != state){
-				env = {x:player.x, y:player.y}; env[action] = state;
-				send('@', env);
+		send('@', {type:'hero'});
+		player = exports.world['@'];
+		window.onkeyup = window.onkeydown = function(e){
+			var action = {}
+			action = keys[e.keyCode];
+			if (action){
+				state = e.type == 'keydown';
+				if (player[action] != state){
+					env = {x:player.x, y:player.y}; env[action] = state;
+					send('@', env);
+				}
 			}
 		}
+		exports.init();
 	}
-	exports.init();
 }
