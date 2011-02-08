@@ -1,4 +1,5 @@
-keys = {65:'left', 68:'right', 87:'up', 83: 'down', 16:'attack'}
+keys = {65:'left', 68:'right', 87:'up', 83: 'down',
+	17:'attack', 16:'run'}
 cvs  = null;
 
 if (typeof(exports)=='undefined') exports = {}
@@ -10,14 +11,15 @@ types.hero = function(id, data){
 	this.id         = id;
 	this.collisions = {};
 	this.speed      = 5;
+	this.run        = data.run    || false;
 	this.left       = data.left   || false;
 	this.right      = data.right  || false;
 	this.up         = data.up     || false;
 	this.attack     = data.attack || false;
 
 	//Start position
-	this.x = data.x || 100;
-	this.y = data.y || 100; 
+	this.x = data.x || 0;
+	this.y = data.y || 0; 
 	this.draw = function(){
 		ctx.save();
 		ctx.translate(this.x, this.y);
@@ -27,12 +29,13 @@ types.hero = function(id, data){
 	}
 	this.update = function(){
 		speed = this.speed;
+		if (this.run) speed *= 2;
 		if ((this.left||this.right)&&(this.up||this.down))
 			speed = .7 * speed;
-		if (this.left) this.x -= speed;
+		if (this.left)  this.x -= speed;
 		if (this.right) this.x += speed;
-		if (this.up) this.y -= speed;
-		if (this.down) this.y += speed;
+		if (this.up)    this.y -= speed;
+		if (this.down)  this.y += speed;
 	}
 	this.bounds = function(){
 		return {left:this.x-10, top:this.y-10,
@@ -40,7 +43,42 @@ types.hero = function(id, data){
 	}
 }
 
+types.zone = function(id, data){
+	this.type       = 'zone';
+	this.id         = id;
+	this.collisions = {};
+
+	this.x     = data.x;
+	this.y     = data.y;
+	this.color = data.color;
+	this.draw = function(){
+		ctx.save();
+		ctx.translate(this.x, this.y);
+		ctx.setStrokeColor(this.color);
+		ctx.strokeRect(-100, -100, 200, 200);
+		if (!this.collisions.hero){
+			ctx.fillStyle = this.color;
+			ctx.fillRect(-100, -100, 200, 200);
+		}
+		ctx.restore();
+	}
+	this.bounds = function(){
+		return {left:this.x-100, top:this.y-100,
+			right:this.x+100, bottom:this.y+100}
+	}
+	this.update = function(){}
+}
+
+var gid = 0;
 exports.init = function(){
+	if (!cvs){
+		zones = {}
+		for (var x = -10; x <= 10; x++)
+			for (var y = -10; y <= 10; y++)
+				zones ['z'+gid++] = {type:'zone', x:x*210, y:y*210,
+					color:((x+y)%2)?'#000':'#f00'};
+		exports.receive(zones);
+	}
 	setInterval(exports.main, 33);
 }
 
