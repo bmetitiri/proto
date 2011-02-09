@@ -33,6 +33,7 @@ types.hero = function(id, data){
 		if (this.run) speed *= 2;
 		if ((this.left||this.right)&&(this.up||this.down))
 			speed = .7 * speed;
+		this.x1 = this.x; this.y1 = this.y;
 		if (this.left)  this.x -= speed;
 		if (this.right) this.x += speed;
 		if (this.up)    this.y -= speed;
@@ -68,15 +69,19 @@ types.zone = function(id, data){
 			right:this.x+300, bottom:this.y+300}
 	}
 	this.update = function(){
-		if (exports.broadcast && this.color == '0,0,0' &&
-				this.collisions.hero){
-			if (Math.random() > .9){
+		if (this.collisions.hero)
+			/*if (this.color == '255,0,0'){ #TODO: Make work
+				for (var h in this.collisions.hero){
+					h = this.collisions.hero[h];
+					h.x = h.x1; h.y = h.y1;
+				}
+			} else*/ if (exports.broadcast && this.color == '0,0,0'
+				&& Math.random() > .95){
 				var mobs = {}; mobs['m'+mid++] = {type:'mob',
 					x:this.x-190+Math.random()*380,
 					y:this.y-190+Math.random()*380}
 				exports.broadcast(mobs);
 			}
-		}
 	}
 }
 
@@ -85,8 +90,8 @@ types.mob = function(id, data){
 	this.id         = id;
 	this.collisions = {};
 
-	this.x = data.x || 0;
-	this.y = data.y || 0;
+	this.x = data.x || 0; this.x1 = data.x1 || this.x;
+	this.y = data.y || 0; this.y1 = data.y1 || this.y;
 	this.speed = 5;
 
 	this.draw = function(){
@@ -111,8 +116,8 @@ types.mob = function(id, data){
 		if (target.y > this.y + speed/2) dy+=1;
 		if (target.y < this.y - speed/2) dy-=1;
 		if (dx&&dy) speed = .7 * speed;
-		this.x += dx*speed*reverse;
-		this.y += dy*speed*reverse;
+		this.x1 = this.x; this.x += dx*speed*reverse;
+		this.y1 = this.y; this.y += dy*speed*reverse;
 	}
 	this.update = function(){
 		if (this.collisions.mob){
@@ -139,8 +144,9 @@ exports.init = function(){
 		zones = {}
 		for (var x = -10; x <= 10; x++)
 			for (var y = -10; y <= 10; y++)
-				zones['z'+zid++] = {type:'zone', x:x*410, y:y*410,
-					color:((x+y)%2)?'0,0,0':'255,0,0'};
+				if (x||y)
+					zones['z'+zid++] = {type:'zone', x:x*410, y:y*410,
+						color:((x+y)%2)?'0,0,0':'255,0,0'};
 		exports.broadcast(zones);
 	}
 	setInterval(exports.main, 33);
