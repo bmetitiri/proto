@@ -27,6 +27,7 @@ server.listen(8080, '0.0.0.0');
 var io = io.listen(server);
 
 var game = require(process.argv[2]);
+game.broadcast = function(data){game.receive(data); io.broadcast(data)}
 game.init();
 
 io.on('connection', function(client){

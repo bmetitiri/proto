@@ -1,10 +1,11 @@
-keys = {65:'left', 68:'right', 87:'up', 83: 'down',
-	17:'attack', 16:'run'}
-cvs  = null;
+var keys = {65:'left', 68:'right', 87:'up',
+	83:'down', 17:'attack', 16:'run'}
+
+var cvs = null, zid = 0, mid = 0;
 
 if (typeof(exports)=='undefined') exports = {}
 
-exports.world = {}, list = [], types = {};
+exports.world = {}, list = [], types = {}, players = [];
 
 types.hero = function(id, data){
 	this.type       = 'hero';
@@ -18,8 +19,8 @@ types.hero = function(id, data){
 	this.attack     = data.attack || false;
 
 	//Start position
-	this.x = data.x || 0;
-	this.y = data.y || 0; 
+	this.x = data.x || 0; this.x1 = data.x1 || this.x;
+	this.y = data.y || 0; this.y1 = data.y1 || this.y;
 	this.draw = function(){
 		ctx.save();
 		ctx.translate(this.x, this.y);
@@ -66,18 +67,81 @@ types.zone = function(id, data){
 		return {left:this.x-300, top:this.y-300,
 			right:this.x+300, bottom:this.y+300}
 	}
-	this.update = function(){}
+	this.update = function(){
+		if (exports.broadcast && this.color == '0,0,0' &&
+				this.collisions.hero){
+			if (Math.random() > .9){
+				var mobs = {}; mobs['m'+mid++] = {type:'mob',
+					x:this.x-190+Math.random()*380,
+					y:this.y-190+Math.random()*380}
+				exports.broadcast(mobs);
+			}
+		}
+	}
 }
 
-var gid = 0;
+types.mob = function(id, data){
+	this.type       = 'mob';
+	this.id         = id;
+	this.collisions = {};
+
+	this.x = data.x || 0;
+	this.y = data.y || 0;
+	this.speed = 5;
+
+	this.draw = function(){
+		ctx.save();
+		ctx.translate(this.x, this.y);
+		ctx.beginPath();
+		ctx.arc(0, 0, 10, 0, Math.PI*2, true);
+		ctx.closePath();
+		ctx.fill();
+		ctx.restore();
+	}
+	this.bounds = function(){
+		return {left:this.x-8, top:this.y-8,
+			right:this.x+8, bottom:this.y+8}
+	}
+	this.toward = function(target, reverse){
+		reverse = (reverse)?-1:1;
+		speed = this.speed;
+		var dx=0, dy=0;
+		if (target.x > this.x + speed/2) dx+=1;
+		if (target.x < this.x - speed/2) dx-=1;
+		if (target.y > this.y + speed/2) dy+=1;
+		if (target.y < this.y - speed/2) dy-=1;
+		if (dx&&dy) speed = .7 * speed;
+		this.x += dx*speed*reverse;
+		this.y += dy*speed*reverse;
+	}
+	this.update = function(){
+		if (this.collisions.mob){
+			this.toward(this.collisions.mob[0], true);
+		} else {
+			var nearest = null, distance = Infinity;
+			for (var p in players){
+				p = players[p];
+				var d = Math.sqrt(Math.pow(this.x-p.x, 2) +
+						Math.pow(this.y-p.y, 2));
+				if (d<distance){
+					nearest  = p;
+					distance = d;
+				}
+			}
+			if (distance<1000) this.toward(nearest);
+			// TODO: else, delete?
+		}
+	}
+}
+
 exports.init = function(){
-	if (!cvs){
+	if (exports.broadcast){
 		zones = {}
 		for (var x = -10; x <= 10; x++)
 			for (var y = -10; y <= 10; y++)
-				zones ['z'+gid++] = {type:'zone', x:x*410, y:y*410,
+				zones['z'+zid++] = {type:'zone', x:x*410, y:y*410,
 					color:((x+y)%2)?'0,0,0':'255,0,0'};
-		exports.receive(zones);
+		exports.broadcast(zones);
 	}
 	setInterval(exports.main, 33);
 }
@@ -120,18 +184,27 @@ exports.receive = function(data){
 	for (var k in data){
 		if (k in exports.world){
 			if (data[k] == 'delete'){
-				for (i in list)
+				var d = exports.world[k];
+				for (var i in list)
 					if (list[i].id == k){
 					   	list.splice(i, 1);
 						break;
 					}
+				if (d.type == 'hero')
+					for (var i in players) //TODO: abstract with above
+						if (players[i].id == k){
+							players.splice(i, 1);
+							break;
+						}
 				delete exports.world[k];
 			}
 			else for (var v in data[k])
 				exports.world[k][v] = data[k][v];
 		} else if (data[k]['type']){
-			exports.world[k] = new types[data[k]['type']](k, data[k]);
-			list.push(exports.world[k]);
+			var n = new types[data[k]['type']](k, data[k]);
+			exports.world[k] = n;
+			if (n.type == 'hero') players.push(n)
+			list.push(n);
 			list.sort(function(a,b){return (a.z||0)-(b.z||0)});
 		}
 	}
