@@ -3,6 +3,7 @@ var keys = {65:'left', 68:'right', 87:'up',
 
 var cvs = null, zid = 0, mid = 0;
 
+
 if (typeof(exports)=='undefined') exports = {}
 
 exports.world = {}, list = [], types = {}, players = [];
@@ -176,6 +177,9 @@ exports.main = function (){
 	if (cvs){
 		ctx.save();
 		ctx.translate(cvs.width/2-player.x, cvs.height/2-player.y);
+		debug.innerHTML = 'x: '+ player.x+' y: '+ player.y + ' zones: ';
+		for (z in player.collisions.zone)
+			debug.innerHTML += player.collisions.zone[z].id + ', ';
 	}
 	for (var i in list){
 		var o = list[i];
@@ -239,6 +243,8 @@ if (typeof(window)!='undefined')
 			exports.receive(data);
 		});
 		socket.connect();
+		
+		debug = document.getElementById('debug')
 
 		cvs = document.getElementById('canvas');
 		ctx = cvs.getContext('2d');
