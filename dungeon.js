@@ -134,7 +134,10 @@ types.mob = function(id, data){
 				}
 			}
 			if (distance<1000) this.toward(nearest);
-			// TODO: else, delete?
+			else if (exports.broadcast){
+				env = {}; env[this.id]='delete';
+				exports.broadcast(env);
+			}
 		}
 	}
 }
