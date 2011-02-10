@@ -3,6 +3,7 @@
 	email = email@joncaldwell.com
 [alias]
 	st = status
+	br = branch
 	ci = commit
 	co = checkout
 [color]
