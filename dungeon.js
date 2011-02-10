@@ -11,7 +11,7 @@ exports.world = {};
 types.hero = function(id, data){
 	this.type       = 'hero';
 	this.id         = id;
-	this.collisions = {};
+
 	this.speed      = 5;
 	this.run        = data.run    || false;
 	this.left       = data.left   || false;
@@ -49,7 +49,6 @@ types.hero = function(id, data){
 types.zone = function(id, data){
 	this.type       = 'zone';
 	this.id         = id;
-	this.collisions = {};
 
 	this.x     = data.x;
 	this.y     = data.y;
@@ -89,7 +88,6 @@ types.zone = function(id, data){
 types.mob = function(id, data){
 	this.type       = 'mob';
 	this.id         = id;
-	this.collisions = {};
 
 	this.x = data.x || 0; this.x1 = data.x1 || this.x;
 	this.y = data.y || 0; this.y1 = data.y1 || this.y;
@@ -122,7 +120,8 @@ types.mob = function(id, data){
 	}
 	this.update = function(){
 		if (this.collisions.mob){
-			this.toward(this.collisions.mob[0], true);
+			for (var m in this.collisions.mob)
+				this.toward(this.collisions.mob[m], true);
 		} else {
 			var nearest = null, distance = Infinity;
 			for (var p in players){
@@ -141,6 +140,12 @@ types.mob = function(id, data){
 			}
 		}
 	}
+}
+
+types.wall = function(){
+	this.type       = 'mob';
+	this.id         = id;
+	this.collisions = {};
 }
 
 exports.init = function(){
@@ -182,14 +187,12 @@ exports.main = function (){
 				var r2 = oo.bounds()
 				if (r1.top < r2.bottom && r2.top < r1.bottom &&
 						r1.left < r2.right && r2.left < r1.right){
-					if (o.collisions[oo.type])
-						o.collisions[oo.type].push(oo);
-					else
-						o.collisions[oo.type] = [oo];
-					if (oo.collisions[o.type])
-						oo.collisions[o.type].push(o);
-					else
-						oo.collisions[o.type] = [o];
+					if (!o.collisions[oo.type])
+						o.collisions[oo.type] = {};
+					o.collisions[oo.type][oo.id] = oo;
+					if (!oo.collisions[o.type])
+						oo.collisions[o.type] = {};
+					oo.collisions[o.type][o.id] = o;
 				}
 			}
 		}
@@ -210,7 +213,7 @@ exports.main = function (){
 	if (cvs) ctx.restore();
 }
 
-exports.receive = function(data){
+exports.receive = function(data){ //TODO: Queue and add in main loop
 	for (var k in data){
 		if (k in exports.world){
 			if (data[k] == 'delete'){
@@ -232,6 +235,7 @@ exports.receive = function(data){
 				exports.world[k][v] = data[k][v];
 		} else if (data[k]['type']){
 			var n = new types[data[k]['type']](k, data[k]);
+			n.collisions = {};
 			exports.world[k] = n;
 			if (n.type == 'hero') players.push(n)
 			list.push(n);
