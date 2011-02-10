@@ -39,7 +39,7 @@ attrs.damage = function(self){
 		self.health-=2;
 	if (self.health < 1){
 		env = {}; env[self.id]='delete';
-		if (exports.broadcast) exports.broadcast(env);
+		if (exports.broadcast) exports.broadcast(env); // TODO: Send:@
 		else exports.receive(env);
 	}
 }
@@ -55,11 +55,11 @@ types.arrow = function(data){
 	this.x      = data.x;
 	this.y      = data.y;
 	this.t      = 50;
-	this.color  = data.color;
+	this.color  = data.color||'#000';
 	this.hits   = data.hits || {'mob':1,'spawn':1,'wall':1};
-	this.dx     = (data.r&1&&-1)+(data.r&2&&1);
-	this.dy     = (data.r&4&&-1)+(data.r&8&&1);
-	this.speed  = (this.dx&&this.dy)?14:20;
+	this.dx     = data.dx;
+	this.dy     = data.dy;
+	this.speed  = data.speed;
 	this.bounds = function(){
 		return {left:this.x-4, top:this.y-4,
 			right:this.x+4, bottom:this.y+4}
@@ -77,8 +77,8 @@ types.arrow = function(data){
 	}
 	this.update = function(){
 		if (this.t-- < 0) this.delete();
-		this.x += this.dx * this.speed;
-		this.y += this.dy * this.speed;
+		this.x += this.dx;
+		this.y += this.dy;
 	}
 }
 
@@ -182,8 +182,12 @@ types.hero = function(data){
 			if (this.inventory['ammo'] > 0){
 				this.inventory['ammo'] -= 1;
 				if (exports.broadcast){
+					var dx = (this.r&1&&-1)+(this.r&2&&1),
+					    dy = (this.r&4&&-1)+(this.r&8&&1);
+					var speed = (dx&&dy)?14:20;
 					var a = {}; a['a'+gid++] = {type:'arrow',
-						x:this.x, y:this.y, r:this.r, color:this.color}
+						x:this.x, y:this.y, color:this.color,
+						dx:dx*speed, dy:dy*speed}
 					exports.broadcast(a);
 				}
 			}
@@ -285,20 +289,21 @@ types.spawn = function(data){
 	this.update = function(){
 		attrs.damage(this);
 		attrs.solid(this);
-		var nearest = null, distance = Infinity;
-		for (var p in players){
-			p = players[p];
-			var d = Math.sqrt(Math.pow(this.x-p.x, 2) +
-					Math.pow(this.y-p.y, 2));
-			if (d<distance) distance = d;
-		}
-		if (distance<200)
-			if (exports.broadcast && Math.random() > .95){
-				var mobs = {}; mobs['m'+gid++] = {type:'mob',
-					x:this.x+(utils.roll(2)-1)*20,
-					y:this.y+(utils.roll(2)-1)*20}
-				exports.broadcast(mobs);
+		var active = false;
+		if (exports.broadcast){
+			for (var p in players){
+				p = players[p];
+				var d = Math.sqrt(Math.pow(this.x-p.x, 2) +
+						Math.pow(this.y-p.y, 2));
+				if (d<200 && Math.random() > .95){
+					var mobs = {}; mobs['m'+gid++] = {type:'mob',
+						x:this.x+(utils.roll(2)-1)*20,
+						y:this.y+(utils.roll(2)-1)*20}
+					exports.broadcast(mobs);
+					break;
+				}
 			}
+		}
 	}
 }
 
@@ -338,6 +343,24 @@ types.tower = function(data){
 	this.update = function(){
 		attrs.damage(this);
 		attrs.solid(this);
+		if (exports.broadcast){
+			var nearest = null, distance = Infinity;
+			for (var p in players){
+				p = players[p];
+				var d = Math.sqrt(Math.pow(this.x-p.x, 2) +
+						Math.pow(this.y-p.y, 2));
+				if (d<distance){
+					nearest  = p;
+					distance = d;
+				}
+			}
+			if (distance<200){
+				var a = {}; a['a'+gid++] = {type:'arrow',
+					x:this.x, y:this.y, r:this.r,
+				   	hits:{'wall':0, 'hero':2}}
+				exports.broadcast(a);
+			}
+		}
 	}
 }
 
