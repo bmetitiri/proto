@@ -147,10 +147,14 @@ types.hero = function(data){
 	this.draw = function(){
 		ctx.save();
 		ctx.translate(this.x, this.y);
+		ctx.fillStyle = '#00f';
+		ctx.beginPath();
+		ctx.lineTo(0, 0);
+		ctx.arc(0, 0, 13, Math.PI*this.health/20, 0, true);
+		ctx.closePath();
+		ctx.fill();
 		ctx.fillStyle = this.color;
 		ctx.fillRect(-10, -10, 20, 20);
-		ctx.fillStyle = '#fff';
-		ctx.fillRect(-10, -10, this.health/2, 4);
 		ctx.restore();
 	}
 	this.update = function(){
@@ -253,7 +257,7 @@ types.spawn = function(data){
 	this.x = data.x;
 	this.y = data.y;
 	this.z      = 5;
-	this.health = 10;
+	this.health = 20;
 	this.bounds = function(){
 		return {left:this.x-10, top:this.y-10,
 			right:this.x+10, bottom:this.y+10}
