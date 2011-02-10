@@ -153,8 +153,8 @@ types.wall = function(id, data){
 
 	this.x = data.x;
 	this.y = data.y;
-	this.width  = 40;
-	this.height = 40;
+	this.width  = data.width||40;
+	this.height = data.height||40;
 	this.bounds = function(){
 		return {left:this.x, top:this.y,
 			right:this.x+this.width, bottom:this.y+this.height}
@@ -164,29 +164,38 @@ types.wall = function(id, data){
 	}
 	this.repel  = function(obj){
 		var b = this.bounds();
-		if (obj.x1+10<b.left || obj.x1-10>b.right) obj.x = obj.x1;
-		if (obj.y1+10<b.top  || obj.y1-10>b.bottom) obj.y = obj.y1;
+		var ox = obj.x; obj.x = obj.x1;
+		var oy = obj.y; obj.y = obj.y1;
+		var obj_b = obj.bounds();
+		if (obj_b.right>b.left && obj_b.left<b.right) obj.x = ox; 
+		if (obj_b.bottom>b.top  && obj_b.top<b.bottom) obj.y = oy; 
+
 	}
 	this.update = function(){
 		for (var h in this.collisions.hero)
 			this.repel(this.collisions.hero[h]);
+		for (var m in this.collisions.mob)
+			this.repel(this.collisions.mob[m]);
 	}
 }
 
 exports.init = function(){
 	var wid = 0, zid = 0;
 	if (exports.broadcast){
-		var zones = {}, walls = {}
-		for (var w = 0; w < 2; w++)
-			walls['w'+wid++] = {type:'wall',
-				x:Math.random()*200-100, y:Math.random()*200-100}
+		/* Walls generation */
+		var zones = {}, walls = {};
+		for (var y = -10; y < 10; y++)
+			for(var x = -10; x < 10; x++)
+				if (x || y) walls['w'+wid++] = {type:'wall', x:x*100-20,y:y*100-20}
 		exports.broadcast(walls);
-		/*for (var x = -1; x <= 1; x++)
+
+		/* Zones generation */
+		for (var x = -1; x <= 1; x++)
 			for (var y = -1; y <= 1; y++)
 				if (x||y)
 					zones['z'+zid++] = {type:'zone', x:x*410, y:y*410,
 						color:((x+y)%2)?'0,0,0':'255,0,0'};
-		exports.broadcast(zones);*/
+		exports.broadcast(zones);
 	}
 	setInterval(exports.main, 33);
 }
