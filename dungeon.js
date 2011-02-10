@@ -1,6 +1,8 @@
 var keys = {65:'left', 68:'right', 87:'up',
 	83:'down', 17:'attack', 16:'run'}
 
+var sys_keys = {13:'chat'}
+
 var cvs = null, zid = 0, mid = 0;
 
 
@@ -13,11 +15,13 @@ types.hero = function(id, data){
 	this.id         = id;
 	this.collisions = {};
 	this.speed      = 5;
-	this.run        = data.run    || false;
-	this.left       = data.left   || false;
-	this.right      = data.right  || false;
-	this.up         = data.up     || false;
-	this.attack     = data.attack || false;
+	this.run        = data.run     || false;
+	this.left       = data.left    || false;
+	this.right      = data.right   || false;
+	this.up         = data.up      || false;
+	this.attack     = data.attack  || false;
+	this.chat       = data.chat    || this.chat || false;
+	this.message    = data.message || '';
 
 	//Start position
 	this.x = data.x || 0; this.x1 = data.x1 || this.x;
@@ -180,6 +184,9 @@ exports.main = function (){
 		debug.innerHTML = 'x: '+ player.x+' y: '+ player.y + ' zones: ';
 		for (z in player.collisions.zone)
 			debug.innerHTML += player.collisions.zone[z].id + ', ';
+		for (p in players)
+			p = players[p];
+			debug.innerHTML += '<br/>'+p.message;
 	}
 	for (var i in list){
 		var o = list[i];
@@ -245,6 +252,7 @@ if (typeof(window)!='undefined')
 		socket.connect();
 		
 		debug = document.getElementById('debug')
+		chatbox = document.getElementById('chatbox')
 
 		cvs = document.getElementById('canvas');
 		ctx = cvs.getContext('2d');
@@ -258,15 +266,30 @@ if (typeof(window)!='undefined')
 		}
 		window.onresize();
 
+		messageBuffer = '';
 		window.onkeyup = window.onkeydown = function(e){
+
 			var action = {}
+			var sys_action = {}
 			action = keys[e.keyCode];
-			if (action){
-				state = e.type == 'keydown';
-				if (player[action] != state){
-					env = {x:player.x, y:player.y}; env[action] = state;
-					send('@', env);
+			sys_action = sys_keys[e.keyCode];
+			
+			if(player['chat'] == false){
+				if (action){
+					state = e.type == 'keydown';
+					if (player[action] != state){
+						env = {x:player.x, y:player.y}; env[action] = state;
+						send('@', env);
+					}
 				}
+			}
+			if(sys_action && e.type =='keyup'){
+				env = {message:chatbox.value}
+				env[sys_action] = player[sys_action] == true?false:true;
+				send('@', env);
+				chatbox.style.visibility = player[sys_action] == true?'visible':'hidden';
+				if (chatbox.style.visibility == 'visible') chatbox.focus();
+				chatbox.value = '';
 			}
 		}
 		exports.init();
