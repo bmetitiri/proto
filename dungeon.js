@@ -11,6 +11,10 @@ var collisions = {}, box_size = 100; //collision engine
 if (typeof(exports)=='undefined') exports = {}
 exports.world = {};
 
+utils.roll = function(dice){
+	return Math.round(Math.random()*dice)
+}
+
 utils.repel = function(self, obj){
 	var b = self.bounds();
 	var ox = obj.x; obj.x = obj.x1;
@@ -242,7 +246,39 @@ types.mob = function(data){
 types.spawn = function(data){
 	this.x = data.x;
 	this.y = data.y;
+	this.z      = 5;
 	this.health = 10;
+	this.bounds = function(){
+		return {left:this.x-10, top:this.y-10,
+			right:this.x+10, bottom:this.y+10}
+	}
+	this.draw   = function(){
+		ctx.save();
+		ctx.translate(this.x, this.y);
+		ctx.rotate(Math.PI/4);
+		ctx.fillStyle = '#0f0';
+		ctx.fillRect(-4, -10, 8, 20);
+		ctx.fillRect(-10, -4, 20, 8);
+		ctx.restore();
+	}
+	this.update = function(){
+		attrs.damage(this);
+		attrs.solid(this);
+		var nearest = null, distance = Infinity;
+		for (var p in players){
+			p = players[p];
+			var d = Math.sqrt(Math.pow(this.x-p.x, 2) +
+					Math.pow(this.y-p.y, 2));
+			if (d<distance) distance = d;
+		}
+		if (distance<200)
+			if (exports.broadcast && Math.random() > .95){
+				var mobs = {}; mobs['m'+gid++] = {type:'mob',
+					x:this.x+(utils.roll(2)-1)*20,
+					y:this.y+(utils.roll(2)-1)*20}
+				exports.broadcast(mobs);
+			}
+	}
 }
 
 types.wall = function(data){
@@ -285,45 +321,41 @@ types.zone = function(data){
 		return {left:this.x-300, top:this.y-300,
 			right:this.x+300, bottom:this.y+300}
 	}
-	this.update = function(){
-		if (this.collisions.hero)
-			/*if (this.color == '255,0,0'){ #TODO: Make work
-				for (var h in this.collisions.hero){
-					h = this.collisions.hero[h];
-					h.x = h.x1; h.y = h.y1;
-				}
-			} else*/ if (exports.broadcast && this.color == '0,0,0'
-				&& Math.random() > .95){
-				var mobs = {}; mobs['m'+gid++] = {type:'mob',
-					x:this.x-190+Math.random()*380,
-					y:this.y-190+Math.random()*380}
-				exports.broadcast(mobs);
-			}
-	}
+	this.update = function(){}
 }
 
 exports.init = function(){
 	if (exports.broadcast){
+		/* Spawn generation */
+		var spawns = {};
+		for (var s = 0; s < 10; s++){
+			spawns['s'+gid++] = {type:'spawn',
+				x:(utils.roll(20)-10)*75,
+				y:(utils.roll(20)-10)*75}
+		}
+		exports.broadcast(spawns);
+
 		/* Walls generation */
-		var zones = {}, walls = {};
-		for (var y = -10; y < 10; y++)
-			for(var x = -10; x < 10; x++)
+		var walls = {}, wall_n = 12;
+		for (var y = -wall_n; y <= wall_n; y++)
+			for(var x = -wall_n; x <= wall_n; x++)
 				if (x || y){
 					walls['w'+gid++] = {type:'wall',
 						x:x*80-20, y:y*80-20}
 					r = Math.random();
-					if (r > .8)
+					if (r > .8 && x<wall_n)
 						walls['w'+gid++] = {type:'wall',
 							x:x*80+20,y:y*80-20}
-					else if (r < .2)
+					else if (r < .2 && y<wall_n)
 						walls['w'+gid++] = {type:'wall',
 							x:x*80-20,y:y*80+20}
 				}
 		exports.broadcast(walls);
 
 		/* Zones generation */
-		for (var x = -1; x <= 1; x++)
-			for (var y = -1; y <= 1; y++)
+		var zones = {}, zone_n=2;
+		for (var x = -zone_n; x <= zone_n; x++)
+			for (var y = -zone_n; y <= zone_n; y++)
 				if (x||y)
 					zones['z'+gid++] = {type:'zone', x:x*410, y:y*410,
 						color:((x+y)%2)?'0,0,0':'255,0,0'};
