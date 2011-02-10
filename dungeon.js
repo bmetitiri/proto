@@ -241,7 +241,7 @@ exports.main = function (){
 		debug.innerHTML += '<br />';
 		if (messages.length > 5) messages.splice(5,1);
 		for (m in messages)
-			debug.innerHTML += messages[m].message + '<br />';
+			debug.innerHTML += '<font color="'+messages[m].color+'">'+messages[m].message + '</font><br />';
 	}
 	for (var i in list){
 		var o = list[i];
@@ -345,7 +345,7 @@ if (typeof(window)!='undefined')
 				}
 			}
 			if(sys_action && e.type =='keyup'){
-				message = {message:chatbox.value, player:player.id}
+				message = {message:chatbox.value, color:player.color}
 				env[sys_action] = player[sys_action] == true?false:true;
 				send('@', env);
 				send('!', message);
