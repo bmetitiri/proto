@@ -55,6 +55,7 @@ types.arrow = function(data){
 	this.x      = data.x;
 	this.y      = data.y;
 	this.t      = 50;
+	this.color  = data.color;
 	this.hits   = data.hits || {'mob':1,'spawn':1,'wall':1};
 	this.dx     = (data.r&1&&-1)+(data.r&2&&1);
 	this.dy     = (data.r&4&&-1)+(data.r&8&&1);
@@ -64,6 +65,7 @@ types.arrow = function(data){
 			right:this.x+4, bottom:this.y+4}
 	}
 	this.draw   = function(){
+		ctx.fillStyle = this.color;
 		ctx.fillRect(this.x-4, this.y-4, 8, 8);
 	}
 	this.delete = function(){
@@ -181,7 +183,7 @@ types.hero = function(data){
 				this.inventory['ammo'] -= 1;
 				if (exports.broadcast){
 					var a = {}; a['a'+gid++] = {type:'arrow',
-						x:this.x, y:this.y, r:this.r}
+						x:this.x, y:this.y, r:this.r, color:this.color}
 					exports.broadcast(a);
 				}
 			}
