@@ -10,9 +10,8 @@ var collisions = {}, box_size = 100; //collision engine
 if (typeof(exports)=='undefined') exports = {}
 exports.world = {};
 
-types.hero = function(id, data){
+types.hero = function(data){
 	this.type       = 'hero';
-	this.id         = id;
 
 	this.speed      = 5;
 	this.run        = data.run     || false;
@@ -50,9 +49,8 @@ types.hero = function(id, data){
 	}
 }
 
-types.zone = function(id, data){
+types.zone = function(data){
 	this.type       = 'zone';
-	this.id         = id;
 
 	this.x     = data.x;
 	this.y     = data.y;
@@ -89,9 +87,8 @@ types.zone = function(id, data){
 	}
 }
 
-types.mob = function(id, data){
+types.mob = function(data){
 	this.type       = 'mob';
-	this.id         = id;
 
 	this.x = data.x || 0; this.x1 = data.x1 || this.x;
 	this.y = data.y || 0; this.y1 = data.y1 || this.y;
@@ -146,9 +143,8 @@ types.mob = function(id, data){
 	}
 }
 
-types.wall = function(id, data){
+types.wall = function(data){
 	this.type = 'wall';
-	this.id   = id;
 	this.z    = -10;
 
 	this.x = data.x;
@@ -289,8 +285,8 @@ exports.receive = function(data){ //TODO: Queue and add in main loop
 			else for (var v in data[k])
 				exports.world[k][v] = data[k][v];
 		} else if (data[k]['type']){
-			var n = new types[data[k]['type']](k, data[k]);
-			n.collisions = {};
+			var n = new types[data[k]['type']](data[k]);
+			n.id = k; n.collisions = {};
 			exports.world[k] = n;
 			if (n.type == 'hero') players.push(n)
 			list.push(n);
