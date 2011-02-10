@@ -137,9 +137,10 @@ types.boom = function(data){
 }
 
 types.hero = function(data){
-	this.speed = 5;
-	this.chat  = data.chat || false;
-	this.color = data.color; 	
+	this.speed  = 5;
+	this.chat   = data.chat || false;
+	this.color  = data.color; 	
+	this.health = 40;
 	this.r = data.r || 8;
 	this.x = data.x || 0; this.x1 = data.x1 || this.x;
 	this.y = data.y || 0; this.y1 = data.y1 || this.y;
@@ -148,6 +149,8 @@ types.hero = function(data){
 		ctx.translate(this.x, this.y);
 		ctx.fillStyle = this.color;
 		ctx.fillRect(-10, -10, 20, 20);
+		ctx.fillStyle = '#fff';
+		ctx.fillRect(-10, -10, this.health/2, 4);
 		ctx.restore();
 	}
 	this.update = function(){
@@ -180,6 +183,9 @@ types.hero = function(data){
 			}
 			this.bomb = false;
 		}
+		for (var m in this.collisions.mob) this.health--;
+		for (var m in this.collisions.boom) this.health-=5;
+		if (this.health < 1) this.health = 1;
 	}
 	this.bounds = function(){
 		return {left:this.x-10, top:this.y-10,
