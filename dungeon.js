@@ -38,11 +38,9 @@ attrs.damage = function(self){
 	for (var b in self.collisions.boom)
 		self.health-=2;
 	if (self.health < 1){
-		env = {}; env[self.id]='delete'; exports.receive(env);
-		/*if (exports.broadcast){
-			env = {}; env[self.id]='delete';
-			exports.broadcast(env);
-		}*/
+		env = {}; env[self.id]='delete';
+		if (exports.broadcast) exports.broadcast(env);
+		else exports.receive(env);
 	}
 }
 
@@ -306,17 +304,33 @@ types.wall = function(data){
 	this.z    = -10;
 	this.x = data.x;
 	this.y = data.y;
-	this.width  = data.width||40;
-	this.height = data.height||40;
 	this.health = 10;
 	this.bounds = function(){
 		return {left:this.x, top:this.y,
-			right:this.x+this.width, bottom:this.y+this.height}
+			right:this.x+40, bottom:this.y+40}
 	}
 	this.draw   = function(){
 		ctx.save();
 		ctx.fillStyle = 'rgba(0,0,0,'+this.health/10+')';
-		ctx.fillRect(this.x, this.y, this.width, this.height);
+		ctx.fillRect(this.x, this.y, 40, 40);
+		ctx.restore();
+	}
+	this.update = function(){
+		attrs.damage(this);
+		attrs.solid(this);
+	}
+}
+
+types.tower = function(data){
+	types.wall.call(this, data);
+	this.health = 20;
+	this.draw   = function(){
+		ctx.save();
+		ctx.beginPath();
+		ctx.fillStyle = 'rgba(0,0,0,'+this.health/20+')';
+		ctx.arc(this.x+20, this.y+20, 20, 0, Math.PI*2, true);
+		ctx.closePath();
+		ctx.fill();
 		ctx.restore();
 	}
 	this.update = function(){
@@ -364,10 +378,18 @@ exports.init = function(){
 					walls['w'+gid++] = {type:'wall',
 						x:x*80-20, y:y*80-20}
 					r = Math.random();
-					if (r > .8 && x<wall_n)
+					if (r > .9 && x<wall_n &&
+							(Math.abs(x)>3||Math.abs(y)>3))
+						walls['t'+gid++] = {type:'tower',
+							x:x*80+20,y:y*80-20}
+					else if (r > .7 && x<wall_n)
 						walls['w'+gid++] = {type:'wall',
 							x:x*80+20,y:y*80-20}
-					else if (r < .2 && y<wall_n)
+					else if (r < .1 && x<wall_n &&
+							(Math.abs(x)>3||Math.abs(y)>3))
+						walls['t'+gid++] = {type:'tower',
+							x:x*80+20,y:y*80-20}
+					else if (r < .3 && y<wall_n)
 						walls['w'+gid++] = {type:'wall',
 							x:x*80-20,y:y*80+20}
 				}
