@@ -28,8 +28,10 @@ utils.repel = function(self, obj){
 attrs.damage = function(self){
 	for (var a in self.collisions.arrow){
 		a = self.collisions.arrow[a];
-		a.delete();
-		self.health--;
+		if (a.hits[self.type]){
+			a.delete();
+			self.health-= a.hits[self.type];
+		}
 	}
 	for (var b in self.collisions.boom)
 		self.health-=2;
@@ -50,12 +52,13 @@ attrs.solid = function(self){
 }
 
 types.arrow = function(data){
-	this.x  = data.x;
-	this.y  = data.y;
-	this.t  = 50;
-	this.dx = (data.r&1&&-1)+(data.r&2&&1);
-	this.dy = (data.r&4&&-1)+(data.r&8&&1);
-	this.speed = (this.dx&&this.dy)?14:20;
+	this.x      = data.x;
+	this.y      = data.y;
+	this.t      = 50;
+	this.hits   = data.hits || {'mob':1,'spawn':1,'wall':1};
+	this.dx     = (data.r&1&&-1)+(data.r&2&&1);
+	this.dy     = (data.r&4&&-1)+(data.r&8&&1);
+	this.speed  = (this.dx&&this.dy)?14:20;
 	this.bounds = function(){
 		return {left:this.x-4, top:this.y-4,
 			right:this.x+4, bottom:this.y+4}
