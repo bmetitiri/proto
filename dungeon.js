@@ -95,7 +95,7 @@ types.bomb = function(data){
 		ctx.save();
 		ctx.beginPath();
 		ctx.fillStyle = 'rgba(127,0,0,'+this.t/30+')';
-		ctx.arc(this.x, this.y, 12, 0, Math.PI*2, true);
+		ctx.arc(this.x, this.y, 6, 0, Math.PI*2, true);
 		ctx.closePath();
 		ctx.fill();
 		ctx.restore();
@@ -546,10 +546,9 @@ if (typeof(window)!='undefined')
 		});
 		socket.connect();
 		
-		debug = document.getElementById('debug')
+		debug   = document.getElementById('debug')
 		chatbox = document.getElementById('chatbox')
-
-		cvs = document.getElementById('canvas');
+		cvs     = document.getElementById('canvas');
 		ctx = cvs.getContext('2d');
 		send('@', {type:'hero',color:Math.floor(Math.random()*16777215).toString(16)});
 		player = exports.world['@'];
@@ -561,9 +560,7 @@ if (typeof(window)!='undefined')
 		}
 		window.onresize();
 
-		messageBuffer = '';
 		window.onkeyup = window.onkeydown = function(e){
-
 			var action = {}
 			var sys_action = {}
 			action = keys[e.keyCode];
