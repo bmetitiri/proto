@@ -4,16 +4,16 @@ var keys = {65:'left', 68:'right', 87:'up',
 var sys_keys = {13:'chat'}
 
 var cvs = null, zid = 0, mid = 0;
-
+var list = [], types = {}, players = [];
+var collisions = {}, box_size = 100; //collision engine
 
 if (typeof(exports)=='undefined') exports = {}
-
-exports.world = {}, list = [], types = {}, players = [];
+exports.world = {};
 
 types.hero = function(id, data){
 	this.type       = 'hero';
 	this.id         = id;
-	this.collisions = {};
+
 	this.speed      = 5;
 	this.run        = data.run     || false;
 	this.left       = data.left    || false;
@@ -53,7 +53,6 @@ types.hero = function(id, data){
 types.zone = function(id, data){
 	this.type       = 'zone';
 	this.id         = id;
-	this.collisions = {};
 
 	this.x     = data.x;
 	this.y     = data.y;
@@ -93,7 +92,6 @@ types.zone = function(id, data){
 types.mob = function(id, data){
 	this.type       = 'mob';
 	this.id         = id;
-	this.collisions = {};
 
 	this.x = data.x || 0; this.x1 = data.x1 || this.x;
 	this.y = data.y || 0; this.y1 = data.y1 || this.y;
@@ -126,7 +124,8 @@ types.mob = function(id, data){
 	}
 	this.update = function(){
 		if (this.collisions.mob){
-			this.toward(this.collisions.mob[0], true);
+			for (var m in this.collisions.mob)
+				this.toward(this.collisions.mob[m], true);
 		} else {
 			var nearest = null, distance = Infinity;
 			for (var p in players){
@@ -139,16 +138,25 @@ types.mob = function(id, data){
 				}
 			}
 			if (distance<1000) this.toward(nearest);
-			// TODO: else, delete?
+			else if (exports.broadcast){
+				env = {}; env[this.id]='delete';
+				exports.broadcast(env);
+			}
 		}
 	}
+}
+
+types.wall = function(){
+	this.type       = 'mob';
+	this.id         = id;
+	this.collisions = {};
 }
 
 exports.init = function(){
 	if (exports.broadcast){
 		zones = {}
-		for (var x = -10; x <= 10; x++)
-			for (var y = -10; y <= 10; y++)
+		for (var x = -1; x <= 1; x++)
+			for (var y = -1; y <= 1; y++)
 				if (x||y)
 					zones['z'+zid++] = {type:'zone', x:x*410, y:y*410,
 						color:((x+y)%2)?'0,0,0':'255,0,0'};
@@ -159,22 +167,37 @@ exports.init = function(){
 
 exports.main = function (){
 	if (cvs) ctx.clearRect(0, 0, cvs.width, cvs.height);
-	for (var i = 0; i<list.length; i++){
-		var o = list[i];
-		var r1 = o.bounds()
-		for (var ii = i+1; ii < list.length; ii++){
-			var oo = list[ii];
-			var r2 = oo.bounds()
-			if (r1.top < r2.bottom && r2.top < r1.bottom &&
-					r1.left < r2.right && r2.left < r1.right){
-				if (o.collisions[oo.type])
-					o.collisions[oo.type].push(oo);
-				else
-					o.collisions[oo.type] = [oo];
-				if (oo.collisions[o.type])
-					oo.collisions[o.type].push(o);
-				else
-					oo.collisions[o.type] = [o];
+	collisions = {};
+	for (var o in list){ //TODO: Remove overlapping duplicates
+		var o = list[o];
+		var b = o.bounds();
+		for (var x = Math.floor(b.left/box_size);
+				x <= Math.floor(b.right/box_size); x++)
+			for (var y = Math.floor(b.top/box_size);
+					y <= Math.floor(b.bottom/box_size); y++){
+				var k = ''+x+','+y;
+				if (collisions[k]) collisions[k].push(o);
+				else collisions[k] = [o];
+			}
+	}
+	for (var l in collisions){
+		l = collisions[l];
+		if (l.length < 2) continue;
+		for (var i = 0; i<l.length; i++){
+			var o = l[i];
+			var r1 = o.bounds()
+			for (var ii = i+1; ii < l.length; ii++){
+				var oo = l[ii];
+				var r2 = oo.bounds()
+				if (r1.top < r2.bottom && r2.top < r1.bottom &&
+						r1.left < r2.right && r2.left < r1.right){
+					if (!o.collisions[oo.type])
+						o.collisions[oo.type] = {};
+					o.collisions[oo.type][oo.id] = oo;
+					if (!oo.collisions[o.type])
+						oo.collisions[o.type] = {};
+					oo.collisions[o.type][o.id] = o;
+				}
 			}
 		}
 	}
@@ -182,7 +205,7 @@ exports.main = function (){
 		ctx.save();
 		ctx.translate(cvs.width/2-player.x, cvs.height/2-player.y);
 		debug.innerHTML = 'x: '+ player.x+' y: '+ player.y + ' zones: ';
-		for (z in player.collisions.zone)
+		for (var z in player.collisions.zone)
 			debug.innerHTML += player.collisions.zone[z].id + ', ';
 		for (p in players)
 			p = players[p];
@@ -197,7 +220,7 @@ exports.main = function (){
 	if (cvs) ctx.restore();
 }
 
-exports.receive = function(data){
+exports.receive = function(data){ //TODO: Queue and add in main loop
 	for (var k in data){
 		if (k in exports.world){
 			if (data[k] == 'delete'){
@@ -219,6 +242,7 @@ exports.receive = function(data){
 				exports.world[k][v] = data[k][v];
 		} else if (data[k]['type']){
 			var n = new types[data[k]['type']](k, data[k]);
+			n.collisions = {};
 			exports.world[k] = n;
 			if (n.type == 'hero') players.push(n)
 			list.push(n);
