@@ -21,18 +21,16 @@ types.hero = function(id, data){
 	this.up         = data.up      || false;
 	this.attack     = data.attack  || false;
 	this.chat       = data.chat    || this.chat || false;
+	this.color      = data.color; 	
 	//Start position
+
 	this.x = data.x || 0; this.x1 = data.x1 || this.x;
 	this.y = data.y || 0; this.y1 = data.y1 || this.y;
 	this.draw = function(){
 		ctx.save();
 		ctx.translate(this.x, this.y);
-		ctx.fillStyle = (this.collisions.hero)?'#f00':'#000';
+		ctx.fillStyle = this.color;
 		ctx.fillRect(-10, -10, 20, 20);
-		if (this.chat){
-			ctx.fillStyle = '#aaf';
-			ctx.fillRect(25, -25, 35, -35);
-		}
 		ctx.restore();
 	}
 	this.update = function(){
@@ -330,7 +328,7 @@ if (typeof(window)!='undefined')
 
 		cvs = document.getElementById('canvas');
 		ctx = cvs.getContext('2d');
-		send('@', {type:'hero'});
+		send('@', {type:'hero',color:Math.floor(Math.random()*16777215).toString(16)});
 		player = exports.world['@'];
 
 		window.onresize = function(){
