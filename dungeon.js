@@ -313,13 +313,13 @@ types.wall = function(data){
 	this.y = data.y;
 	this.health = 10;
 	this.bounds = function(){
-		return {left:this.x, top:this.y,
-			right:this.x+40, bottom:this.y+40}
+		return {left:this.x-20, top:this.y-20,
+			right:this.x+20, bottom:this.y+20}
 	}
 	this.draw   = function(){
 		ctx.save();
 		ctx.fillStyle = 'rgba(0,0,0,'+this.health/10+')';
-		ctx.fillRect(this.x, this.y, 40, 40);
+		ctx.fillRect(this.x-20, this.y-20, 40, 40);
 		ctx.restore();
 	}
 	this.update = function(){
@@ -335,7 +335,7 @@ types.tower = function(data){
 		ctx.save();
 		ctx.beginPath();
 		ctx.fillStyle = 'rgba(0,0,0,'+this.health/20+')';
-		ctx.arc(this.x+20, this.y+20, 20, 0, Math.PI*2, true);
+		ctx.arc(this.x, this.y, 20, 0, Math.PI*2, true);
 		ctx.closePath();
 		ctx.fill();
 		ctx.restore();
@@ -355,8 +355,11 @@ types.tower = function(data){
 				}
 			}
 			if (distance<200){
+				var r = 20/distance;
 				var a = {}; a['a'+gid++] = {type:'arrow',
-					x:this.x, y:this.y, r:this.r,
+					x:this.x, y:this.y,
+					dx: (nearest.x-this.x)/r,
+					dy: (nearest.y-this.y)/r,
 				   	hits:{'wall':0, 'hero':2}}
 				exports.broadcast(a);
 			}
@@ -401,22 +404,22 @@ exports.init = function(){
 			for(var x = -wall_n; x <= wall_n; x++)
 				if (x || y){
 					walls['w'+gid++] = {type:'wall',
-						x:x*80-20, y:y*80-20}
+						x:x*80, y:y*80}
 					r = Math.random();
 					if (r > .9 && x<wall_n &&
 							(Math.abs(x)>3||Math.abs(y)>3))
 						walls['t'+gid++] = {type:'tower',
-							x:x*80+20,y:y*80-20}
+							x:x*80+40,y:y*80}
 					else if (r > .7 && x<wall_n)
 						walls['w'+gid++] = {type:'wall',
-							x:x*80+20,y:y*80-20}
+							x:x*80+40,y:y*80}
 					else if (r < .1 && x<wall_n &&
 							(Math.abs(x)>3||Math.abs(y)>3))
 						walls['t'+gid++] = {type:'tower',
-							x:x*80+20,y:y*80-20}
+							x:x*80+40,y:y*80}
 					else if (r < .3 && y<wall_n)
 						walls['w'+gid++] = {type:'wall',
-							x:x*80-20,y:y*80+20}
+							x:x*80,y:y*80+40}
 				}
 		exports.broadcast(walls);
 
