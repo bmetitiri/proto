@@ -3,7 +3,7 @@ var keys = {65:'left', 68:'right', 87:'up',
 
 var sys_keys = {13:'chat'}
 
-var cvs = null, zid = 0, mid = 0;
+var cvs = null, mid = 0;
 var list = [], types = {}, players = [];
 var collisions = {}, box_size = 100; //collision engine
 
@@ -146,21 +146,47 @@ types.mob = function(id, data){
 	}
 }
 
-types.wall = function(){
-	this.type       = 'mob';
-	this.id         = id;
-	this.collisions = {};
+types.wall = function(id, data){
+	this.type = 'wall';
+	this.id   = id;
+	this.z    = -10;
+
+	this.x = data.x;
+	this.y = data.y;
+	this.width  = 40;
+	this.height = 40;
+	this.bounds = function(){
+		return {left:this.x, top:this.y,
+			right:this.x+this.width, bottom:this.y+this.height}
+	}
+	this.draw   = function(){
+		ctx.fillRect(this.x, this.y, this.width, this.height);
+	}
+	this.repel  = function(obj){
+		var b = this.bounds();
+		if (obj.x1+10<b.left || obj.x1-10>b.right) obj.x = obj.x1;
+		if (obj.y1+10<b.top  || obj.y1-10>b.bottom) obj.y = obj.y1;
+	}
+	this.update = function(){
+		for (var h in this.collisions.hero)
+			this.repel(this.collisions.hero[h]);
+	}
 }
 
 exports.init = function(){
+	var wid = 0, zid = 0;
 	if (exports.broadcast){
-		zones = {}
-		for (var x = -1; x <= 1; x++)
+		var zones = {}, walls = {}
+		for (var w = 0; w < 2; w++)
+			walls['w'+wid++] = {type:'wall',
+				x:Math.random()*200-100, y:Math.random()*200-100}
+		exports.broadcast(walls);
+		/*for (var x = -1; x <= 1; x++)
 			for (var y = -1; y <= 1; y++)
 				if (x||y)
 					zones['z'+zid++] = {type:'zone', x:x*410, y:y*410,
 						color:((x+y)%2)?'0,0,0':'255,0,0'};
-		exports.broadcast(zones);
+		exports.broadcast(zones);*/
 	}
 	setInterval(exports.main, 33);
 }
