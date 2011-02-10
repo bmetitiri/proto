@@ -29,6 +29,10 @@ types.hero = function(id, data){
 		ctx.translate(this.x, this.y);
 		ctx.fillStyle = (this.collisions.hero)?'#f00':'#000';
 		ctx.fillRect(-10, -10, 20, 20);
+		if (this.chat){
+			ctx.fillStyle = '#aaf';
+			ctx.fillRect(25, -25, 35, -35);
+		}
 		ctx.restore();
 	}
 	this.update = function(){
@@ -243,7 +247,7 @@ exports.main = function (){
 		debug.innerHTML += '<br />';
 		if (messages.length > 5) messages.splice(5,1);
 		for (m in messages)
-			debug.innerHTML += messages[m]+'<br />';
+			debug.innerHTML += messages[m].message + '<br />';
 	}
 	for (var i in list){
 		var o = list[i];
@@ -257,7 +261,7 @@ exports.main = function (){
 exports.receive = function(data){ //TODO: Queue and add in main loop
 	for (var k in data){
 		if (data[k].message){
-			messages.unshift(data[k].message);
+			messages.unshift(data[k]);
 			continue;
 		}
 		if (k in exports.world){
@@ -346,7 +350,7 @@ if (typeof(window)!='undefined')
 				}
 			}
 			if(sys_action && e.type =='keyup'){
-				message = {message:chatbox.value}
+				message = {message:chatbox.value, player:player.id}
 				env[sys_action] = player[sys_action] == true?false:true;
 				send('@', env);
 				send('!', message);
