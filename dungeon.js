@@ -1,5 +1,7 @@
-var keys = {65:'left', 68:'right', 87:'up',
-	83:'down', 32:'attack', 16:'run', 66:'bomb'}
+var keys = {32:'attack', 16:'run', 66:'bomb',
+	65:'left', 68:'right', 87:'up', 83:'down',
+	72:'left', 76:'right', 75:'up', 74:'down'} /* hlkj */
+	
 
 var sys_keys = {13:'chat'}
 
@@ -28,8 +30,10 @@ utils.repel = function(self, obj){
 attrs.damage = function(self){
 	for (var a in self.collisions.arrow){
 		a = self.collisions.arrow[a];
-		a.delete();
-		self.health--;
+		if (a.hits[self.type]){
+			a.delete();
+			self.health-= a.hits[self.type];
+		}
 	}
 	for (var b in self.collisions.boom)
 		self.health-=2;
@@ -54,6 +58,7 @@ types.arrow = function(data){
 	this.y      = data.y;
 	this.t      = 50;
 	this.color  = data.color;
+	this.hits   = data.hits || {'mob':1,'spawn':1,'wall':1};
 	this.dx     = (data.r&1&&-1)+(data.r&2&&1);
 	this.dy     = (data.r&4&&-1)+(data.r&8&&1);
 	this.speed  = (this.dx&&this.dy)?14:20;
@@ -142,7 +147,7 @@ types.hero = function(data){
 	this.speed     = 5;
 	this.chat      = data.chat || false;
 	this.color     = data.color; 	
-	this.health    = 40;
+	this.health    = 20;
 	this.inventory = {'bombs':5, 'ammo':1000}
 	this.r = data.r || 8;
 	this.x = data.x || 0; this.x1 = data.x1 || this.x;
@@ -153,7 +158,7 @@ types.hero = function(data){
 		ctx.fillStyle = '#00f';
 		ctx.beginPath();
 		ctx.lineTo(0, 0);
-		ctx.arc(0, 0, 13, Math.PI*this.health/20, 0, true);
+		ctx.arc(0, 0, 13, Math.PI*this.health/10, 0, true);
 		ctx.closePath();
 		ctx.fill();
 		ctx.fillStyle = this.color;
@@ -197,8 +202,7 @@ types.hero = function(data){
 			this.bomb = false;
 		}
 		for (var m in this.collisions.mob) this.health--;
-		for (var m in this.collisions.boom) this.health-=5;
-		if (this.health < 1) this.health = 1;
+		attrs.damage(this);
 	}
 	this.bounds = function(){
 		return {left:this.x-10, top:this.y-10,
