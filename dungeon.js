@@ -5,10 +5,45 @@ var sys_keys = {13:'chat'}
 
 var cvs = null, gid = 0;
 var list = [], types = {}, players = [], messages = [];
+var attrs = {}, utils = {};
 var collisions = {}, box_size = 100; //collision engine
 
 if (typeof(exports)=='undefined') exports = {}
 exports.world = {};
+
+utils.repel = function(self, obj){
+	var b = self.bounds();
+	var ox = obj.x; obj.x = obj.x1;
+	var oy = obj.y; obj.y = obj.y1;
+	var obj_b = obj.bounds();
+	if (obj_b.right>b.left && obj_b.left<b.right) obj.x = ox; 
+	else if (obj_b.bottom>b.top && obj_b.top<b.bottom) obj.y = oy;
+	else {obj.x = ox; obj.y = oy;}
+}
+
+attrs.damage = function(self){
+	for (var a in self.collisions.arrow){
+		a = self.collisions.arrow[a];
+		a.delete();
+		self.health--;
+	}
+	for (var b in self.collisions.boom)
+		self.health-=2;
+	if (self.health < 1){
+		env = {}; env[self.id]='delete'; exports.receive(env);
+		/*if (exports.broadcast){
+			env = {}; env[self.id]='delete';
+			exports.broadcast(env);
+		}*/
+	}
+}
+
+attrs.solid = function(self){
+	for (var h in self.collisions.hero)
+		utils.repel(self, self.collisions.hero[h]);
+	for (var m in self.collisions.mob)
+		utils.repel(self, self.collisions.mob[m]);
+}
 
 types.arrow = function(data){
 	this.x  = data.x;
@@ -148,40 +183,6 @@ types.hero = function(data){
 	}
 }
 
-types.zone = function(data){
-	this.x     = data.x;
-	this.y     = data.y;
-	this.z     = 10;
-	this.color = data.color;
-	this.draw = function(){
-		ctx.save();
-		ctx.translate(this.x, this.y);
-		ctx.fillStyle = (this.collisions.hero)?
-			'rgba('+this.color+',.2)':'rgb('+this.color+')';
-		ctx.fillRect(-200, -200, 400, 400);
-		ctx.restore();
-	}
-	this.bounds = function(){
-		return {left:this.x-300, top:this.y-300,
-			right:this.x+300, bottom:this.y+300}
-	}
-	this.update = function(){
-		if (this.collisions.hero)
-			/*if (this.color == '255,0,0'){ #TODO: Make work
-				for (var h in this.collisions.hero){
-					h = this.collisions.hero[h];
-					h.x = h.x1; h.y = h.y1;
-				}
-			} else*/ if (exports.broadcast && this.color == '0,0,0'
-				&& Math.random() > .95){
-				var mobs = {}; mobs['m'+gid++] = {type:'mob',
-					x:this.x-190+Math.random()*380,
-					y:this.y-190+Math.random()*380}
-				exports.broadcast(mobs);
-			}
-	}
-}
-
 types.mob = function(data){
 	this.x = data.x || 0; this.x1 = data.x1 || this.x;
 	this.y = data.y || 0; this.y1 = data.y1 || this.y;
@@ -214,20 +215,7 @@ types.mob = function(data){
 		this.y1 = this.y; this.y += dy*speed*reverse;
 	}
 	this.update = function(){
-		for (var a in this.collisions.arrow){
-			a = this.collisions.arrow[a];
-			a.delete();
-			this.health--;
-		}
-		for (var b in this.collisions.boom)
-			this.health--;
-		if (this.health < 1){
-			env = {}; env[this.id]='delete'; exports.receive(env);
-			/*if (exports.broadcast){
-				env = {}; env[this.id]='delete';
-				exports.broadcast(env);
-			}*/
-		}
+		attrs.damage(this);
 		if (this.collisions.mob){
 			for (var m in this.collisions.mob)
 				this.toward(this.collisions.mob[m], true);
@@ -251,6 +239,12 @@ types.mob = function(data){
 	}
 }
 
+types.spawn = function(data){
+	this.x = data.x;
+	this.y = data.y;
+	this.health = 10;
+}
+
 types.wall = function(data){
 	this.z    = -10;
 	this.x = data.x;
@@ -268,32 +262,43 @@ types.wall = function(data){
 		ctx.fillRect(this.x, this.y, this.width, this.height);
 		ctx.restore();
 	}
-	this.repel  = function(obj){
-		var b = this.bounds();
-		var ox = obj.x; obj.x = obj.x1;
-		var oy = obj.y; obj.y = obj.y1;
-		var obj_b = obj.bounds();
-		if (obj_b.right>b.left && obj_b.left<b.right) obj.x = ox; 
-		else if (obj_b.bottom>b.top && obj_b.top<b.bottom) obj.y = oy;
-		else {obj.x = ox; obj.y = oy;}
+	this.update = function(){
+		attrs.damage(this);
+		attrs.solid(this);
+	}
+}
+
+types.zone = function(data){
+	this.x     = data.x;
+	this.y     = data.y;
+	this.z     = 10;
+	this.color = data.color;
+	this.draw = function(){
+		ctx.save();
+		ctx.translate(this.x, this.y);
+		ctx.fillStyle = (this.collisions.hero)?
+			'rgba('+this.color+',.2)':'rgb('+this.color+')';
+		ctx.fillRect(-200, -200, 400, 400);
+		ctx.restore();
+	}
+	this.bounds = function(){
+		return {left:this.x-300, top:this.y-300,
+			right:this.x+300, bottom:this.y+300}
 	}
 	this.update = function(){
-		for (var h in this.collisions.hero)this.repel(this.collisions.hero[h]);
-		for (var m in this.collisions.mob) this.repel(this.collisions.mob[m]);
-		for (var a in this.collisions.arrow){
-			a = this.collisions.arrow[a];
-			a.delete();
-			this.health--;
-		}
-		for (var b in this.collisions.boom)
-			this.health-=2;
-		if (this.health < 1){
-			env = {}; env[this.id]='delete'; exports.receive(env);
-			/*if (exports.broadcast){
-				env = {}; env[this.id]='delete';
-				exports.broadcast(env);
-			}*/
-		}
+		if (this.collisions.hero)
+			/*if (this.color == '255,0,0'){ #TODO: Make work
+				for (var h in this.collisions.hero){
+					h = this.collisions.hero[h];
+					h.x = h.x1; h.y = h.y1;
+				}
+			} else*/ if (exports.broadcast && this.color == '0,0,0'
+				&& Math.random() > .95){
+				var mobs = {}; mobs['m'+gid++] = {type:'mob',
+					x:this.x-190+Math.random()*380,
+					y:this.y-190+Math.random()*380}
+				exports.broadcast(mobs);
+			}
 	}
 }
 
