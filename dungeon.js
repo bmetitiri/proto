@@ -11,8 +11,6 @@ if (typeof(exports)=='undefined') exports = {}
 exports.world = {};
 
 types.hero = function(data){
-	this.type       = 'hero';
-
 	this.speed      = 5;
 	this.run        = data.run     || false;
 	this.left       = data.left    || false;
@@ -48,8 +46,6 @@ types.hero = function(data){
 }
 
 types.zone = function(data){
-	this.type       = 'zone';
-
 	this.x     = data.x;
 	this.y     = data.y;
 	this.z     = 10;
@@ -86,8 +82,6 @@ types.zone = function(data){
 }
 
 types.mob = function(data){
-	this.type       = 'mob';
-
 	this.x = data.x || 0; this.x1 = data.x1 || this.x;
 	this.y = data.y || 0; this.y1 = data.y1 || this.y;
 	this.speed = 5;
@@ -142,9 +136,7 @@ types.mob = function(data){
 }
 
 types.wall = function(data){
-	this.type = 'wall';
 	this.z    = -10;
-
 	this.x = data.x;
 	this.y = data.y;
 	this.width  = data.width||40;
@@ -283,8 +275,9 @@ exports.receive = function(data){ //TODO: Queue and add in main loop
 			else for (var v in data[k])
 				exports.world[k][v] = data[k][v];
 		} else if (data[k]['type']){
-			var n = new types[data[k]['type']](data[k]);
-			n.id = k; n.collisions = {};
+			var t = data[k]['type'];
+			var n = new types[t](data[k]);
+			n.id = k; n.type = t; n.collisions = {};
 			exports.world[k] = n;
 			if (n.type == 'hero') players.push(n)
 			list.push(n);
