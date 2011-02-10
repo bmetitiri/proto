@@ -140,10 +140,11 @@ types.boom = function(data){
 }
 
 types.hero = function(data){
-	this.speed  = 5;
-	this.chat   = data.chat || false;
-	this.color  = data.color; 	
-	this.health = 40;
+	this.speed     = 5;
+	this.chat      = data.chat || false;
+	this.color     = data.color; 	
+	this.health    = 40;
+	this.inventory = {'bombs':5, 'ammo':1000}
 	this.r = data.r || 8;
 	this.x = data.x || 0; this.x1 = data.x1 || this.x;
 	this.y = data.y || 0; this.y1 = data.y1 || this.y;
@@ -176,17 +177,23 @@ types.hero = function(data){
 			(this.up&&4)|(this.down&&8);
 		if (dir) this.r = dir;
 		if (this.attack){
-			if (exports.broadcast){
-				var a = {}; a['a'+gid++] = {type:'arrow',
-					x:this.x, y:this.y, r:this.r}
-				exports.broadcast(a);
+			if (this.inventory['ammo'] > 0){
+				this.inventory['ammo'] -= 1;
+				if (exports.broadcast){
+					var a = {}; a['a'+gid++] = {type:'arrow',
+						x:this.x, y:this.y, r:this.r}
+					exports.broadcast(a);
+				}
 			}
 			this.attack = false;
 		}
 		if (this.bomb){
-			if (exports.broadcast){
-				var b = {}; b['b'+gid++] = {type:'bomb', x:this.x, y:this.y}
-				exports.broadcast(b);
+			if (this.inventory['bombs'] > 0){
+				this.inventory['bombs'] -= 1;
+				if (exports.broadcast){
+					var b = {}; b['b'+gid++] = {type:'bomb', x:this.x, y:this.y}
+					exports.broadcast(b);
+				}
 			}
 			this.bomb = false;
 		}
@@ -416,9 +423,7 @@ exports.main = function (){
 	if (cvs){
 		ctx.save();
 		ctx.translate(cvs.width/2-player.x, cvs.height/2-player.y);
-		debug.innerHTML = 'x: '+ player.x+' y: '+ player.y + ' zones: ';
-		for (var z in player.collisions.zone)
-			debug.innerHTML += player.collisions.zone[z].id + ', ';
+		debug.innerHTML = 'health: '+ player.health+' | bombs: '+player.inventory['bombs'] + ' | ammo: ' + player.inventory['ammo'];
 		debug.innerHTML += '<br />';
 		if (messages.length > 5) messages.splice(5,1);
 		for (m in messages)
