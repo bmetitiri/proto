@@ -60,8 +60,8 @@ types.bomb = function(data){
 		env = {}; env[this.id]='delete'; exports.receive(env);
 	}
 	this.update = function(){
-		if (this.t-- < 0){
-	   		this.delete();
+		if (this.t-- < 0 || this.collisions.boom){
+			this.delete();
 			if (exports.broadcast){
 				var e = {}; e['e'+gid++] = {type:'boom', x:this.x, y:this.y}
 				exports.broadcast(e);
