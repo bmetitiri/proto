@@ -1,9 +1,9 @@
 var keys = {65:'left', 68:'right', 87:'up',
-	83:'down', 32:'attack', 16:'run'}
+	83:'down', 32:'attack', 16:'run', 66:'bomb'}
 
 var sys_keys = {13:'chat'}
 
-var cvs = null, aid = 0, mid = 0;
+var cvs = null, gid = 0;
 var list = [], types = {}, players = [], messages = [];
 var collisions = {}, box_size = 100; //collision engine
 
@@ -13,7 +13,7 @@ exports.world = {};
 types.arrow = function(data){
 	this.x  = data.x;
 	this.y  = data.y;
-	this.t  = 100;
+	this.t  = 50;
 	this.dx = (data.r&1&&-1)+(data.r&2&&1);
 	this.dy = (data.r&4&&-1)+(data.r&8&&1);
 	this.speed = (this.dx&&this.dy)?14:20;
@@ -35,6 +35,65 @@ types.arrow = function(data){
 		if (this.t-- < 0) this.delete();
 		this.x += this.dx * this.speed;
 		this.y += this.dy * this.speed;
+	}
+}
+
+types.bomb = function(data){
+	this.x = data.x;
+	this.y = data.y;
+	this.z = -1;
+	this.t = 100;
+	this.bounds = function(){
+		return {left:this.x-6, top:this.y-6,
+			right:this.x+6, bottom:this.y+6}
+	}
+	this.draw   = function(){
+		ctx.save();
+		ctx.beginPath();
+		ctx.fillStyle = 'rgba(127,0,0,'+this.t/30+')';
+		ctx.arc(this.x, this.y, 12, 0, Math.PI*2, true);
+		ctx.closePath();
+		ctx.fill();
+		ctx.restore();
+	}
+	this.delete = function(){
+		env = {}; env[this.id]='delete'; exports.receive(env);
+	}
+	this.update = function(){
+		if (this.t-- < 0){
+	   		this.delete();
+			if (exports.broadcast){
+				var e = {}; e['e'+gid++] = {type:'boom', x:this.x, y:this.y}
+				exports.broadcast(e);
+			}
+		}
+	}
+}
+
+types.boom = function(data){
+	this.x = data.x;
+	this.y = data.y;
+	this.t = 1;
+	this.z = 20;
+	this.bounds = function(){
+		return {left:this.x-66, top:this.y-66,
+			right:this.x+66, bottom:this.y+66}
+	}
+	this.draw   = function(){
+		ctx.save();
+		ctx.beginPath();
+		ctx.fillStyle = 'rgba(255,0,0,.5)';
+		ctx.arc(this.x, this.y, 100, 0, Math.PI*2, true);
+		ctx.fillStyle = 'rgba(255,0,0,.5)';
+		ctx.fillRect(this.x-66, this.y-66, 132, 132)
+		ctx.closePath();
+		ctx.fill();
+		ctx.restore();
+	}
+	this.update = function(){
+		if (this.t-- < 0){
+			env = {}; env[this.id]='delete'; exports.receive(env);
+		}
 	}
 }
 
@@ -69,11 +128,18 @@ types.hero = function(data){
 		if (dir) this.r = dir;
 		if (this.attack){
 			if (exports.broadcast){
-				var a = {}; a['a'+aid++] = {type:'arrow',
+				var a = {}; a['a'+gid++] = {type:'arrow',
 					x:this.x, y:this.y, r:this.r}
 				exports.broadcast(a);
 			}
 			this.attack = false;
+		}
+		if (this.bomb){
+			if (exports.broadcast){
+				var b = {}; b['b'+gid++] = {type:'bomb', x:this.x, y:this.y}
+				exports.broadcast(b);
+			}
+			this.bomb = false;
 		}
 	}
 	this.bounds = function(){
@@ -108,7 +174,7 @@ types.zone = function(data){
 				}
 			} else*/ if (exports.broadcast && this.color == '0,0,0'
 				&& Math.random() > .95){
-				var mobs = {}; mobs['m'+mid++] = {type:'mob',
+				var mobs = {}; mobs['m'+gid++] = {type:'mob',
 					x:this.x-190+Math.random()*380,
 					y:this.y-190+Math.random()*380}
 				exports.broadcast(mobs);
@@ -153,6 +219,8 @@ types.mob = function(data){
 			a.delete();
 			this.health--;
 		}
+		for (var b in this.collisions.boom)
+			this.health--;
 		if (this.health < 1){
 			env = {}; env[this.id]='delete'; exports.receive(env);
 			/*if (exports.broadcast){
@@ -217,6 +285,8 @@ types.wall = function(data){
 			a.delete();
 			this.health--;
 		}
+		for (var b in this.collisions.boom)
+			this.health-=2;
 		if (this.health < 1){
 			env = {}; env[this.id]='delete'; exports.receive(env);
 			/*if (exports.broadcast){
@@ -228,21 +298,20 @@ types.wall = function(data){
 }
 
 exports.init = function(){
-	var wid = 0, zid = 0;
 	if (exports.broadcast){
 		/* Walls generation */
 		var zones = {}, walls = {};
 		for (var y = -10; y < 10; y++)
 			for(var x = -10; x < 10; x++)
 				if (x || y){
-					walls['w'+wid++] = {type:'wall',
+					walls['w'+gid++] = {type:'wall',
 						x:x*80-20, y:y*80-20}
 					r = Math.random();
 					if (r > .8)
-						walls['w'+wid++] = {type:'wall',
+						walls['w'+gid++] = {type:'wall',
 							x:x*80+20,y:y*80-20}
 					else if (r < .2)
-						walls['w'+wid++] = {type:'wall',
+						walls['w'+gid++] = {type:'wall',
 							x:x*80-20,y:y*80+20}
 				}
 		exports.broadcast(walls);
@@ -251,7 +320,7 @@ exports.init = function(){
 		for (var x = -1; x <= 1; x++)
 			for (var y = -1; y <= 1; y++)
 				if (x||y)
-					zones['z'+zid++] = {type:'zone', x:x*410, y:y*410,
+					zones['z'+gid++] = {type:'zone', x:x*410, y:y*410,
 						color:((x+y)%2)?'0,0,0':'255,0,0'};
 		exports.broadcast(zones);
 	}
