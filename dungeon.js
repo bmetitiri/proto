@@ -41,14 +41,14 @@ types.arrow = function(data){
 types.hero = function(data){
 	this.speed = 5;
 	this.chat  = data.chat || false;
-	//Start position
+	this.color = data.color; 	
 	this.r = data.r || 8;
 	this.x = data.x || 0; this.x1 = data.x1 || this.x;
 	this.y = data.y || 0; this.y1 = data.y1 || this.y;
 	this.draw = function(){
 		ctx.save();
 		ctx.translate(this.x, this.y);
-		ctx.fillStyle = (this.collisions.hero)?'#f00':'#000';
+		ctx.fillStyle = this.color;
 		ctx.fillRect(-10, -10, 20, 20);
 		ctx.restore();
 	}
@@ -303,7 +303,7 @@ exports.main = function (){
 		debug.innerHTML += '<br />';
 		if (messages.length > 5) messages.splice(5,1);
 		for (m in messages)
-			debug.innerHTML += messages[m]+'<br />';
+			debug.innerHTML += '<font color="'+messages[m].color+'">'+messages[m].message + '</font><br />';
 	}
 	for (var i in list){
 		var o = list[i];
@@ -317,7 +317,7 @@ exports.main = function (){
 exports.receive = function(data){ //TODO: Queue and add in main loop
 	for (var k in data){
 		if (data[k].message){
-			messages.unshift(data[k].message);
+			messages.unshift(data[k]);
 			continue;
 		}
 		if (k in exports.world){
@@ -379,7 +379,7 @@ if (typeof(window)!='undefined')
 
 		cvs = document.getElementById('canvas');
 		ctx = cvs.getContext('2d');
-		send('@', {type:'hero'});
+		send('@', {type:'hero',color:Math.floor(Math.random()*16777215).toString(16)});
 		player = exports.world['@'];
 
 		window.onresize = function(){
@@ -407,7 +407,7 @@ if (typeof(window)!='undefined')
 				}
 			}
 			if(sys_action && e.type =='keyup'){
-				message = {message:chatbox.value}
+				message = {message:chatbox.value, color:player.color}
 				env[sys_action] = player[sys_action] == true?false:true;
 				send('@', env);
 				send('!', message);
