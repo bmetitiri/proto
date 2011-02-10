@@ -4,7 +4,7 @@ var keys = {65:'left', 68:'right', 87:'up',
 var sys_keys = {13:'chat'}
 
 var cvs = null, mid = 0;
-var list = [], types = {}, players = [];
+var list = [], types = {}, players = [], messages = [];
 var collisions = {}, box_size = 100; //collision engine
 
 if (typeof(exports)=='undefined') exports = {}
@@ -21,8 +21,6 @@ types.hero = function(id, data){
 	this.up         = data.up      || false;
 	this.attack     = data.attack  || false;
 	this.chat       = data.chat    || this.chat || false;
-	this.message    = data.message || '';
-
 	//Start position
 	this.x = data.x || 0; this.x1 = data.x1 || this.x;
 	this.y = data.y || 0; this.y1 = data.y1 || this.y;
@@ -250,9 +248,10 @@ exports.main = function (){
 		debug.innerHTML = 'x: '+ player.x+' y: '+ player.y + ' zones: ';
 		for (var z in player.collisions.zone)
 			debug.innerHTML += player.collisions.zone[z].id + ', ';
-		for (p in players)
-			p = players[p];
-			debug.innerHTML += '<br/>'+p.message;
+		debug.innerHTML += '<br />';
+		if (messages.length > 5) messages.splice(5,1);
+		for (m in messages)
+			debug.innerHTML += messages[m]+'<br />';
 	}
 	for (var i in list){
 		var o = list[i];
@@ -265,6 +264,10 @@ exports.main = function (){
 
 exports.receive = function(data){ //TODO: Queue and add in main loop
 	for (var k in data){
+		if (data[k].message){
+			messages.unshift(data[k].message);
+			continue;
+		}
 		if (k in exports.world){
 			if (data[k] == 'delete'){
 				var d = exports.world[k];
@@ -351,9 +354,10 @@ if (typeof(window)!='undefined')
 				}
 			}
 			if(sys_action && e.type =='keyup'){
-				env = {message:chatbox.value}
+				message = {message:chatbox.value}
 				env[sys_action] = player[sys_action] == true?false:true;
 				send('@', env);
+				send('!', message);
 				chatbox.style.visibility = player[sys_action] == true?'visible':'hidden';
 				if (chatbox.style.visibility == 'visible') chatbox.focus();
 				chatbox.value = '';
