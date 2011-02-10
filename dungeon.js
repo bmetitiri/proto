@@ -168,14 +168,12 @@ types.wall = function(id, data){
 		var oy = obj.y; obj.y = obj.y1;
 		var obj_b = obj.bounds();
 		if (obj_b.right>b.left && obj_b.left<b.right) obj.x = ox; 
-		if (obj_b.bottom>b.top  && obj_b.top<b.bottom) obj.y = oy; 
-
+		else if (obj_b.bottom>b.top && obj_b.top<b.bottom) obj.y = oy;
+		else {obj.x = ox; obj.y = oy;}
 	}
 	this.update = function(){
-		for (var h in this.collisions.hero)
-			this.repel(this.collisions.hero[h]);
-		for (var m in this.collisions.mob)
-			this.repel(this.collisions.mob[m]);
+		for (var h in this.collisions.hero)this.repel(this.collisions.hero[h]);
+		for (var m in this.collisions.mob) this.repel(this.collisions.mob[m]);
 	}
 }
 
@@ -186,7 +184,17 @@ exports.init = function(){
 		var zones = {}, walls = {};
 		for (var y = -10; y < 10; y++)
 			for(var x = -10; x < 10; x++)
-				if (x || y) walls['w'+wid++] = {type:'wall', x:x*100-20,y:y*100-20}
+				if (x || y){
+					walls['w'+wid++] = {type:'wall',
+						x:x*80-20, y:y*80-20}
+					r = Math.random();
+					if (r > .8)
+						walls['w'+wid++] = {type:'wall',
+							x:x*80+20,y:y*80-20}
+					else if (r < .2)
+						walls['w'+wid++] = {type:'wall',
+							x:x*80-20,y:y*80+20}
+				}
 		exports.broadcast(walls);
 
 		/* Zones generation */
