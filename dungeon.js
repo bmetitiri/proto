@@ -576,6 +576,32 @@ function send(id, data){
 	exports.receive(env);
 }
 
+function handle_keys(e){
+	var action = {}
+	var sys_action = {}
+	action = keys[e.keyCode];
+	sys_action = sys_keys[e.keyCode];
+	
+	if(player['chat'] == false){
+		if (action){
+			state = e.type == 'keydown';
+			if (player[action] != state){
+				env = {x:player.x, y:player.y}; env[action] = state;
+				send('@', env);
+			}
+		}
+	}
+	if(sys_action && e.type =='keyup'){
+		message = {message:chatbox.value, color:player.color}
+		env[sys_action] = player[sys_action] == true?false:true;
+		send('@', env);
+		send('!', message);
+		chatbox.style.visibility = player[sys_action] == true?'visible':'hidden';
+		if (chatbox.style.visibility == 'visible') chatbox.focus();
+		chatbox.value = '';
+	}
+}
+
 if (typeof(window)!='undefined')
 	window.onload = function(){
 		socket = new io.Socket(null, {port: 8080});
@@ -599,30 +625,13 @@ if (typeof(window)!='undefined')
 		}
 		window.onresize();
 
-		window.onkeyup = window.onkeydown = function(e){
-			var action = {}
-			var sys_action = {}
-			action = keys[e.keyCode];
-			sys_action = sys_keys[e.keyCode];
-			
-			if(player['chat'] == false){
-				if (action){
-					state = e.type == 'keydown';
-					if (player[action] != state){
-						env = {x:player.x, y:player.y}; env[action] = state;
-						send('@', env);
-					}
-				}
-			}
-			if(sys_action && e.type =='keyup'){
-				message = {message:chatbox.value, color:player.color}
-				env[sys_action] = player[sys_action] == true?false:true;
-				send('@', env);
-				send('!', message);
-				chatbox.style.visibility = player[sys_action] == true?'visible':'hidden';
-				if (chatbox.style.visibility == 'visible') chatbox.focus();
-				chatbox.value = '';
-			}
+		window.onkeydown = handle_keys;
+		window.onkeyup = function(e){
+			if (e.keyCode == 192)
+				if (debug.style.display != 'none')
+					debug.style.display = 'none'
+				else debug.style.display = 'block'
+			else handle_keys(e);
 		}
 		exports.init();
 	}
