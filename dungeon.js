@@ -30,7 +30,7 @@ utils.repel = function(self, obj){
 attrs.damage = function(self){
 	for (var a in self.collisions.arrow){
 		a = self.collisions.arrow[a];
-		if (a.hits[self.type]){
+		if (a.hits[self.type] != null){
 			a.delete();
 			self.health-= a.hits[self.type];
 		}
@@ -343,7 +343,7 @@ types.tower = function(data){
 	this.update = function(){
 		attrs.damage(this);
 		attrs.solid(this);
-		if (exports.broadcast){
+		if (exports.broadcast && Math.random() < .05){
 			var nearest = null, distance = Infinity;
 			for (var p in players){
 				p = players[p];
@@ -358,8 +358,8 @@ types.tower = function(data){
 				var r = 20/distance;
 				var a = {}; a['a'+gid++] = {type:'arrow',
 					x:this.x, y:this.y,
-					dx: (nearest.x-this.x)/r,
-					dy: (nearest.y-this.y)/r,
+					dx: (nearest.x-this.x)*r,
+					dy: (nearest.y-this.y)*r,
 				   	hits:{'wall':0, 'hero':2}}
 				exports.broadcast(a);
 			}
@@ -372,7 +372,7 @@ types.zone = function(data){
 	this.y     = data.y;
 	this.z     = 10;
 	this.color = data.color;
-	this.draw = function(){
+	this.draw  = function(){
 		ctx.save();
 		ctx.translate(this.x, this.y);
 		ctx.fillStyle = (this.collisions.hero)?
