@@ -35,7 +35,7 @@ attrs.damage = function(self){
 		}
 	}
 	for (var b in self.collisions.boom)
-		self.health-=2;
+		self.health-=3;
 	if (self.health < 1){
 		env = {}; env[self.id]='delete';
 		if (exports.broadcast) exports.broadcast(env); // TODO: Send:@
@@ -271,7 +271,7 @@ types.spawn = function(data){
 	this.x = data.x;
 	this.y = data.y;
 	this.z      = 5;
-	this.health = 20;
+	this.health = 15;
 	this.bounds = function(){
 		return {left:this.x-10, top:this.y-10,
 			right:this.x+10, bottom:this.y+10}
@@ -329,11 +329,11 @@ types.wall = function(data){
 
 types.tower = function(data){
 	types.wall.call(this, data);
-	this.health = 16;
+	this.health = 15;
 	this.draw   = function(){
 		ctx.save();
 		ctx.beginPath();
-		ctx.fillStyle = 'rgba(0,0,0,'+this.health/20+')';
+		ctx.fillStyle = 'rgba(0,0,0,'+this.health/15+')';
 		ctx.arc(this.x, this.y, 20, 0, Math.PI*2, true);
 		ctx.closePath();
 		ctx.fill();
@@ -552,7 +552,18 @@ exports.main = function (){
 		}
 		o.collisions = {};
 	}
-	if (cvs) ctx.restore();
+	if (cvs){
+		for (var p in players){
+			p = players[p];
+			ctx.lineWidth = 40;
+			ctx.strokeStyle = 'rgba(0,0,0,.5)';
+			ctx.beginPath();
+			ctx.arc(p.x, p.y, 190, 0, Math.PI*2, true);
+			ctx.closePath();
+			ctx.stroke();
+		}
+		ctx.restore();
+	}
 }
 
 exports.receive = function(data){
