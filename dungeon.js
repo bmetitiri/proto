@@ -145,7 +145,7 @@ types.hero = function(data){
 	this.chat      = data.chat || false;
 	this.color     = data.color; 	
 	this.health    = 20;
-	this.inventory = {'bombs':10, 'ammo':100}
+	this.inventory = {'bombs':5, 'ammo':500}
 	this.r = data.r || 8;
 	this.x = data.x || 0; this.x1 = data.x1 || this.x;
 	this.y = data.y || 0; this.y1 = data.y1 || this.y;
