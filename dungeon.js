@@ -1,7 +1,6 @@
 var keys = {32:'attack', 16:'run', 66:'bomb',
 	65:'left', 68:'right', 87:'up', 83:'down',
 	72:'left', 76:'right', 75:'up', 74:'down'} /* hlkj */
-	
 
 var sys_keys = {13:'chat'}
 
@@ -146,7 +145,7 @@ types.hero = function(data){
 	this.chat      = data.chat || false;
 	this.color     = data.color; 	
 	this.health    = 20;
-	this.inventory = {'bombs':5, 'ammo':1000}
+	this.inventory = {'bombs':10, 'ammo':100}
 	this.r = data.r || 8;
 	this.x = data.x || 0; this.x1 = data.x1 || this.x;
 	this.y = data.y || 0; this.y1 = data.y1 || this.y;
