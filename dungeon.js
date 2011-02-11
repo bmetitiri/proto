@@ -117,7 +117,7 @@ types.boom = function(data){
 	this.x = data.x;
 	this.y = data.y;
 	this.t = 1;
-	this.z = 20;
+	this.z = -20;
 	this.bounds = function(){
 		return {left:this.x-66, top:this.y-66,
 			right:this.x+66, bottom:this.y+66}
@@ -435,9 +435,8 @@ exports.init = function(){
 }
 
 exports.main = function (){
-	if (cvs) ctx.clearRect(0, 0, cvs.width, cvs.height);
 	collisions = {};
-	for (var o in list){
+	for (var o in list){ //TODO: Remove overlapping duplicates
 		var o = list[o];
 		var b = o.bounds();
 		for (var x = Math.floor(b.left/box_size);
@@ -471,8 +470,18 @@ exports.main = function (){
 		}
 	}
 	if (cvs){
+		ctx.fillStyle = '#000';
+		ctx.fillRect(0, 0, cvs.width, cvs.height);
 		ctx.save();
 		ctx.translate(cvs.width/2-player.x, cvs.height/2-player.y);
+		for (var p in players){
+			p = players[p];
+			ctx.fillStyle = '#cc8';
+			ctx.beginPath();
+			ctx.arc(p.x, p.y, 200, 0, Math.PI*2, true);
+			ctx.closePath();
+			ctx.fill();
+		}
 		debug.innerHTML = 'health: '+ player.health+' | bombs: '+player.inventory['bombs'] + ' | ammo: ' + player.inventory['ammo'];
 		debug.innerHTML += '<br />';
 		if (messages.length > 5) messages.splice(5,1);
@@ -482,7 +491,18 @@ exports.main = function (){
 	for (var i in list){
 		var o = list[i];
 		o.update();
-		if (cvs) o.draw();
+		if (cvs){
+			if (o.type == 'boom' || o.collisions.boom) o.draw();
+			else for (var p in players){
+				p = players[p];
+				var d = Math.sqrt(Math.pow(o.x-p.x, 2) +
+						Math.pow(o.y-p.y, 2));
+				if (d<220){
+				   	o.draw();
+					break;
+				}
+			}
+		}
 		o.collisions = {};
 	}
 	if (cvs) ctx.restore();
@@ -524,7 +544,7 @@ exports.receive = function(data){ //TODO: Queue and add in main loop
 	}
 }
 
-function draw(){
+/*function draw(){
 	ctx.save();
 	ctx.translate(cvs.width/2-player.x, cvs.height/2-player.y);
 	for (var o in exports.world){
@@ -532,7 +552,7 @@ function draw(){
 		o.draw();
 	}
 	ctx.restore();
-}
+}*/
 
 function send(id, data){
 	socket.send(data);
@@ -558,7 +578,7 @@ if (typeof(window)!='undefined')
 		window.onresize = function(){
 			cvs.width  = window.innerWidth;
 			cvs.height = window.innerHeight;
-			draw();
+//			draw();
 		}
 		window.onresize();
 
