@@ -366,7 +366,7 @@ types.tower = function(data){
 	}
 }
 
-types.zone = function(data){
+/*types.zone = function(data){
 	this.x     = data.x;
 	this.y     = data.y;
 	this.z     = 10;
@@ -384,7 +384,7 @@ types.zone = function(data){
 			right:this.x+300, bottom:this.y+300}
 	}
 	this.update = function(){}
-}
+}*/
 
 exports.init = function(){
 	if (exports.broadcast){
@@ -422,14 +422,14 @@ exports.init = function(){
 				}
 		exports.broadcast(walls);
 
-		/* Zones generation */
-		var zones = {}, zone_n=2;
-		for (var x = -zone_n; x <= zone_n; x++)
-			for (var y = -zone_n; y <= zone_n; y++)
-				if (x||y)
-					zones['z'+gid++] = {type:'zone', x:x*410, y:y*410,
-						color:((x+y)%2)?'0,0,0':'255,0,0'};
-		exports.broadcast(zones);
+//		/* Zones generation */
+//		var zones = {}, zone_n=2;
+//		for (var x = -zone_n; x <= zone_n; x++)
+//			for (var y = -zone_n; y <= zone_n; y++)
+//				//if (x||y)
+//				zones['z'+gid++] = {type:'zone', x:x*400, y:y*400,
+//					color:'0,0,0'};//((x+y)%2)?'0,0,0':'255,0,0'};
+//		exports.broadcast(zones);
 	}
 	setInterval(exports.main, 33);
 }
@@ -437,7 +437,7 @@ exports.init = function(){
 exports.main = function (){
 	if (cvs) ctx.clearRect(0, 0, cvs.width, cvs.height);
 	collisions = {};
-	for (var o in list){ //TODO: Remove overlapping duplicates
+	for (var o in list){
 		var o = list[o];
 		var b = o.bounds();
 		for (var x = Math.floor(b.left/box_size);
