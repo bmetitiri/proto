@@ -5,7 +5,7 @@ var keys = {32:'attack', 16:'run', 66:'bomb',
 var sys_keys = {13:'chat'}
 
 var cvs = null, gid = 0;
-var list = [], types = {}, players = [], messages = [];
+var list = [], types = {}, players = [], messages = [], data_q = [];
 var attrs = {}, utils = {};
 var collisions = {}, box_size = 100; //collision engine
 
@@ -329,7 +329,7 @@ types.wall = function(data){
 
 types.tower = function(data){
 	types.wall.call(this, data);
-	this.health = 20;
+	this.health = 16;
 	this.draw   = function(){
 		ctx.save();
 		ctx.beginPath();
@@ -434,7 +434,54 @@ exports.init = function(){
 	setInterval(exports.main, 33);
 }
 
+function process(data){
+	for (var k in data){
+		if (data[k].message){
+			messages.unshift(data[k]);
+			continue;
+		}
+		if (k in exports.world){
+			if (data[k] == 'delete'){
+				var d = exports.world[k];
+				for (var i in list)
+					if (list[i].id == k){
+					   	list.splice(i, 1);
+						break;
+					}
+				if (d.type == 'hero')
+					for (var i in players) //TODO: abstract with above
+						if (players[i].id == k){
+							players.splice(i, 1);
+							break;
+						}
+				delete exports.world[k];
+			}
+			else for (var v in data[k])
+				exports.world[k][v] = data[k][v];
+		} else if (data[k]['type']){
+			var t = data[k]['type'];
+			var n = new types[t](data[k]);
+			n.id = k; n.type = t; n.collisions = {};
+			exports.world[k] = n;
+			if (n.type == 'hero') players.push(n)
+			list.push(n);
+			list.sort(function(a,b){return (a.z||0)-(b.z||0)});
+		}
+	}
+}
+
+/*function draw(){
+	ctx.save();
+	ctx.translate(cvs.width/2-player.x, cvs.height/2-player.y);
+	for (var o in exports.world){
+	var o = exports.world[o];
+		o.draw();
+	}
+	ctx.restore();
+}*/
+
 exports.main = function (){
+	while(data_q.length) process(data_q.shift());
 	collisions = {};
 	for (var o in list){ //TODO: Remove overlapping duplicates
 		var o = list[o];
@@ -508,51 +555,9 @@ exports.main = function (){
 	if (cvs) ctx.restore();
 }
 
-exports.receive = function(data){ //TODO: Queue and add in main loop
-	for (var k in data){
-		if (data[k].message){
-			messages.unshift(data[k]);
-			continue;
-		}
-		if (k in exports.world){
-			if (data[k] == 'delete'){
-				var d = exports.world[k];
-				for (var i in list)
-					if (list[i].id == k){
-					   	list.splice(i, 1);
-						break;
-					}
-				if (d.type == 'hero')
-					for (var i in players) //TODO: abstract with above
-						if (players[i].id == k){
-							players.splice(i, 1);
-							break;
-						}
-				delete exports.world[k];
-			}
-			else for (var v in data[k])
-				exports.world[k][v] = data[k][v];
-		} else if (data[k]['type']){
-			var t = data[k]['type'];
-			var n = new types[t](data[k]);
-			n.id = k; n.type = t; n.collisions = {};
-			exports.world[k] = n;
-			if (n.type == 'hero') players.push(n)
-			list.push(n);
-			list.sort(function(a,b){return (a.z||0)-(b.z||0)});
-		}
-	}
+exports.receive = function(data){
+	data_q.push(data);
 }
-
-/*function draw(){
-	ctx.save();
-	ctx.translate(cvs.width/2-player.x, cvs.height/2-player.y);
-	for (var o in exports.world){
-	var o = exports.world[o];
-		o.draw();
-	}
-	ctx.restore();
-}*/
 
 function send(id, data){
 	socket.send(data);
@@ -573,6 +578,7 @@ if (typeof(window)!='undefined')
 		cvs     = document.getElementById('canvas');
 		ctx = cvs.getContext('2d');
 		send('@', {type:'hero',color:Math.floor(Math.random()*16777215).toString(16)});
+		while(data_q.length) process(data_q.shift());
 		player = exports.world['@'];
 
 		window.onresize = function(){
