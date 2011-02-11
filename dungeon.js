@@ -53,7 +53,7 @@ attrs.solid = function(self){
 types.arrow = function(data){
 	this.x      = data.x;
 	this.y      = data.y;
-	this.t      = 50;
+	this.t      = data.t||50;
 	this.color  = data.color||'#000';
 	this.hits   = data.hits || {'mob':1,'spawn':1,'wall':1,'tower':1};
 	this.dx     = data.dx;
@@ -85,7 +85,7 @@ types.bomb = function(data){
 	this.x = data.x;
 	this.y = data.y;
 	this.z = -1;
-	this.t = 100;
+	this.t = data.t||100;
 	this.bounds = function(){
 		return {left:this.x-6, top:this.y-6,
 			right:this.x+6, bottom:this.y+6}
@@ -116,7 +116,7 @@ types.bomb = function(data){
 types.boom = function(data){
 	this.x = data.x;
 	this.y = data.y;
-	this.t = 1;
+	this.t = data.t || 1;
 	this.z = -20;
 	this.bounds = function(){
 		return {left:this.x-66, top:this.y-66,
@@ -141,10 +141,10 @@ types.boom = function(data){
 }
 
 types.hero = function(data){
-	this.speed     = 5;
-	this.chat      = data.chat || false;
+	this.speed     = data.speed  || 5;
+	this.chat      = data.chat   || false;
+	this.health    = data.health || 20;
 	this.color     = data.color; 	
-	this.health    = 20;
 	this.inventory = {'bombs':5, 'ammo':500}
 	this.r = data.r || 8;
 	this.x = data.x || 0; this.x1 = data.x1 || this.x;
@@ -214,8 +214,8 @@ types.hero = function(data){
 types.mob = function(data){
 	this.x = data.x || 0; this.x1 = data.x1 || this.x;
 	this.y = data.y || 0; this.y1 = data.y1 || this.y;
-	this.speed  = 5;
-	this.health = 2;
+	this.speed  = data.speed  || 5;
+	this.health = data.health || 2;
 
 	this.draw = function(){
 		ctx.save();
@@ -271,7 +271,7 @@ types.spawn = function(data){
 	this.x = data.x;
 	this.y = data.y;
 	this.z      = 5;
-	this.health = 15;
+	this.health = data.health || 15;
 	this.bounds = function(){
 		return {left:this.x-10, top:this.y-10,
 			right:this.x+10, bottom:this.y+10}
@@ -310,7 +310,7 @@ types.wall = function(data){
 	this.z    = -10;
 	this.x = data.x;
 	this.y = data.y;
-	this.health = 10;
+	this.health = data.health || 10;
 	this.bounds = function(){
 		return {left:this.x-20, top:this.y-20,
 			right:this.x+20, bottom:this.y+20}
@@ -329,7 +329,7 @@ types.wall = function(data){
 
 types.tower = function(data){
 	types.wall.call(this, data);
-	this.health = 15;
+	this.health = data.health || 15;
 	this.draw   = function(){
 		ctx.save();
 		ctx.beginPath();
