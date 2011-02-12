@@ -13,10 +13,6 @@ var collisions = {}, box_size = 100; //collision engine
 if (typeof(exports)=='undefined') exports = {}
 exports.world = {};
 
-utils.roll = function(dice){
-	return Math.round(Math.random()*dice)
-}
-
 utils.repel = function(self, obj){
 	var b = self.bounds();
 	var ox = obj.x; obj.x = obj.x1;
@@ -25,6 +21,10 @@ utils.repel = function(self, obj){
 	if (obj_b.right>b.left && obj_b.left<b.right) obj.x = ox; 
 	else if (obj_b.bottom>b.top && obj_b.top<b.bottom) obj.y = oy;
 	else {obj.x = ox; obj.y = oy;}
+}
+
+utils.roll = function(dice){
+	return Math.round(Math.random()*dice)
 }
 
 attrs.damage = function(self){
@@ -402,7 +402,6 @@ function map(x_o, y_o, spawn_c){
 }
 
 exports.init = function(){
-	if (exports.broadcast) atlas['0,0'] = map(0, 0, 4)
 	setInterval(exports.main, 33);
 }
 
@@ -442,8 +441,28 @@ function process(data){
 	}
 }
 
+var map_size = 520;
+
+function generate(x, y){
+	var x_o = Math.round(x/map_size);
+	var y_o = Math.round(y/map_size);
+	var a = ''+x_o+','+y_o;
+	if (!atlas[a]){
+		atlas[a] = map(x_o*map_size, y_o*map_size, 4);
+		console.log('generate', a)
+	}
+}
+
 exports.main = function (){
 	while(data_q.length) process(data_q.shift());
+	if (exports.broadcast)
+		for (var p in players){
+			p = players[p];
+			generate(p.x-200, p.y-200);
+			generate(p.x+200, p.y-200);
+			generate(p.x-200, p.y+200);
+			generate(p.x+200, p.y+200);
+		}
 	collisions = {};
 	for (var o in list){ //TODO: Remove overlapping duplicates
 		var o = list[o];
