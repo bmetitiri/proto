@@ -279,9 +279,20 @@ types.spawn = function(data){
 		ctx.save();
 		ctx.translate(this.x, this.y);
 		ctx.rotate(Math.PI/4);
-		ctx.fillStyle = '#0f0';
-		ctx.fillRect(-4, -10, 8, 20);
-		ctx.fillRect(-10, -4, 20, 8);
+		ctx.fillStyle = '#ddd';
+		ctx.fillRect(-2, -10, 4, 20);
+		ctx.fillRect(-10, -2, 20, 4);
+		ctx.beginPath();
+		ctx.arc(-2, -12, 3, 0, Math.PI*2, true);
+		ctx.arc(2, -12, 3, 0, Math.PI*2, true);
+		ctx.arc(-2, 12, 3, 0, Math.PI*2, true);
+		ctx.arc(2, 12, 3, 0, Math.PI*2, true);
+		ctx.arc(-12, -2, 3, 0, Math.PI*2, true);
+		ctx.arc(12, -2, 3, 0, Math.PI*2, true);
+		ctx.arc(-12, 2, 3, 0, Math.PI*2, true);
+		ctx.arc(12, 2, 3, 0, Math.PI*2, true);
+		ctx.closePath();
+		ctx.fill();
 		ctx.restore();
 	}
 	this.update = function(){
