@@ -3,16 +3,13 @@ var keys = {32:'attack', 16:'run', 66:'bomb',
 	72:'left', 76:'right', 75:'up', 74:'down'} /* hlkj */
 
 var cvs = null, gid = 0;
-var list = [], types = {}, players = [], messages = [], data_q = [];
+var list = [], types = {}, atlas = {};
+var players = [], messages = [], data_q = [];
 var attrs = {}, utils = {};
 var collisions = {}, box_size = 100; //collision engine
 
 if (typeof(exports)=='undefined') exports = {}
 exports.world = {};
-
-utils.roll = function(dice){
-	return Math.round(Math.random()*dice)
-}
 
 utils.repel = function(self, obj){
 	var b = self.bounds();
@@ -22,6 +19,10 @@ utils.repel = function(self, obj){
 	if (obj_b.right>b.left && obj_b.left<b.right) obj.x = ox; 
 	else if (obj_b.bottom>b.top && obj_b.top<b.bottom) obj.y = oy;
 	else {obj.x = ox; obj.y = oy;}
+}
+
+utils.roll = function(dice){
+	return Math.round(Math.random()*dice)
 }
 
 attrs.damage = function(self){
@@ -83,7 +84,7 @@ types.bomb = function(data){
 	this.x = data.x;
 	this.y = data.y;
 	this.z = -1;
-	this.t = data.t||100;
+	this.t = data.t||50;
 	this.bounds = function(){
 		return {left:this.x-6, top:this.y-6,
 			right:this.x+6, bottom:this.y+6}
@@ -364,71 +365,41 @@ types.tower = function(data){
 	}
 }
 
-/*types.zone = function(data){
-	this.x     = data.x;
-	this.y     = data.y;
-	this.z     = 10;
-	this.color = data.color;
-	this.draw  = function(){
-		ctx.save();
-		ctx.translate(this.x, this.y);
-		ctx.fillStyle = (this.collisions.hero)?
-			'rgba('+this.color+',.2)':'rgb('+this.color+')';
-		ctx.fillRect(-200, -200, 400, 400);
-		ctx.restore();
+function map(x_o, y_o, spawn_c){
+	var items = {};
+	/* Spawn generation */
+	for (var s = 0; s < spawn_c; s++){
+		var x = (utils.roll(20)-10)*24+x_o;
+		var y = (utils.roll(20)-10)*24+y_o;
+		if (Math.abs(x) < 100 && Math.abs(y) < 100) s--;
+		else items['s'+gid++] = {type:'spawn', x:x, y:y}
 	}
-	this.bounds = function(){
-		return {left:this.x-300, top:this.y-300,
-			right:this.x+300, bottom:this.y+300}
-	}
-	this.update = function(){}
-}*/
+
+	/* Walls generation */
+	var wall_n = 3;
+	for (var y = -wall_n; y <= wall_n; y++)
+		for(var x = -wall_n; x <= wall_n; x++){
+			var wx = x*80+x_o, wy = y*80+y_o;
+			if (wx || wy){
+				items['w'+gid++] = {type:'wall', x:wx, y:wy}
+				r = Math.random();
+				if (r > .9 && x<wall_n &&
+						(Math.abs(x)>3||Math.abs(y)>3))
+					items['t'+gid++] = {type:'tower', x:wx+40, y:wy}
+				else if (r > .7 && x<wall_n)
+					items['w'+gid++] = {type:'wall',  x:wx+40, y:wy}
+				else if (r < .1 && x<wall_n &&
+						(Math.abs(x)>3||Math.abs(y)>3))
+					items['t'+gid++] = {type:'tower', x:wx+40, y:wy}
+				else if (r < .3 && y<wall_n)
+					items['w'+gid++] = {type:'wall',  x:wx, y:wy+40}
+			}
+		}
+	exports.broadcast(items);
+	return items;
+}
 
 exports.init = function(){
-	if (exports.broadcast){
-		/* Spawn generation */
-		var spawns = {};
-		for (var s = 0; s < 10; s++){
-			spawns['s'+gid++] = {type:'spawn',
-				x:(utils.roll(20)-10)*75,
-				y:(utils.roll(20)-10)*75}
-		}
-		exports.broadcast(spawns);
-
-		/* Walls generation */
-		var walls = {}, wall_n = 12;
-		for (var y = -wall_n; y <= wall_n; y++)
-			for(var x = -wall_n; x <= wall_n; x++)
-				if (x || y){
-					walls['w'+gid++] = {type:'wall',
-						x:x*80, y:y*80}
-					r = Math.random();
-					if (r > .9 && x<wall_n &&
-							(Math.abs(x)>3||Math.abs(y)>3))
-						walls['t'+gid++] = {type:'tower',
-							x:x*80+40,y:y*80}
-					else if (r > .7 && x<wall_n)
-						walls['w'+gid++] = {type:'wall',
-							x:x*80+40,y:y*80}
-					else if (r < .1 && x<wall_n &&
-							(Math.abs(x)>3||Math.abs(y)>3))
-						walls['t'+gid++] = {type:'tower',
-							x:x*80+40,y:y*80}
-					else if (r < .3 && y<wall_n)
-						walls['w'+gid++] = {type:'wall',
-							x:x*80,y:y*80+40}
-				}
-		exports.broadcast(walls);
-
-//		/* Zones generation */
-//		var zones = {}, zone_n=2;
-//		for (var x = -zone_n; x <= zone_n; x++)
-//			for (var y = -zone_n; y <= zone_n; y++)
-//				//if (x||y)
-//				zones['z'+gid++] = {type:'zone', x:x*400, y:y*400,
-//					color:'0,0,0'};//((x+y)%2)?'0,0,0':'255,0,0'};
-//		exports.broadcast(zones);
-	}
 	setInterval(exports.main, 33);
 }
 
@@ -468,18 +439,28 @@ function process(data){
 	}
 }
 
-/*function draw(){
-	ctx.save();
-	ctx.translate(cvs.width/2-player.x, cvs.height/2-player.y);
-	for (var o in exports.world){
-	var o = exports.world[o];
-		o.draw();
+var map_size = 520;
+
+function generate(x, y){
+	var x_o = Math.round(x/map_size);
+	var y_o = Math.round(y/map_size);
+	var a = ''+x_o+','+y_o;
+	if (!atlas[a]){
+		atlas[a] = map(x_o*map_size, y_o*map_size, 4);
+		console.log('generate', a)
 	}
-	ctx.restore();
-}*/
+}
 
 exports.main = function (){
 	while(data_q.length) process(data_q.shift());
+	if (exports.broadcast)
+		for (var p in players){
+			p = players[p];
+			generate(p.x-200, p.y-200);
+			generate(p.x+200, p.y-200);
+			generate(p.x-200, p.y+200);
+			generate(p.x+200, p.y+200);
+		}
 	collisions = {};
 	for (var o in list){ //TODO: Remove overlapping duplicates
 		var o = list[o];
@@ -521,7 +502,7 @@ exports.main = function (){
 		ctx.translate(cvs.width/2-player.x, cvs.height/2-player.y);
 		for (var p in players){
 			p = players[p];
-			ctx.fillStyle = '#cc8';
+			ctx.fillStyle = '#aa8';
 			ctx.beginPath();
 			ctx.arc(p.x, p.y, 200, 0, Math.PI*2, true);
 			ctx.closePath();
@@ -550,9 +531,7 @@ exports.main = function (){
 		}
 		o.collisions = {};
 	}
-	if (cvs){
-		ctx.restore();
-	}
+	if (cvs) ctx.restore();
 }
 
 exports.receive = function(data){
@@ -599,7 +578,6 @@ if (typeof(window)!='undefined')
 		window.onresize = function(){
 			cvs.width  = window.innerWidth;
 			cvs.height = window.innerHeight;
-//			draw();
 		}
 		window.onresize();
 
