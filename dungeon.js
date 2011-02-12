@@ -485,14 +485,9 @@ exports.main = function (){
 		ctx.translate(cvs.width/2-player.x, cvs.height/2-player.y);
 		for (var p in players){
 			p = players[p];
-			ctx.fillStyle = '#775';
+			ctx.fillStyle = '#aa8';
 			ctx.beginPath();
 			ctx.arc(p.x, p.y, 200, 0, Math.PI*2, true);
-			ctx.closePath();
-			ctx.fill();
-			ctx.fillStyle = '#cc8';
-			ctx.beginPath();
-			ctx.arc(p.x, p.y, 160, 0, Math.PI*2, true);
 			ctx.closePath();
 			ctx.fill();
 		}
