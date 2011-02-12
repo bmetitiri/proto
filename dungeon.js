@@ -2,8 +2,6 @@ var keys = {32:'attack', 16:'run', 66:'bomb',
 	65:'left', 68:'right', 87:'up', 83:'down',
 	72:'left', 76:'right', 75:'up', 74:'down'} /* hlkj */
 
-var sys_keys = {13:'chat'}
-
 var cvs = null, gid = 0;
 var list = [], types = {}, players = [], messages = [], data_q = [];
 var attrs = {}, utils = {};
@@ -529,7 +527,7 @@ exports.main = function (){
 			ctx.closePath();
 			ctx.fill();
 		}
-		debug.innerHTML = 'health: '+ player.health+' | bombs: '+player.inventory['bombs'] + ' | ammo: ' + player.inventory['ammo'];
+		debug.innerHTML = 'health: '+ player.health+' | bombs:'+player.inventory['bombs'] + ' | ammo: ' + player.inventory['ammo'];
 		debug.innerHTML += '<br />';
 		if (messages.length > 5) messages.splice(5,1);
 		for (m in messages)
@@ -553,15 +551,6 @@ exports.main = function (){
 		o.collisions = {};
 	}
 	if (cvs){
-		for (var p in players){
-			p = players[p];
-			ctx.lineWidth = 40;
-			ctx.strokeStyle = 'rgba(0,0,0,.5)';
-			ctx.beginPath();
-			ctx.arc(p.x, p.y, 190, 0, Math.PI*2, true);
-			ctx.closePath();
-			ctx.stroke();
-		}
 		ctx.restore();
 	}
 }
@@ -578,27 +567,16 @@ function send(id, data){
 
 function handle_keys(e){
 	var action = {}
-	var sys_action = {}
 	action = keys[e.keyCode];
-	sys_action = sys_keys[e.keyCode];
 	
 	if(player['chat'] == false){
 		if (action){
 			state = e.type == 'keydown';
 			if (player[action] != state){
-				env = {x:player.x, y:player.y}; env[action] = state;
+				var env = {x:player.x, y:player.y}; env[action] = state;
 				send('@', env);
 			}
 		}
-	}
-	if(sys_action && e.type =='keyup'){
-		message = {message:chatbox.value, color:player.color}
-		env[sys_action] = player[sys_action] == true?false:true;
-		send('@', env);
-		send('!', message);
-		chatbox.style.visibility = player[sys_action] == true?'visible':'hidden';
-		if (chatbox.style.visibility == 'visible') chatbox.focus();
-		chatbox.value = '';
 	}
 }
 
@@ -631,7 +609,15 @@ if (typeof(window)!='undefined')
 				if (debug.style.display != 'none')
 					debug.style.display = 'none'
 				else debug.style.display = 'block'
-			else handle_keys(e);
+			else if (e.keyCode == 13){
+					(!player['chat']) ? chatbox.style.display = 'block': chatbox.style.display = 'none';
+					if (chatbox.style.display == 'block') chatbox.focus();
+					message = {message:chatbox.value, color:player.color}
+					var env = {}; env['chat'] = !player['chat'];
+					send('@', env);
+					send('!', message);
+					chatbox.value = '';
+			} else handle_keys(e);
 		}
 		exports.init();
 	}
