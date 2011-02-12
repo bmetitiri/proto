@@ -29,8 +29,8 @@ attrs.damage = function(self){
 	for (var a in self.collisions.arrow){
 		a = self.collisions.arrow[a];
 		if (a.hits[self.type] != null){
-			a.delete();
-			self.health-= a.hits[self.type];
+			a.remove();
+			self.health -= a.hits[self.type];
 		}
 	}
 	for (var b in self.collisions.boom)
@@ -66,7 +66,7 @@ types.arrow = function(data){
 		ctx.fillStyle = this.color;
 		ctx.fillRect(this.x-4, this.y-4, 8, 8);
 	}
-	this.delete = function(){
+	this.remove = function(){
 		env = {}; env[this.id]='delete'; exports.receive(env);
 		/*if (exports.broadcast){
 			env = {}; env[this.id]='delete';
@@ -74,7 +74,7 @@ types.arrow = function(data){
 		}*/
 	}
 	this.update = function(){
-		if (this.t-- < 0) this.delete();
+		if (this.t-- < 0) this.remove();
 		this.x += this.dx;
 		this.y += this.dy;
 	}
@@ -98,12 +98,12 @@ types.bomb = function(data){
 		ctx.fill();
 		ctx.restore();
 	}
-	this.delete = function(){
+	this.remove = function(){
 		env = {}; env[this.id]='delete'; exports.receive(env);
 	}
 	this.update = function(){
 		if (this.t-- < 0 || this.collisions.boom){
-			this.delete();
+			this.remove();
 			if (exports.broadcast){
 				var e = {}; e['e'+gid++] = {type:'boom', x:this.x, y:this.y}
 				exports.broadcast(e);

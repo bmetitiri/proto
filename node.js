@@ -11,7 +11,7 @@ var server = http.createServer(
 		file = req.url.slice(1)||'index.html';
 		fs.readFile(file, function(e, data){
 			if (e){
-				res.writeHead(500);
+				res.writeHead(404);
 				res.end('404: Not Found');
 				console.log('Error reading [' + file + ']');
 			} else {
