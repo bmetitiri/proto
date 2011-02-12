@@ -85,7 +85,7 @@ types.bomb = function(data){
 	this.x = data.x;
 	this.y = data.y;
 	this.z = -1;
-	this.t = data.t||100;
+	this.t = data.t||50;
 	this.bounds = function(){
 		return {left:this.x-6, top:this.y-6,
 			right:this.x+6, bottom:this.y+6}
@@ -366,71 +366,41 @@ types.tower = function(data){
 	}
 }
 
-/*types.zone = function(data){
-	this.x     = data.x;
-	this.y     = data.y;
-	this.z     = 10;
-	this.color = data.color;
-	this.draw  = function(){
-		ctx.save();
-		ctx.translate(this.x, this.y);
-		ctx.fillStyle = (this.collisions.hero)?
-			'rgba('+this.color+',.2)':'rgb('+this.color+')';
-		ctx.fillRect(-200, -200, 400, 400);
-		ctx.restore();
+function map(x_o, y_o, spawn_c){
+	var items = {};
+	/* Spawn generation */
+	for (var s = 0; s < spawn_c; s++){
+		var x = (utils.roll(20)-10)*24+x_o;
+		var y = (utils.roll(20)-10)*24+y_o;
+		if (Math.abs(x) < 100 && Math.abs(y) < 100) s--;
+		else items['s'+gid++] = {type:'spawn', x:x, y:y}
 	}
-	this.bounds = function(){
-		return {left:this.x-300, top:this.y-300,
-			right:this.x+300, bottom:this.y+300}
-	}
-	this.update = function(){}
-}*/
+
+	/* Walls generation */
+	var wall_n = 3;
+	for (var y = -wall_n; y <= wall_n; y++)
+		for(var x = -wall_n; x <= wall_n; x++){
+			var wx = x*80+x_o, wy = y*80+y_o;
+			if (wx || wy){
+				items['w'+gid++] = {type:'wall', x:wx, y:wy}
+				r = Math.random();
+				if (r > .9 && x<wall_n &&
+						(Math.abs(x)>3||Math.abs(y)>3))
+					items['t'+gid++] = {type:'tower', x:wx+40, y:wy}
+				else if (r > .7 && x<wall_n)
+					items['w'+gid++] = {type:'wall',  x:wx+40, y:wy}
+				else if (r < .1 && x<wall_n &&
+						(Math.abs(x)>3||Math.abs(y)>3))
+					items['t'+gid++] = {type:'tower', x:wx+40, y:wy}
+				else if (r < .3 && y<wall_n)
+					items['w'+gid++] = {type:'wall',  x:wx, y:wy+40}
+			}
+		}
+	exports.broadcast(items);
+}
 
 exports.init = function(){
-	if (exports.broadcast){
-		/* Spawn generation */
-		var spawns = {};
-		for (var s = 0; s < 10; s++){
-			spawns['s'+gid++] = {type:'spawn',
-				x:(utils.roll(20)-10)*75,
-				y:(utils.roll(20)-10)*75}
-		}
-		exports.broadcast(spawns);
-
-		/* Walls generation */
-		var walls = {}, wall_n = 12;
-		for (var y = -wall_n; y <= wall_n; y++)
-			for(var x = -wall_n; x <= wall_n; x++)
-				if (x || y){
-					walls['w'+gid++] = {type:'wall',
-						x:x*80, y:y*80}
-					r = Math.random();
-					if (r > .9 && x<wall_n &&
-							(Math.abs(x)>3||Math.abs(y)>3))
-						walls['t'+gid++] = {type:'tower',
-							x:x*80+40,y:y*80}
-					else if (r > .7 && x<wall_n)
-						walls['w'+gid++] = {type:'wall',
-							x:x*80+40,y:y*80}
-					else if (r < .1 && x<wall_n &&
-							(Math.abs(x)>3||Math.abs(y)>3))
-						walls['t'+gid++] = {type:'tower',
-							x:x*80+40,y:y*80}
-					else if (r < .3 && y<wall_n)
-						walls['w'+gid++] = {type:'wall',
-							x:x*80,y:y*80+40}
-				}
-		exports.broadcast(walls);
-
-//		/* Zones generation */
-//		var zones = {}, zone_n=2;
-//		for (var x = -zone_n; x <= zone_n; x++)
-//			for (var y = -zone_n; y <= zone_n; y++)
-//				//if (x||y)
-//				zones['z'+gid++] = {type:'zone', x:x*400, y:y*400,
-//					color:'0,0,0'};//((x+y)%2)?'0,0,0':'255,0,0'};
-//		exports.broadcast(zones);
-	}
+	if (exports.broadcast) map(0, 0, 4)
 	setInterval(exports.main, 33);
 }
 
