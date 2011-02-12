@@ -441,7 +441,7 @@ function process(data){
 	}
 }
 
-var map_size = 520;
+var map_size = 560;
 
 function generate(x, y){
 	var x_o = Math.round(x/map_size);
