@@ -5,7 +5,8 @@ var keys = {32:'attack', 16:'run', 66:'bomb',
 var sys_keys = {13:'chat'}
 
 var cvs = null, gid = 0;
-var list = [], types = {}, players = [], messages = [], data_q = [];
+var list = [], types = {}, atlas = {};
+var players = [], messages = [], data_q = [];
 var attrs = {}, utils = {};
 var collisions = {}, box_size = 100; //collision engine
 
@@ -397,10 +398,11 @@ function map(x_o, y_o, spawn_c){
 			}
 		}
 	exports.broadcast(items);
+	return items;
 }
 
 exports.init = function(){
-	if (exports.broadcast) map(0, 0, 4)
+	if (exports.broadcast) atlas['0,0'] = map(0, 0, 4)
 	setInterval(exports.main, 33);
 }
 
@@ -439,16 +441,6 @@ function process(data){
 		}
 	}
 }
-
-/*function draw(){
-	ctx.save();
-	ctx.translate(cvs.width/2-player.x, cvs.height/2-player.y);
-	for (var o in exports.world){
-	var o = exports.world[o];
-		o.draw();
-	}
-	ctx.restore();
-}*/
 
 exports.main = function (){
 	while(data_q.length) process(data_q.shift());
@@ -493,9 +485,14 @@ exports.main = function (){
 		ctx.translate(cvs.width/2-player.x, cvs.height/2-player.y);
 		for (var p in players){
 			p = players[p];
-			ctx.fillStyle = '#cc8';
+			ctx.fillStyle = '#775';
 			ctx.beginPath();
 			ctx.arc(p.x, p.y, 200, 0, Math.PI*2, true);
+			ctx.closePath();
+			ctx.fill();
+			ctx.fillStyle = '#cc8';
+			ctx.beginPath();
+			ctx.arc(p.x, p.y, 160, 0, Math.PI*2, true);
 			ctx.closePath();
 			ctx.fill();
 		}
@@ -522,18 +519,7 @@ exports.main = function (){
 		}
 		o.collisions = {};
 	}
-	if (cvs){
-		for (var p in players){
-			p = players[p];
-			ctx.lineWidth = 40;
-			ctx.strokeStyle = 'rgba(0,0,0,.5)';
-			ctx.beginPath();
-			ctx.arc(p.x, p.y, 190, 0, Math.PI*2, true);
-			ctx.closePath();
-			ctx.stroke();
-		}
-		ctx.restore();
-	}
+	if (cvs) ctx.restore();
 }
 
 exports.receive = function(data){
@@ -591,7 +577,6 @@ if (typeof(window)!='undefined')
 		window.onresize = function(){
 			cvs.width  = window.innerWidth;
 			cvs.height = window.innerHeight;
-//			draw();
 		}
 		window.onresize();
 
