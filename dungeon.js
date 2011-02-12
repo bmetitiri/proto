@@ -385,15 +385,13 @@ function map(x_o, y_o, spawn_c){
 			if (wx || wy){
 				items['w'+gid++] = {type:'wall', x:wx, y:wy}
 				r = Math.random();
-				if (r > .9 && x<wall_n &&
-						(Math.abs(x)>3||Math.abs(y)>3))
+				if (r > .9 && (Math.abs(x)>3||Math.abs(y)>3))
 					items['t'+gid++] = {type:'tower', x:wx+40, y:wy}
-				else if (r > .7 && x<wall_n)
+				else if (r > .7)
 					items['w'+gid++] = {type:'wall',  x:wx+40, y:wy}
-				else if (r < .1 && x<wall_n &&
-						(Math.abs(x)>3||Math.abs(y)>3))
+				else if (r < .1 && (Math.abs(x)>3||Math.abs(y)>3))
 					items['t'+gid++] = {type:'tower', x:wx+40, y:wy}
-				else if (r < .3 && y<wall_n)
+				else if (r < .3)
 					items['w'+gid++] = {type:'wall',  x:wx, y:wy+40}
 			}
 		}
