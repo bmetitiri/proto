@@ -42,6 +42,19 @@ attrs.damage = function(self){
 	}
 }
 
+attrs.bag = function(self){
+	for (var p in self.collisions.pickup){
+		p = self.collisions.pickup[p];
+		if (p.item_type == 'healthpack') 
+			if(self.health + 10 <= 100) self.health += 10;
+		if (p.item_type == 'quiver') 
+			if(self.inventory['ammo'] + 10 <= 500) self.inventory['ammo'] += 10;
+		if (p.item_type == 'bomb_bag') 
+			if(self.inventory['bombs'] + 5 <= 30) self.inventory['bombs'] += 5;
+		p.remove();
+	}
+}
+
 attrs.solid = function(self){
 	for (var h in self.collisions.hero)
 		utils.repel(self, self.collisions.hero[h]);
@@ -109,6 +122,52 @@ types.bomb = function(data){
 				exports.broadcast(e);
 			}
 		}
+	}
+}
+
+types.pickup = function(data){
+	this.x = data.x;
+	this.y = data.y;
+	this.z      = 4;
+	this.health = data.health || 5;
+	this.item_type = data.item_type || 'healthpack';
+	this.bounds = function(){
+		return {left:this.x-10, top:this.y-10,
+			right:this.x+10, bottom:this.y+10}
+	}
+	this.draw   = function(){
+		ctx.save();
+		ctx.translate(this.x, this.y);
+		if (this.item_type == 'healthpack'){
+			ctx.fillStyle = '#fff';
+			ctx.fillRect(-10, -10, 20, 20);
+			ctx.fillStyle = '#f00';
+			ctx.fillRect(-2, -10, 4, 20);
+			ctx.fillRect(-10, -2, 20, 4);
+		}
+		else if (this.item_type =='quiver'){
+			ctx.fillStyle = '#0a0';
+			ctx.fillRect(-10, -10, 20, 20);
+		}
+		else if (this.item_type =='bomb_bag'){
+			ctx.fillStyle = '#666';
+			ctx.fillRect(-10, -10, 20, 20);
+			ctx.save();
+			ctx.beginPath();
+			ctx.fillStyle = 'rgba(127,0,0,1)';
+			ctx.arc(0, 0, 6, 0, Math.PI*2, true);
+			ctx.closePath();
+			ctx.fill();
+			ctx.restore();
+		}
+
+		ctx.restore();
+	}
+	this.update = function(){
+		attrs.damage(this);
+	}
+	this.remove = function(){
+		env = {}; env[this.id]='delete'; exports.receive(env);
 	}
 }
 
@@ -203,6 +262,7 @@ types.hero = function(data){
 		}
 		for (var m in this.collisions.mob) this.health--;
 		attrs.damage(this);
+		attrs.bag(this);
 	}
 	this.bounds = function(){
 		return {left:this.x-10, top:this.y-10,
@@ -384,6 +444,16 @@ function map(x_o, y_o, spawn_c){
 		var y = (utils.roll(20)-10)*24+y_o;
 		if (Math.abs(x) < 100 && Math.abs(y) < 100) s--;
 		else items['s'+gid++] = {type:'spawn', x:x, y:y}
+	}
+	
+	/* Items generation */
+	var item_types = new Array('healthpack', 'quiver', 'bomb_bag');
+	for (var i = 0; i < 2; i++){
+		var x = (utils.roll(20)-10)*24+x_o;
+		var y = (utils.roll(20)-10)*24+y_o;
+		if (Math.abs(x) < 100 && Math.abs(y) < 100) i--;
+		else items['p'+gid++] =
+		{type:'pickup',item_type:item_types[utils.roll(item_types.length)], x:x, y:y}
 	}
 
 	/* Walls generation */
