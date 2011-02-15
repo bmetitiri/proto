@@ -7,6 +7,7 @@ var list = [], types = {}, atlas = {};
 var players = [], messages = [], data_q = [];
 var attrs = {}, utils = {};
 var collisions = {}, box_size = 100; //collision engine
+var item_types = ['healthpack', 'quiver', 'bomb_bag'];
 
 if (typeof(exports)=='undefined') exports = {}
 exports.world = {};
@@ -37,8 +38,13 @@ attrs.damage = function(self){
 		self.health-=3;
 	if (self.health < 1){
 		env = {}; env[self.id]='delete';
-		if (exports.broadcast) exports.broadcast(env); // TODO: Send:@
-		else exports.receive(env);
+		if (exports.broadcast){
+			if (Math.random() < .1)
+				env['p'+gid++] = {type:'pickup',item_type:item_types[
+					utils.roll(item_types.length)], x:self.x, y:self.y};
+		   	exports.broadcast(env); // TODO: Send:@
+
+		} else exports.receive(env);
 	}
 }
 
@@ -447,7 +453,6 @@ function map(x_o, y_o, spawn_c){
 	}
 	
 	/* Items generation */
-	var item_types = new Array('healthpack', 'quiver', 'bomb_bag');
 	for (var i = 0; i < 2; i++){
 		var x = (utils.roll(20)-10)*24+x_o;
 		var y = (utils.roll(20)-10)*24+y_o;
