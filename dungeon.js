@@ -601,7 +601,6 @@ exports.main = function (){
 	}
 	for (var i in list){
 		var o = list[i];
-		o.update();
 		if (cvs){
 			if (o.type == 'boom' || o.collisions.boom) o.draw();
 			else for (var p in players){
@@ -614,9 +613,28 @@ exports.main = function (){
 				}
 			}
 		}
+		o.update();
 		o.collisions = {};
 	}
-	if (cvs) ctx.restore();
+	if (cvs){
+		for (var p in players){
+			p = players[p];
+			if (p != player){
+				var dx = player.x-p.x, dy = player.y-p.y;
+				var d = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
+				if (d > 250){
+					ctx.beginPath();
+					ctx.moveTo(player.x-(dx/d*230), player.y-(dy/d*230));
+					ctx.lineTo(player.x-(dx/d*250), player.y-(dy/d*250));
+					if (d > 1000) d = 2000;
+					ctx.lineWidth = 6-(d/400);
+					ctx.strokeStyle = p.color;
+					ctx.stroke();
+				}
+			}
+		}
+		ctx.restore();
+	}
 }
 
 exports.receive = function(data){
