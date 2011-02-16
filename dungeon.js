@@ -370,7 +370,7 @@ types.spawn = function(data){
 				p = players[p];
 				var d = Math.sqrt(Math.pow(this.x-p.x, 2) +
 						Math.pow(this.y-p.y, 2));
-				if (d<200 && Math.random() > .95){
+				if (d<400 && Math.random() > .95){
 					var mobs = {}; mobs['m'+gid++] = {type:'mob',
 						x:this.x+(utils.roll(2)-1)*20,
 						y:this.y+(utils.roll(2)-1)*20}
@@ -444,21 +444,22 @@ types.tower = function(data){
 
 function map(x_o, y_o, spawn_c){
 	var items = {};
-	/* Spawn generation */
-	for (var s = 0; s < spawn_c; s++){
-		var x = (utils.roll(20)-10)*24+x_o;
-		var y = (utils.roll(20)-10)*24+y_o;
-		if (Math.abs(x) < 100 && Math.abs(y) < 100) s--;
-		else items['s'+gid++] = {type:'spawn', x:x, y:y}
-	}
-	
-	/* Items generation */
-	for (var i = 0; i < 2; i++){
-		var x = (utils.roll(20)-10)*24+x_o;
-		var y = (utils.roll(20)-10)*24+y_o;
-		if (Math.abs(x) < 100 && Math.abs(y) < 100) i--;
-		else items['p'+gid++] =
-		{type:'pickup',item_type:item_types[utils.roll(item_types.length)], x:x, y:y}
+	if (x_o||y_o){
+		/* Spawn generation */
+		for (var s = 0; s < spawn_c; s++){
+			var x = (utils.roll(20)-10)*24+x_o;
+			var y = (utils.roll(20)-10)*24+y_o;
+			//if (Math.abs(x) < 100 && Math.abs(y) < 100) s--; else
+			items['s'+gid++] = {type:'spawn', x:x, y:y}
+		}
+		
+		/* Items generation */
+		for (var i = 0; i < 2; i++){
+			var x = (utils.roll(20)-10)*24+x_o;
+			var y = (utils.roll(20)-10)*24+y_o;
+			items['p'+gid++] = {type:'pickup',item_type:item_types[
+				utils.roll(item_types.length)], x:x, y:y}
+		}
 	}
 
 	/* Walls generation */
