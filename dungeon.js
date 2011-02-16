@@ -443,8 +443,8 @@ types.tower = function(data){
 }
 
 function map(x_o, y_o, spawn_c){
-	var items = {};
-	if (x_o||y_o){
+	var items = {}, danger=x_o||y_o;
+	if (danger){
 		/* Spawn generation */
 		for (var s = 0; s < spawn_c; s++){
 			var x = (utils.roll(20)-10)*24+x_o;
@@ -470,11 +470,11 @@ function map(x_o, y_o, spawn_c){
 			if (wx || wy){
 				items['w'+gid++] = {type:'wall', x:wx, y:wy}
 				r = Math.random();
-				if (r > .9 && (Math.abs(x)>3||Math.abs(y)>3))
+				if (r > .9 && danger)
 					items['t'+gid++] = {type:'tower', x:wx+40, y:wy}
 				else if (r > .7)
 					items['w'+gid++] = {type:'wall',  x:wx+40, y:wy}
-				else if (r < .1 && (Math.abs(x)>3||Math.abs(y)>3))
+				else if (r < .1 && danger)
 					items['t'+gid++] = {type:'tower', x:wx+40, y:wy}
 				else if (r < .3)
 					items['w'+gid++] = {type:'wall',  x:wx, y:wy+40}
