@@ -14,36 +14,36 @@ types.hero = function(data){
 	this.dy = data.dy || 0;
 	this.draw = function(){
 		context.fillStyle = '#00f';
-		context.fillRect(this.x-8, this.y-8, 16, 16);
+		context.fillRect(this.x-size/2, this.y-size/2, size, size);
 	}
 	this.update = function(){
 		this.dx = 0, dir = 0;
 		if (this.left){  this.dx -= 5; this.dir = -1;}
 		if (this.right){ this.dx += 5; this.dir = 1;}
 		if (this.run)   this.dx *= 2;
-		var x = this.x+15*this.dir;
+		var x = this.x+size-1*this.dir;
 		if (tile(x, this.y-7) || tile(x, this.y+7)){
-			this.x  = size*adjust(this.x)+8;
+			this.x  = size*adjust(this.x)+size/2;
 			this.dx = 0;
 		}
 		this.x += this.dx;
 
-		if (tile(this.x-7, this.y+15) || tile(this.x+7, this.y+15)){
-			this.y  = size*adjust(this.y)+8;
+		if (tile(this.x-7, this.y+size-1) || tile(this.x+7, this.y+size-1)){
+			this.y  = size*adjust(this.y)+size/2;
 			this.dy = 0;
 			this.jump = this.double = true;
-		} else if (this.dy < 15){
+		} else if (this.dy < size-1){
 		   	this.dy += 1;
 			if (!this.up && this.double){
 			   	this.double = false;
 				this.jump = true;
 			}
 		}
-		if (tile(this.x-7, this.y-15) || tile(this.x+7, this.y-15)){
-			this.y  = size*adjust(this.y)+8;
+		if (tile(this.x-7, this.y-size-1) || tile(this.x+7, this.y-size-1)){
+			this.y  = size*adjust(this.y)+size/2;
 			if (this.dy < 0) this.dy = 0;
 		} else if (this.jump && this.up){
-		   	this.dy = -15;
+		   	this.dy = -size+1;
 			this.jump = false;
 		}
 		this.y += this.dy;
