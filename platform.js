@@ -21,12 +21,11 @@ types.hero = function(data){
 		if (this.left){  this.dx -= 5; this.dir = -1;}
 		if (this.right){ this.dx += 5; this.dir = 1;}
 		if (this.run)   this.dx *= 2;
-		var x = this.x+size-1*this.dir;
+		var x = this.x+(size-1)*this.dir;
 		if (tile(x, this.y-7) || tile(x, this.y+7)){
 			this.x  = size*adjust(this.x)+size/2;
 			this.dx = 0;
 		}
-		this.x += this.dx;
 
 		if (tile(this.x-7, this.y+size-1) || tile(this.x+7, this.y+size-1)){
 			this.y  = size*adjust(this.y)+size/2;
@@ -46,6 +45,7 @@ types.hero = function(data){
 		   	this.dy = -size+1;
 			this.jump = false;
 		}
+		this.x += this.dx;
 		this.y += this.dy;
 	}
 }
@@ -66,14 +66,15 @@ exports.draw = function(){
 }
 
 exports.init = function(){
-	for (var x = 0; x < 5; x++)
+	for (var x = 0; x < 10; x++)
 		map.push([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]);
 	map.push([0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1]);
+	map.push([0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1]);
 	for (var x = 0; x < 10; x++)
 		map.push([0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1]);
 	map.push([0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1]);
 	map.push([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]);
-	for (var x = 0; x < 20; x++)
+	for (var x = 0; x < 40; x++)
 		map.push([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]);
 	for (var x = 0; x < 10; x++)
 		map.push([0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,1]);
