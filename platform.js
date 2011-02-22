@@ -1,9 +1,9 @@
-var gid = 0, map = [], size = 16, canvas = context = null;
+var gid = 0, size = 16, canvas = context = null;
 var keys = {16:'run', 37:'left', 39:'right', 38:'up', 40:'down'}
 
-function adjust(i){return Math.floor(i/size);}
+function adjust(i){return Math.floor(parseInt(i)/size);}
 function tile(x, y){
-	var r = map[adjust(x)]; return r && r[adjust(y)];}
+	var r = parseInt(map[adjust(y)][adjust(x)]); return r;}
 
 types = {}
 
@@ -27,6 +27,7 @@ types.hero = function(data){
 			this.dx = 0;
 		}
 
+		// if on ground
 		if (tile(this.x-7, this.y+size-1) || tile(this.x+7, this.y+size-1)){
 			this.y  = size*adjust(this.y)+size/2;
 			this.dy = 0;
@@ -38,6 +39,7 @@ types.hero = function(data){
 				this.jump = true;
 			}
 		}
+		// jumped into something above
 		if (tile(this.x-7, this.y-size-1) || tile(this.x+7, this.y-size-1)){
 			this.y  = size*adjust(this.y)+size/2;
 			if (this.dy < 0) this.dy *= -.1;
@@ -57,31 +59,18 @@ exports.draw = function(){
 	context.fillStyle = '#89c';
 	context.fillRect(0, 0, canvas.width, canvas.height);
 	context.fillStyle = '#000';
-	for (var x = 0; x < map.length; x++){
-		var row = map[x];
-		for (var y = 0; y < row.length; y++)
-			if (row[y]) context.fillRect(x*size, y*size, size, size);
+	context.save();
+	if(typeof(hero) != 'undefined')
+		context.translate((canvas.width/8)-hero.x,-size);
+	for (var y = 0; y < map.length; y++){
+		for (var x = 0; x < map[0].length; x++)
+			if (map[y][x]=='1') context.fillRect(x*size, y*size, size, size);
 	}
 	for (var o in world) world[o].draw();
+	context.restore();
 }
 
 exports.init = function(){
-	for (var x = 0; x < 10; x++)
-		map.push([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]);
-	map.push([0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1]);
-	map.push([0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1]);
-	for (var x = 0; x < 10; x++)
-		map.push([0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1]);
-	map.push([0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1]);
-	map.push([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]);
-	for (var x = 0; x < 40; x++)
-		map.push([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]);
-	for (var x = 0; x < 10; x++)
-		map.push([0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,1]);
-	map.push([0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1]);
-	map.push([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]);
-	for (var x = 0; x < 10; x++)
-		map.push([0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1]);
 	hero = world['@'] = new types.hero({x:100, y:100});
 	setInterval(exports.main, 30);
 }
@@ -95,8 +84,8 @@ window.onload = function(){
 	canvas = document.getElementById('canvas'),
 		   context = canvas.getContext('2d');
 	(window.onresize = function(){
-		canvas.width  = window.innerWidth;
-		canvas.height = window.innerHeight;
+		canvas.width  = window.innerWidth/2;
+		canvas.height = window.innerHeight/2;
 		exports.draw(canvas);
 	})();
 	window.onkeydown = window.onkeyup = function (e){
@@ -106,6 +95,7 @@ window.onload = function(){
 			if (hero[action] != state) hero[action] = state;
 		}
 	}
+
 	exports.init();
 	exports.draw(canvas);
 }
