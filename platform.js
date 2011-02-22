@@ -40,7 +40,7 @@ types.hero = function(data){
 		}
 		if (tile(this.x-7, this.y-size-1) || tile(this.x+7, this.y-size-1)){
 			this.y  = size*adjust(this.y)+size/2;
-			if (this.dy < 0) this.dy = 0;
+			if (this.dy < 0) this.dy *= -.1;
 		} else if (this.jump && this.up){
 		   	this.dy = -size+1;
 			this.jump = false;
