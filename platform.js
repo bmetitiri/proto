@@ -1,4 +1,4 @@
-var gid = 0, size = 32, canvas = context = null;
+var gid = 0, size = 16, canvas = context = null;
 var keys = {16:'run', 37:'left', 39:'right', 38:'up', 40:'down'}
 
 function adjust(i){return Math.floor(parseInt(i)/size);}
@@ -84,8 +84,8 @@ window.onload = function(){
 	canvas = document.getElementById('canvas'),
 		   context = canvas.getContext('2d');
 	(window.onresize = function(){
-		canvas.width  = window.innerWidth;
-		canvas.height = window.innerHeight;
+		canvas.width  = window.innerWidth/2;
+		canvas.height = window.innerHeight/2;
 		exports.draw(canvas);
 	})();
 	window.onkeydown = window.onkeyup = function (e){
