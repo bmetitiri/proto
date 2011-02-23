@@ -2,7 +2,7 @@
 
 var http = require('http'),
 	fs   = require('fs');
-	io   = require('./socket.io'),
+	io   = require('socket.io'),
 
 mime = {'html':'text/html', 'js':'text/javascript'}
 
