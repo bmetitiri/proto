@@ -31,6 +31,7 @@ game.broadcast = function(data){game.receive(data); io.broadcast(data)}
 game.init();
 
 io.on('connection', function(client){
+	client.send({sessionId:client.sessionId}); 
 	client.send(game.world); // TODO: Shouldn't occur during loop
 
 	client.on('message', function(message){

@@ -637,7 +637,17 @@ exports.main = function (){
 	}
 }
 
+
+create_player = function(sessionId){
+	send(sessionId.toString(), {type:'hero',color:Math.floor(Math.random()*16777215).toString(16)});
+	while(data_q.length) process(data_q.shift());
+	player = exports.world[sessionId];
+}
+
 exports.receive = function(data){
+	if (data.sessionId){
+		create_player(data.sessionId);
+	}
 	data_q.push(data);
 }
 
@@ -656,7 +666,7 @@ function handle_keys(e){
 			state = e.type == 'keydown';
 			if (player[action] != state){
 				var env = {x:player.x, y:player.y}; env[action] = state;
-				send('@', env);
+				send(player.id.toString(), env);
 			}
 		}
 	}
@@ -674,15 +684,13 @@ if (typeof(window)!='undefined')
 		chatbox = document.getElementById('chatbox')
 		cvs     = document.getElementById('canvas');
 		ctx = cvs.getContext('2d');
-		send('@', {type:'hero',color:Math.floor(Math.random()*16777215).toString(16)});
-		while(data_q.length) process(data_q.shift());
-		player = exports.world['@'];
 
 		window.onresize = function(){
 			cvs.width  = window.innerWidth;
 			cvs.height = window.innerHeight;
 		}
 		window.onresize();
+
 
 		window.onkeydown = handle_keys;
 		window.onkeyup = function(e){
@@ -695,7 +703,7 @@ if (typeof(window)!='undefined')
 					if (chatbox.style.display == 'block') chatbox.focus();
 					message = {message:chatbox.value, color:player.color}
 					var env = {}; env['chat'] = !player['chat'];
-					send('@', env);
+					send(player.id.toString(), env);
 					send('!', message);
 					chatbox.value = '';
 			} else handle_keys(e);
