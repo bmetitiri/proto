@@ -55,9 +55,10 @@ attrs.bag = function(self){
 		p = self.collisions.pickup[p];
 		if (p.item_type == 'healthpack') 
 			if(self.health + 10 <= 100) self.health += 10;
-		if (p.item_type == 'quiver') 
-			if(self.inventory.ammo + 10 <= 500) self.inventory.ammo += 10;
-		if (p.item_type == 'bomb_bag') 
+		if (p.item_type == 'quiver'){
+			if(self.inventory.ammo + 50 <= 500) self.inventory.ammo += 50;
+			else self.inventory.ammo = 500;
+		} if (p.item_type == 'bomb_bag') 
 			if(self.inventory.bombs + 5 <= 30) self.inventory.bombs += 5;
 		p.remove();
 	}
@@ -154,8 +155,11 @@ types.pickup = function(data){
 			ctx.fillRect(-10, -2, 20, 4);
 		}
 		else if (this.item_type =='quiver'){
-			ctx.fillStyle = '#0a0';
-			ctx.fillRect(-10, -10, 20, 20);
+			ctx.save();
+			ctx.rotate(Math.PI/4);
+			ctx.fillStyle = '#840';
+			ctx.fillRect(-5, -10, 10, 20);
+			ctx.restore();
 		}
 		else if (this.item_type =='bomb_bag'){
 			ctx.fillStyle = '#666';
