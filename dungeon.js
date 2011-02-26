@@ -42,9 +42,8 @@ attrs.damage = function(self){
 			if (Math.random() < .1)
 				env['p'+gid++] = {type:'pickup',item_type:item_types[
 					utils.roll(item_types.length)], x:self.x, y:self.y};
-			if (self.type == 'hero' && self.inventory.bombs){
+			if (self.type == 'hero' && self.inventory.bombs)
 				env['b'+gid++] = {type:'bomb', x:self.x, y:self.y}
-			}
 		   	exports.broadcast(env); // TODO: Send:@
 
 		} else exports.receive(env);
