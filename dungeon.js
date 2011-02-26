@@ -231,19 +231,21 @@ types.hero = function(data){
 	}
 	this.update = function(){
 		speed = this.speed;
-		if (this.run && this.stamina-- > 0) speed *= 2;
-		else if (this.stamina < 100) this.stamina++;
+		if (this.left||this.right||this.up||this.down){
+			if (this.run && this.stamina-- > 0) speed *= 2;
+			else if (this.stamina < 100) this.stamina++;
 
-		if ((this.left||this.right)&&(this.up||this.down))
-			speed = .7 * speed;
-		this.x1 = this.x; this.y1 = this.y;
-		if (this.left)  this.x -= speed;
-		if (this.right) this.x += speed;
-		if (this.up)    this.y -= speed;
-		if (this.down)  this.y += speed;
+			if ((this.left||this.right)&&(this.up||this.down))
+				speed = .7 * speed;
+			this.x1 = this.x; this.y1 = this.y;
+			if (this.left)  this.x -= speed;
+			if (this.right) this.x += speed;
+			if (this.up)    this.y -= speed;
+			if (this.down)  this.y += speed;
 
-		var dir = (this.left&&1)|(this.right&&2)|
-			(this.up&&4)|(this.down&&8);
+			var dir = (this.left&&1)|(this.right&&2)|
+				(this.up&&4)|(this.down&&8);
+		}
 		if (dir) this.r = dir;
 		if (this.attack){
 			if (this.inventory['ammo'] > 0){
