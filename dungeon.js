@@ -207,9 +207,10 @@ types.boom = function(data){
 }
 
 types.hero = function(data){
-	this.speed     = data.speed  || 5;
-	this.chat      = data.chat   || false;
-	this.health    = data.health || 20;
+	this.speed     = data.speed   || 5;
+	this.chat      = data.chat    || false;
+	this.health    = data.health  || 20;
+	this.stamina   = data.stamina || 100;
 	this.color     = data.color; 	
 	this.inventory = {'bombs':5, 'ammo':500}
 	this.r = data.r || 8;
@@ -230,7 +231,8 @@ types.hero = function(data){
 	}
 	this.update = function(){
 		speed = this.speed;
-		if (this.run) speed *= 2;
+		if (this.run && this.stamina-- > 0) speed *= 2;
+		else if (this.stamina < 100) this.stamina++;
 
 		if ((this.left||this.right)&&(this.up||this.down))
 			speed = .7 * speed;
