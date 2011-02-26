@@ -42,6 +42,9 @@ attrs.damage = function(self){
 			if (Math.random() < .1)
 				env['p'+gid++] = {type:'pickup',item_type:item_types[
 					utils.roll(item_types.length)], x:self.x, y:self.y};
+			if (self.type == 'hero' && self.inventory.bombs){
+				env['b'+gid++] = {type:'bomb', x:self.x, y:self.y}
+			}
 		   	exports.broadcast(env); // TODO: Send:@
 
 		} else exports.receive(env);
@@ -54,9 +57,9 @@ attrs.bag = function(self){
 		if (p.item_type == 'healthpack') 
 			if(self.health + 10 <= 100) self.health += 10;
 		if (p.item_type == 'quiver') 
-			if(self.inventory['ammo'] + 10 <= 500) self.inventory['ammo'] += 10;
+			if(self.inventory.ammo + 10 <= 500) self.inventory.ammo += 10;
 		if (p.item_type == 'bomb_bag') 
-			if(self.inventory['bombs'] + 5 <= 30) self.inventory['bombs'] += 5;
+			if(self.inventory.bombs + 5 <= 30) self.inventory.bombs += 5;
 		p.remove();
 	}
 }
@@ -257,8 +260,8 @@ types.hero = function(data){
 			this.attack = false;
 		}
 		if (this.bomb){
-			if (this.inventory['bombs'] > 0){
-				this.inventory['bombs'] -= 1;
+			if (this.inventory.bombs > 0){
+				this.inventory.bombs -= 1;
 				if (exports.broadcast){
 					var b = {}; b['b'+gid++] = {type:'bomb', x:this.x, y:this.y}
 					exports.broadcast(b);
