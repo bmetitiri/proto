@@ -19,7 +19,9 @@ if(three) {
 		light1 = new THREE.PointLight( 0xffffff ),
 		renderer = new THREE.WebGLRenderer();
 	scene.fog = new THREE.FogExp2( 0x000000, 0.0025);
-	var radius = 1000, rotation = 0;
+	var cube = new Cube( 40, 40, 40, 1, 1, 
+		new THREE.MeshLambertMaterial( { color:
+			0xcccccc, shading:THREE.FlatShading } ))
 }
 
 utils.repel = function(self, obj){
@@ -196,10 +198,10 @@ types.hero = function(data){
 			new THREE.MeshLambertMaterial( { color:
 				Math.random() * 0xffffff, shading:THREE.FlatShading } )),
 			new THREE.MeshFaceMaterial() );
-	this.model.position.x = this.x;
-	this.model.position.y = 10;
-	this.model.position.z = this.y;
-	this.model.overdraw = true;
+		this.model.position.x = this.x;
+		this.model.position.y = 10;
+		this.model.position.z = this.y;
+		this.model.overdraw = true;
 		scene.addObject(this.model);
 	}
 	this.update = function(){
@@ -354,10 +356,7 @@ types.wall = function(data){
 	this.draw   = function(){
 	}
 	if(three){
-		this.wall = new THREE.Mesh( new Cube( 40, 40, 40, 1, 1, 
-				new THREE.MeshLambertMaterial( { color:
-					0xcccccc, shading:THREE.FlatShading } )),
-				new THREE.MeshFaceMaterial() );
+		this.wall = new THREE.Mesh(cube, new THREE.MeshFaceMaterial());
 		this.wall.position.x = this.x;
 		this.wall.position.y = 20;
 		this.wall.position.z = this.y;
@@ -542,6 +541,8 @@ exports.main = function (){
 			p = players[p];
 			generate(p.x-200, p.y-200);
 			generate(p.x+200, p.y-200);
+			generate(p.x+200, p.y+200);
+			generate(p.x-200, p.y+200);
 		}
 	collisions = {};
 	for (var o in list){ //TODO: Remove overlapping duplicates
