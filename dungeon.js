@@ -474,7 +474,7 @@ function generateTextureBase() {
 exports.init = function(){
 	if (three){
 		camera.position.y = 100;
-		light1.position.y = 100;
+		light1.position.y = 30;
 		scene.addLight( light1 );
 		var geometry = new Plane(10000,10000);
 		var texture = generateTextureBase();
@@ -597,8 +597,8 @@ exports.main = function (){
 	 if(typeof(THREE) != 'undefined' && typeof(player) != 'undefined') {
 		 camera.position.z = player.model.position.z+100;
 		 camera.position.x = player.model.position.x;
-		 light1.position.x = player.model.position.x+50;
-		 light1.position.z = player.model.position.z+50;
+		 light1.position.x = player.model.position.x+10;
+		 light1.position.z = player.model.position.z+10;
 		 renderer.render( scene, camera);
 	 }
 }
