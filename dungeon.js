@@ -19,9 +19,10 @@ if(three) {
 		light = new THREE.PointLight( 0xffcc99 ),
 		renderer = new THREE.WebGLRenderer();
 	scene.fog = new THREE.FogExp2( 0x000000, 0.0025);
-	var wall = new Cube( 40, 40, 40, 1, 1, 
+	var wall = new Cube(40, 40, 40, 1, 1, 
 		new THREE.MeshLambertMaterial( { color:
 			0xcccccc, shading:THREE.FlatShading } ))
+	var tower_geometry = new Cylinder(16, 20, 20, 30, 0, 0);
 }
 
 utils.repel = function(self, obj){
@@ -372,7 +373,15 @@ types.wall = function(data){
 types.tower = function(data){
 	types.wall.call(this, data);
 	this.health = data.health || 15;
-	this.draw   = function(){
+	if(three){
+		this.tower = new THREE.Mesh(tower_geometry, new THREE.MeshLambertMaterial( 
+			{ color: 0xff0000, shading:THREE.FlatShading } ), new THREE.MeshFaceMaterial());
+		this.tower.position.x = this.x;
+		this.tower.position.y = 20;
+		this.tower.position.z = this.y;
+		this.tower.rotation.x = - 90 * ( Math.PI / 180 );
+		this.tower.overdraw = true;
+		scene.addObject(this.tower);
 	}
 	this.update = function(){
 		attrs.damage(this);
