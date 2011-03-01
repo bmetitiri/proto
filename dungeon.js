@@ -14,10 +14,11 @@ if (typeof(exports)=='undefined') exports = {}
 exports.world = {};
 
 if(three) {
-	var camera = new THREE.Camera(75, null, 1, 20000),
+	var camera = new THREE.Camera(75, null, 1, 1000),
 		scene = new THREE.Scene(),
 		light1 = new THREE.PointLight( 0xffffff ),
 		renderer = new THREE.WebGLRenderer();
+	scene.fog = new THREE.FogExp2( 0x000000, 0.0025);
 	var radius = 1000, rotation = 0;
 }
 
@@ -196,7 +197,7 @@ types.hero = function(data){
 				Math.random() * 0xffffff, shading:THREE.FlatShading } )),
 			new THREE.MeshFaceMaterial() );
 	this.model.position.x = this.x;
-	this.model.position.y = 125;
+	this.model.position.y = 10;
 	this.model.position.z = this.y;
 	this.model.overdraw = true;
 		scene.addObject(this.model);
@@ -358,7 +359,7 @@ types.wall = function(data){
 					0xcccccc, shading:THREE.FlatShading } )),
 				new THREE.MeshFaceMaterial() );
 		this.wall.position.x = this.x;
-		this.wall.position.y = 125;
+		this.wall.position.y = 20;
 		this.wall.position.z = this.y;
 		this.wall.overdraw = true;
 		scene.addObject(this.wall);
@@ -471,9 +472,9 @@ function generateTextureBase() {
 }
 
 exports.init = function(){
-	if (typeof(THREE) !='undefined'){
-		camera.position.y = camera.position.z = 200;
-		light1.position.y = 2000;
+	if (three){
+		camera.position.y = 100;
+		light1.position.y = 100;
 		scene.addLight( light1 );
 		var geometry = new Plane(10000,10000);
 		var texture = generateTextureBase();
