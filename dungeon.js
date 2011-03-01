@@ -2,6 +2,7 @@ var keys = {32:'attack', 16:'run', 66:'bomb',
 	65:'left', 68:'right', 87:'up', 83:'down',
 	72:'left', 76:'right', 75:'up', 74:'down'} /* hlkj */
 
+var three = typeof(THREE)!='undefined';
 var cvs = null, gid = 0;
 var list = [], types = {}, atlas = {};
 var players = [], messages = [], data_q = [];
@@ -12,7 +13,7 @@ var item_types = ['healthpack', 'quiver', 'bomb_bag'];
 if (typeof(exports)=='undefined') exports = {}
 exports.world = {};
 
-if(typeof(THREE)!='undefined') {
+if(three) {
 	var camera = new THREE.Camera(75, null, 1, 20000),
 		scene = new THREE.Scene(),
 		light1 = new THREE.PointLight( 0xffffff ),
@@ -189,7 +190,7 @@ types.hero = function(data){
 	this.y = data.y || 0; this.y1 = data.y1 || this.y;
 	this.draw = function(){
 	}
-	if(typeof(THREE)!='undefined'){
+	if(three){
 	this.model = new THREE.Mesh( new Cube( 20, 20, 20, 1, 1, 
 			new THREE.MeshLambertMaterial( { color:
 				Math.random() * 0xffffff, shading:THREE.FlatShading } )),
@@ -214,7 +215,7 @@ types.hero = function(data){
 			if (this.up)    {this.y -= speed; }
 			if (this.down)  {this.y += speed; }
 	
-	if(typeof(THREE)!='undefined'){
+	if(three){
 		this.model.position.x = this.x;
 		this.model.position.z = this.y;
 		camera.target.position = player.model.position;
@@ -351,7 +352,7 @@ types.wall = function(data){
 	}
 	this.draw   = function(){
 	}
-	if(typeof(THREE)!='undefined'){
+	if(three){
 		this.wall = new THREE.Mesh( new Cube( 40, 40, 40, 1, 1, 
 				new THREE.MeshLambertMaterial( { color:
 					0xcccccc, shading:THREE.FlatShading } )),
