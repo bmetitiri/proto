@@ -19,7 +19,7 @@ if(three) {
 		light = new THREE.PointLight( 0xffcc99 ),
 		renderer = new THREE.WebGLRenderer();
 	scene.fog = new THREE.FogExp2( 0x000000, 0.0025);
-	var cube = new Cube( 40, 40, 40, 1, 1, 
+	var wall = new Cube( 40, 40, 40, 1, 1, 
 		new THREE.MeshLambertMaterial( { color:
 			0xcccccc, shading:THREE.FlatShading } ))
 }
@@ -356,7 +356,7 @@ types.wall = function(data){
 	this.draw   = function(){
 	}
 	if(three){
-		this.wall = new THREE.Mesh(cube, new THREE.MeshFaceMaterial());
+		this.wall = new THREE.Mesh(wall, new THREE.MeshFaceMaterial());
 		this.wall.position.x = this.x;
 		this.wall.position.y = 20;
 		this.wall.position.z = this.y;
