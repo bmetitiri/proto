@@ -598,8 +598,8 @@ exports.main = function (){
 	 if(typeof(THREE) != 'undefined' && typeof(player) != 'undefined') {
 		 camera.position.z = player.model.position.z+100;
 		 camera.position.x = player.model.position.x;
-		 light.position.x = player.model.position.x+10;
-		 light.position.z = player.model.position.z+10;
+		 light.position.x = player.model.position.x;
+		 light.position.z = player.model.position.z;
 		 renderer.render( scene, camera);
 	 }
 }
