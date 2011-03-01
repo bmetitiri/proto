@@ -16,7 +16,7 @@ exports.world = {};
 if(three) {
 	var camera = new THREE.Camera(75, null, 1, 1000),
 		scene = new THREE.Scene(),
-		light = new THREE.PointLight( 0xff9999 ),
+		light = new THREE.PointLight( 0xffcc99 ),
 		renderer = new THREE.WebGLRenderer();
 	scene.fog = new THREE.FogExp2( 0x000000, 0.0025);
 	var cube = new Cube( 40, 40, 40, 1, 1, 
