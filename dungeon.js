@@ -403,7 +403,7 @@ types.spawn = function(data){
 				p = players[p];
 				var d = Math.sqrt(Math.pow(this.x-p.x, 2) +
 						Math.pow(this.y-p.y, 2));
-				if (d<400 && Math.random() > .95){
+				if (d<400 && Math.random() > .99){
 					var mobs = {}; mobs['m'+gid++] = {type:'mob',
 						x:this.x+(utils.roll(2)-1)*20,
 						y:this.y+(utils.roll(2)-1)*20}
