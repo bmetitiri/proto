@@ -1,16 +1,18 @@
 <?doctype html>
 <html>
 	<head>
-		<title>&#960;</title>
+		<title>dungeon</title>
 		<style type="text/css">
 			* {margin:0; padding:0;}
-			#canvas {height:100%; width:100%;}
+			body {overflow: hidden;}
 		</style>
+		<script src="/socket.io/socket.io.js"></script>
+		<script type="text/javascript" src="three.js"></script>
+		<script type="text/javascript" src="plane.js"></script>
+		<script type="text/javascript" src="cube.js"></script>
+		<script type="text/javascript" src="dungeon.js"></script>
 	</head>
-	<body></body>
-	<!--script src="/socket.io/socket.io.js"></script-->
-	<script type="text/javascript" src="three.js"></script>
-	<script type="text/javascript" src="cube.js"></script>
-	<script type="text/javascript" src="plane.js"></script>
-	<script type="text/javascript" src="abit.js"></script>
+	<body>
+		<canvas id="canvas"></canvas>
+		</body>
 </html>

@@ -24,13 +24,14 @@ var server = http.createServer(
 
 server.listen(8080, '0.0.0.0');
 
-/*var io = io.listen(server);
+var io = io.listen(server);
 
 var game = require(process.argv[2]);
 game.broadcast = function(data){game.receive(data); io.broadcast(data)}
 game.init();
 
 io.on('connection', function(client){
+	client.send({sessionId:client.sessionId}); 
 	client.send(game.world); // TODO: Shouldn't occur during loop
 
 	client.on('message', function(message){
@@ -44,4 +45,4 @@ io.on('connection', function(client){
 		game.receive(env);
 		client.broadcast(env);
 	});
-});*/
+});
