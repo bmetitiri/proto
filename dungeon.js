@@ -16,7 +16,6 @@ exports.world = {};
 if(three) {
 	var camera = new THREE.Camera(75, null, 1, 1000),
 		scene = new THREE.Scene(),
-		light = new THREE.PointLight( 0xffcc99 ),
 		renderer = new THREE.WebGLRenderer();
 	scene.fog = new THREE.FogExp2( 0x000000, 0.0025);
 	var wall = new Cube(40, 40, 40, 1, 1, 
@@ -204,6 +203,11 @@ types.hero = function(data){
 		this.model.position.z = this.y;
 		this.model.overdraw = true;
 		scene.addObject(this.model);
+		this.light = new THREE.PointLight( 0xffcc99 ),
+		this.light.position.x = this.x;
+		this.light.position.z = this.y;
+		this.light.position.y = 30;
+		scene.addLight( this.light );
 	}
 	this.update = function(){
 		speed = this.speed;
@@ -220,8 +224,8 @@ types.hero = function(data){
 			if (this.down)  {this.y += speed; }
 	
 	if(three){
-		this.model.position.x = this.x;
-		this.model.position.z = this.y;
+		this.light.position.x = this.model.position.x = this.x;
+		this.light.position.z = this.model.position.z = this.y;
 		camera.target.position = player.model.position;
 	}
 
@@ -482,8 +486,6 @@ function generateTextureBase() {
 exports.init = function(){
 	if (three){
 		camera.position.y = 100;
-		light.position.y = 30;
-		scene.addLight( light );
 		var geometry = new Plane(10000,10000);
 		var texture = generateTextureBase();
 		var floor = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( { map: new THREE.Texture( texture , new THREE.UVMapping(), THREE.ClampToEdgeWrapping, THREE.ClampToEdgeWrapping ) } ) );
@@ -607,8 +609,6 @@ exports.main = function (){
 	 if(typeof(THREE) != 'undefined' && typeof(player) != 'undefined') {
 		 camera.position.z = player.model.position.z+100;
 		 camera.position.x = player.model.position.x;
-		 light.position.x = player.model.position.x;
-		 light.position.z = player.model.position.z;
 		 renderer.render( scene, camera);
 	 }
 }
@@ -637,7 +637,7 @@ function handle_keys(e){
 	var action = {}
 	action = keys[e.keyCode];
 	
-	if(player['chat'] == false){
+	if(typeof(player) != 'undefined' && player['chat'] == false){
 		if (action){
 			state = e.type == 'keydown';
 			if (player[action] != state){
