@@ -22,6 +22,12 @@ if(three) {
 		new THREE.MeshLambertMaterial( { color:
 			0xcccccc, shading:THREE.FlatShading } ))
 	var tower_geometry = new Cylinder(16, 20, 20, 30, 0, 0);
+	var mob = new Cube(20, 20, 20, 1, 1, 
+		new THREE.MeshLambertMaterial( { color:
+			0x00ff00, shading:THREE.FlatShading } ))
+	var arrow = new Cube(2, 2, 2, 1, 1, 
+		new THREE.MeshLambertMaterial( { color:
+			0x00ffff, shading:THREE.FlatShading } ))
 }
 
 utils.repel = function(self, obj){
@@ -93,10 +99,18 @@ types.arrow = function(data){
 	this.dy     = data.dy;
 	this.speed  = data.speed;
 	this.bounds = function(){
-		return {left:this.x-4, top:this.y-4,
-			right:this.x+4, bottom:this.y+4}
+		return {left:this.x-2, top:this.y-2,
+			right:this.x+2, bottom:this.y+2}
 	}
 	this.draw   = function(){
+	}
+	if(three){
+		this.arrow = new THREE.Mesh(arrow, new THREE.MeshFaceMaterial());
+		this.arrow.position.x = this.x;
+		this.arrow.position.y = 20;
+		this.arrow.position.z = this.y;
+		this.arrow.overdraw = true;
+		scene.addObject(this.arrow);
 	}
 	this.remove = function(){
 		env = {}; env[this.id]='delete'; exports.receive(env);
@@ -109,6 +123,10 @@ types.arrow = function(data){
 		if (this.t-- < 0) this.remove();
 		this.x += this.dx;
 		this.y += this.dy;
+		if(three) {
+			this.arrow.position.x = this.x;
+			this.arrow.position.z = this.y;
+		}
 	}
 }
 
@@ -273,12 +291,19 @@ types.mob = function(data){
 	this.y = data.y || 0; this.y1 = data.y1 || this.y;
 	this.speed  = data.speed  || 5;
 	this.health = data.health || 2;
-
-	this.draw = function(){
+	if(three){
+		this.mob = new THREE.Mesh(mob, new THREE.MeshFaceMaterial());
+		this.mob.position.x = this.x;
+		this.mob.position.y = 20;
+		this.mob.position.z = this.y;
+		this.mob.overdraw = true;
+		scene.addObject(this.mob);
 	}
 	this.bounds = function(){
 		return {left:this.x-8, top:this.y-8,
 			right:this.x+8, bottom:this.y+8}
+	}
+	this.draw   = function(){
 	}
 	this.toward = function(target, reverse){
 		reverse = (reverse)?-1:1;
@@ -291,6 +316,10 @@ types.mob = function(data){
 		if (dx&&dy) speed = .7 * speed;
 		this.x1 = this.x; this.x += dx*speed*reverse;
 		this.y1 = this.y; this.y += dy*speed*reverse;
+		if(three) {
+			this.mob.position.x = this.x;
+			this.mob.position.z = this.y;
+		}
 	}
 	this.update = function(){
 		attrs.damage(this);
