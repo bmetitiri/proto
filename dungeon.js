@@ -16,7 +16,7 @@ exports.world = {};
 if(three) {
 	var camera = new THREE.Camera(75, null, 1, 1000),
 		scene = new THREE.Scene(),
-		light1 = new THREE.PointLight( 0xffffff ),
+		light = new THREE.PointLight( 0xff9999 ),
 		renderer = new THREE.WebGLRenderer();
 	scene.fog = new THREE.FogExp2( 0x000000, 0.0025);
 	var cube = new Cube( 40, 40, 40, 1, 1, 
@@ -473,8 +473,8 @@ function generateTextureBase() {
 exports.init = function(){
 	if (three){
 		camera.position.y = 100;
-		light1.position.y = 30;
-		scene.addLight( light1 );
+		light.position.y = 30;
+		scene.addLight( light );
 		var geometry = new Plane(10000,10000);
 		var texture = generateTextureBase();
 		var floor = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( { map: new THREE.Texture( texture , new THREE.UVMapping(), THREE.ClampToEdgeWrapping, THREE.ClampToEdgeWrapping ) } ) );
@@ -598,8 +598,8 @@ exports.main = function (){
 	 if(typeof(THREE) != 'undefined' && typeof(player) != 'undefined') {
 		 camera.position.z = player.model.position.z+100;
 		 camera.position.x = player.model.position.x;
-		 light1.position.x = player.model.position.x+10;
-		 light1.position.z = player.model.position.z+10;
+		 light.position.x = player.model.position.x+10;
+		 light.position.z = player.model.position.z+10;
 		 renderer.render( scene, camera);
 	 }
 }
