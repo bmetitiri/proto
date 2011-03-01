@@ -17,7 +17,7 @@ if(three) {
 	var camera = new THREE.Camera(75, null, 1, 1000),
 		scene = new THREE.Scene(),
 		renderer = new THREE.WebGLRenderer();
-	scene.fog = new THREE.FogExp2( 0x000000, 0.0025);
+	scene.fog = new THREE.Fog( 0x000000, 1, 500);
 	var wall = new Cube(40, 40, 40, 1, 1, 
 		new THREE.MeshLambertMaterial( { color:
 			0xcccccc, shading:THREE.FlatShading } ))
