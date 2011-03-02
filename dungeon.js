@@ -725,6 +725,15 @@ if (typeof(window)!='undefined')
 			camera.aspect = window.innerWidth / window.innerHeight;
 			camera.updateProjectionMatrix();
 		})();
+
+		function mouseHandler(e){
+			delta = e.wheelDelta;
+			if (delta < 0) camera.position.y +=15;
+			if (delta > 0) camera.position.y -=15;
+		}
+		window.addEventListener('mousewheel', mouseHandler, false);
+
+
 		window.onkeydown = handle_keys;
 		window.onkeyup = function(e){
 			if (e.keyCode == 192)
