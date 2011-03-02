@@ -1,4 +1,4 @@
-This repo contains a number of disparate code sketches -- largely to cut down on the number of abandoned, largely unusable branches in github.
+This repo contains a number of disparate code sketches -- largely to cut down on the number of abandoned, largely unusable repos in github.
 
 ###baad
  - Webkit with transparency
