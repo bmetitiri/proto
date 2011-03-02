@@ -59,7 +59,7 @@ let NERDTreeIgnore=['\.vim$', '\.pyc$']
 "let g:JavaImpDataDir = $HOME.'/.vim/JavaImp' 
 "map <silent> <C-o> :JavaImpSilent<cr>:JIS<cr>
 
-set tw=80
+"set tw=80
 set spell
 
 vmap > >gv
