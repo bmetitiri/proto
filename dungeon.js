@@ -21,14 +21,14 @@ if(three) {
 	var wall = new Cube(40, 40, 40, 1, 1, 
 		new THREE.MeshLambertMaterial( { color:
 			0xcccccc, shading:THREE.FlatShading } ))
-	var tower_geometry = new Cylinder(16, 20, 20, 30, 0, 0);
-	var mob = new Cube(20, 20, 20, 1, 1, 
+	var tower_geometry = new Cylinder(16, 20, 20, 40, 0, 0);
+	var mob = new Cube(15, 20, 15, 1, 1, 
 		new THREE.MeshLambertMaterial( { color:
 			0x00ff00, shading:THREE.FlatShading } ));
 	var arrow = new Cube(4, 4, 4, 1, 1, 
 		new THREE.MeshLambertMaterial( { color:
 			0x00ffff, shading:THREE.FlatShading } ));
-	var player_model = new Cube( 20, 20, 20, 1, 1, 
+	var player_model = new Cube( 15, 20, 15, 1, 1, 
 			new THREE.MeshLambertMaterial( { color:
 				Math.random() * 0xffffff, shading:THREE.FlatShading } ));
 	var bomb = new Cube(5, 5, 5, 1, 1, 
@@ -68,7 +68,7 @@ attrs.damage = function(self){
 		self.health-=3;
 	if (self.health < 1){
 		env = {}; env[self.id]='delete';
-		if(three) renderer.removeObject(scene, self.model);
+		self.remove();
 		if (exports.broadcast){
 			if (Math.random() < .1)
 				env['p'+gid++] = {type:'pickup',item_type:item_types[
@@ -115,8 +115,6 @@ types.arrow = function(data){
 		return {left:this.x-4, top:this.y-4,
 			right:this.x+4, bottom:this.y+4}
 	}
-	this.draw   = function(){
-	}
 	if(three){
 		this.model = new THREE.Mesh(arrow, new THREE.MeshFaceMaterial());
 		this.model.position.x = this.x;
@@ -161,8 +159,6 @@ types.bomb = function(data){
 		this.model.overdraw = true;
 		scene.addObject(this.model);
 	}
-	this.draw   = function(){
-	}
 	this.remove = function(){
 		if(three) renderer.removeObject(scene, this.model);
 		env = {}; env[this.id]='delete'; exports.receive(env);
@@ -189,20 +185,20 @@ types.pickup = function(data){
 			right:this.x+10, bottom:this.y+10}
 	}
 	if(three){
-		this.model = new THREE.Mesh(pickup, new THREE.MeshFaceMaterial());
+         if (this.item_type == 'healthpack'){
+		 	this.model = new THREE.Mesh(pickup, new THREE.MeshFaceMaterial());
+         }
+         else if (this.item_type =='quiver'){
+		 	this.model = new THREE.Mesh(pickup, new THREE.MeshFaceMaterial());
+         }
+         else if (this.item_type =='bomb_bag'){
+		 	this.model = new THREE.Mesh(pickup, new THREE.MeshFaceMaterial());
+         }
 		this.model.position.x = this.x;
 		this.model.position.y = 20;
 		this.model.position.z = this.y;
 		this.model.overdraw = true;
 		scene.addObject(this.model);
-	}
-	this.draw   = function(){
-         if (this.item_type == 'healthpack'){
-         }
-         else if (this.item_type =='quiver'){
-         }
-         else if (this.item_type =='bomb_bag'){
-         }
 	}
 	this.update = function(){
 		attrs.damage(this);
@@ -313,6 +309,10 @@ types.hero = function(data){
 		return {left:this.x-10, top:this.y-10,
 			right:this.x+10, bottom:this.y+10}
 	}
+	this.remove = function(){
+		if(three) renderer.removeObject(scene, this.model);
+		env = {}; env[this.id]='delete'; exports.receive(env);
+	}
 }
 
 types.mob = function(data){
@@ -332,8 +332,6 @@ types.mob = function(data){
 		return {left:this.x-8, top:this.y-8,
 			right:this.x+8, bottom:this.y+8}
 	}
-	this.draw   = function(){
-	}
 	this.toward = function(target, reverse){
 		reverse = (reverse)?-1:1;
 		speed = this.speed;
@@ -349,6 +347,10 @@ types.mob = function(data){
 			this.model.position.x = this.x;
 			this.model.position.z = this.y;
 		}
+	}
+	this.remove = function(){
+		if(three) renderer.removeObject(scene, this.model);
+		env = {}; env[this.id]='delete'; exports.receive(env);
 	}
 	this.update = function(){
 		attrs.damage(this);
@@ -392,7 +394,9 @@ types.spawn = function(data){
 		this.model.overdraw = true;
 		scene.addObject(this.model);
 	}
-	this.draw   = function(){
+	this.remove = function(){
+		if(three) renderer.removeObject(scene, this.model);
+		env = {}; env[this.id]='delete'; exports.receive(env);
 	}
 	this.update = function(){
 		attrs.damage(this);
@@ -424,9 +428,11 @@ types.wall = function(data){
 		return {left:this.x-20, top:this.y-20,
 			right:this.x+20, bottom:this.y+20}
 	}
-	this.draw   = function(){
+	this.remove = function(){
+		if(three) renderer.removeObject(scene, this.model);
+		env = {}; env[this.id]='delete'; exports.receive(env);
 	}
-	if(three){
+	if(three && !this.model){
 		this.model = new THREE.Mesh(wall, new THREE.MeshFaceMaterial());
 		this.model.position.x = this.x;
 		this.model.position.y = 20;
@@ -441,18 +447,20 @@ types.wall = function(data){
 }
 
 types.tower = function(data){
+	if (three) this.model = new THREE.Mesh(tower_geometry, new THREE.MeshLambertMaterial( 
+			{ color: 0xff0000, shading:THREE.FlatShading } ), new THREE.MeshFaceMaterial());
 	types.wall.call(this, data);
-	this.health = data.health || 15;
 	if(three){
 		this.model = new THREE.Mesh(tower_geometry, new THREE.MeshLambertMaterial( 
 			{ color: 0xff0000, shading:THREE.FlatShading } ), new THREE.MeshFaceMaterial());
 		this.model.position.x = this.x;
-		this.model.position.y = 20;
+		this.model.position.y = 0;
 		this.model.position.z = this.y;
 		this.model.rotation.x = - 90 * ( Math.PI / 180 );
 		this.model.overdraw = true;
 		scene.addObject(this.model);
 	}
+	this.health = data.health || 15;
 	this.update = function(){
 		attrs.damage(this);
 		attrs.solid(this);
@@ -657,18 +665,6 @@ exports.main = function (){
 	}
 	for (var i in list){
 		var o = list[i];
-		if (typeof(THREE) != 'undefined'){
-			if (o.type == 'boom' || o.collisions.boom) o.draw();
-			else for (var p in players){
-				p = players[p];
-				var d = Math.sqrt(Math.pow(o.x-p.x, 2) +
-						Math.pow(o.y-p.y, 2));
-				if (d<220){
-				   	o.draw();
-					break;
-				}
-			}
-		}
 		o.update();
 		o.collisions = {};
 	}
