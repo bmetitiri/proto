@@ -5,15 +5,22 @@
 			a {color:#00f; text-decoration:none;}
 			h1 {font-variant:small-caps;margin:0;}
 			.add {text-align:center;}
+			.clear {clear:both;}
 			.content {background:#ddf; border:1px solid #000;
 				margin:0 auto; max-width:400px; padding:20px;
-				box-shadow: 0 5px 10px #333;
-				-moz-box-shadow: 0 5px 10px #333;
-				-webkit-box-shadow: 0 5px 10px #333;}
+				box-shadow: 0 5px 5px #333;
+				-moz-box-shadow: 0 5px 5px #333;
+				-webkit-box-shadow: 0 5px 5px #333;}
 			.next, .prev {font-size:x-large; margin-top:13px;}
 			.next {float:right;}
 			.prev {float:left;}
-			.resolution form {display:none;}
+			.resolution form {display:none; float:right;}
+			.resolution:hover {list-style-type:none;
+				margin-left:-40px;padding-left:40px;}
+			.resolution:hover {background:#fff; border:1px solid #000;
+				box-shadow: 0 5px 5px #333 inset;
+				-moz-box-shadow: 0 5px 5px #333 inset;
+				-webkit-box-shadow: 0 5px 5px #333 inset;}
 			.resolution:hover form {display:block;}
 			.small {font-size:small; font-weight:normal;}
 			.user {border-bottom:1px solid #000; float:right}

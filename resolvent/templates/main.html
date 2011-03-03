@@ -18,6 +18,10 @@
 		</h3>
 		{% if user %}
 			<form method="POST">
+				<!--select name="frequency">
+					<option>Frequency</option>
+				</select>
+				<input name="method" type="submit" value="Schedule" /-->
 				<input name="method" type="submit" value="Give Up" />
 				<input name="id" type="hidden" value="{{r.key}}" />
 			</form>
@@ -26,7 +30,7 @@
 	{% endfor %}
 </ul>
 {% if user %}
-<form class="add" method="POST">
+<form class="add clear" method="POST">
 	<label for="name">Resolve to</label>
 	<input id="name" name="name" type="text" />
 	(<label for="public">publicly</label>

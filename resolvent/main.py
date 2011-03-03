@@ -1,5 +1,7 @@
 import common
 
+per_page = 10
+
 class Resolution(common.db.Model):
 	user   = common.db.UserProperty(auto_current_user_add=True)
 	name   = common.db.StringProperty()
@@ -18,8 +20,8 @@ class Main(common.Page):
 		resolutions = Resolution.all().order('-date')
 		if self.user: resolutions.filter('user =', self.user)
 		else: resolutions.filter('public =', True)
-		resolutions = resolutions.fetch(6, page*5-5)
-		if resolutions[5:]: next = page+1
+		resolutions = resolutions.fetch(per_page+1, page*per_page-per_page)
+		if resolutions[per_page:]: next = page+1
 		self.out(next=next, prev=page-1, resolutions=resolutions[:5])
 	def post(self):
 		if self.user:
