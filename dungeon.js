@@ -9,35 +9,36 @@ var players = [], messages = [], data_q = [];
 var attrs = {}, utils = {};
 var collisions = {}, box_size = 100; //collision engine
 var item_types = ['healthpack', 'quiver', 'bomb_bag'];
+var wallGeo, wallMaterial;
 
 if (typeof(exports)=='undefined') exports = {}
 exports.world = {};
 
 if(three) {
+	wallGeo = new Cube(40, 40, 40);
+	wallMaterial = new THREE.MeshLambertMaterial( { color: 0x00ff80, opacity: 1, shading: THREE.FlatShading, map: ImageUtils.loadTexture( "textures/square-outline-textured.png" ) } );
+	wallMaterial.color.setHSV( 0.1, 0.7, 1.0 );
 	var camera = new THREE.Camera(75, null, 1, 1000),
 		scene = new THREE.Scene(),
 		renderer = new THREE.WebGLRenderer();
 	scene.fog = new THREE.Fog( 0x000000, 1, 500);
-	var wall = new Cube(40, 40, 40, 1, 1, 
-		new THREE.MeshLambertMaterial( { color:
-			0xcccccc, shading:THREE.FlatShading } ))
 	var tower_geometry = new Cylinder(16, 20, 20, 40, 0, 0);
-	var mob = new Cube(15, 20, 15, 1, 1, 
+	var mob = new Cube(15, 20, 15, 1, 1, 1, 
 		new THREE.MeshLambertMaterial( { color:
 			0x00ff00, shading:THREE.FlatShading } ));
-	var arrow = new Cube(4, 4, 4, 1, 1, 
+	var arrow = new Cube(4, 4, 4, 1, 1, 1, 
 		new THREE.MeshLambertMaterial( { color:
 			0x00ffff, shading:THREE.FlatShading } ));
-	var player_model = new Cube( 15, 20, 15, 1, 1, 
+	var player_model = new Cube( 15, 20, 15, 1, 1, 1,
 			new THREE.MeshLambertMaterial( { color:
 				Math.random() * 0xffffff, shading:THREE.FlatShading } ));
-	var bomb = new Cube(5, 5, 5, 1, 1, 
+	var bomb = new Cube(5, 5, 5, 1, 1, 1,
 		new THREE.MeshLambertMaterial( { color:
 			0xaaaaaa, shading:THREE.FlatShading } ));
-	var pickup = new Cube(5, 5, 5, 1, 1, 
+	var pickup = new Cube(5, 5, 5, 1, 1, 1,
 		new THREE.MeshLambertMaterial( { color:
 			0xf0ff0f, shading:THREE.FlatShading } ));
-	var spawn = new Cube(20, 20, 20, 1, 1, 
+	var spawn = new Cube(20, 20, 20, 1, 1, 1,
 		new THREE.MeshLambertMaterial( { color:
 			0xffff00, shading:THREE.FlatShading } ));
 }
@@ -124,7 +125,7 @@ types.arrow = function(data){
 		scene.addObject(this.model);
 	}
 	this.remove = function(){
-		if(three) renderer.removeObject(scene, this.model);
+		if(three) scene.removeObject(this.model);
 		env = {}; env[this.id]='delete'; exports.receive(env);
 		/*if (exports.broadcast){
 			env = {}; env[this.id]='delete';
@@ -160,7 +161,7 @@ types.bomb = function(data){
 		scene.addObject(this.model);
 	}
 	this.remove = function(){
-		if(three) renderer.removeObject(scene, this.model);
+		if(three) scene.removeObject(this.model);
 		env = {}; env[this.id]='delete'; exports.receive(env);
 	}
 	this.update = function(){
@@ -204,7 +205,7 @@ types.pickup = function(data){
 		attrs.damage(this);
 	}
 	this.remove = function(){
-		if(three) renderer.removeObject(scene, this.model);
+		if(three) scene.removeObject(this.model);
 		env = {}; env[this.id]='delete'; exports.receive(env);
 	}
 }
@@ -310,7 +311,7 @@ types.hero = function(data){
 			right:this.x+10, bottom:this.y+10}
 	}
 	this.remove = function(){
-		if(three) renderer.removeObject(scene, this.model);
+		if(three) scene.removeObject(this.model);
 		env = {}; env[this.id]='delete'; exports.receive(env);
 	}
 }
@@ -349,7 +350,7 @@ types.mob = function(data){
 		}
 	}
 	this.remove = function(){
-		if(three) renderer.removeObject(scene, this.model);
+		if(three) scene.removeObject(this.model);
 		env = {}; env[this.id]='delete'; exports.receive(env);
 	}
 	this.update = function(){
@@ -395,7 +396,7 @@ types.spawn = function(data){
 		scene.addObject(this.model);
 	}
 	this.remove = function(){
-		if(three) renderer.removeObject(scene, this.model);
+		if(three) scene.removeObject(this.model);
 		env = {}; env[this.id]='delete'; exports.receive(env);
 	}
 	this.update = function(){
@@ -429,11 +430,11 @@ types.wall = function(data){
 			right:this.x+20, bottom:this.y+20}
 	}
 	this.remove = function(){
-		if(three) renderer.removeObject(scene, this.model);
+		if(three) scene.removeObject(this.model);
 		env = {}; env[this.id]='delete'; exports.receive(env);
 	}
 	if(three && !this.model){
-		this.model = new THREE.Mesh(wall, new THREE.MeshFaceMaterial());
+		this.model = new THREE.Mesh(wallGeo, wallMaterial);
 		this.model.position.x = this.x;
 		this.model.position.y = 20;
 		this.model.position.z = this.y;
@@ -668,7 +669,7 @@ exports.main = function (){
 		o.update();
 		o.collisions = {};
 	}
-	 if(typeof(THREE) != 'undefined' && typeof(player) != 'undefined') {
+	 if(three && typeof(player) != 'undefined') {
 		 camera.position.z = player.model.position.z+100;
 		 camera.position.x = player.model.position.x;
 		 renderer.render( scene, camera);
