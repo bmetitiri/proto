@@ -16,7 +16,7 @@ exports.world = {};
 
 if(three) {
 	wallGeo = new Cube(40, 40, 40);
-	wallMaterial = new THREE.MeshLambertMaterial( { color: 0x00ff80, opacity: 1, shading: THREE.FlatShading, map: ImageUtils.loadTexture( "textures/square-outline-textured.png" ) } );
+	wallMaterial = new THREE.MeshLambertMaterial( { color: 0x00ff80, opacity: 1, shading: THREE.FlatShading, map: ImageUtils.loadTexture("textures/minecraft/dirt.png" ) } );
 	wallMaterial.color.setHSV( 0.1, 0.7, 1.0 );
 	var camera = new THREE.Camera(75, null, 1, 1000),
 		scene = new THREE.Scene(),
@@ -534,40 +534,49 @@ function map(x_o, y_o, spawn_c){
 
 
 
-// from three.js grass demo
-function generateTextureBase() {
-
-	var canvas = document.createElement( 'canvas' );
-	canvas.loaded = true;
-	canvas.width = 512;
-	canvas.height = 512;
-
-	var context = canvas.getContext( '2d' );
-	context.fillStyle = "#030";
-	context.fillRect(0,0, canvas.width, canvas.height);
-
-	for ( var i = 0; i < 20000; i ++ ) {
-		context.fillStyle = 'rgba(0,' + Math.floor( Math.random() * 64 + 32 ) + ',16,1)';
-		context.beginPath();
-		context.arc( Math.random() * canvas.width, Math.random() * canvas.height, Math.random() * 3 + 1, 0, Math.PI * 2, true );
-		context.closePath();
-		context.fill();
-	}
-	context.globalAlpha = 0.1;
-	context.globalCompositeOperation = 'lighter';
-	return canvas;
-}
 
 exports.init = function(){
+	// checkerboard floor from three.js example
 	if (three){
 		camera.position.y = 100;
-		var geometry = new Plane(10000,10000);
-		var texture = generateTextureBase();
-		var floor = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( { map: new THREE.Texture( texture , new THREE.UVMapping(), THREE.ClampToEdgeWrapping, THREE.ClampToEdgeWrapping ) } ) );
-		floor.rotation.x = - 90 * ( Math.PI / 180 );
-		floor.position.x = 0;
-		floor.position.z = 0;
-		scene.addObject(floor);
+		imageCanvas = document.createElement( "canvas" ),
+		context = imageCanvas.getContext( "2d" );
+
+		imageCanvas.width = imageCanvas.height = 128;
+
+		context.fillStyle = "#444";
+		context.fillRect( 0, 0, 128, 128 );
+		context.fillStyle = "#fff";
+		context.fillRect( 0, 0, 64, 64);
+		context.fillRect( 64, 64, 64, 64 );
+
+		var textureCanvas = new THREE.Texture( imageCanvas, THREE.UVMapping, THREE.RepeatWrapping, THREE.RepeatWrapping );
+		materialCanvas = new THREE.MeshBasicMaterial( { map: textureCanvas } );
+		textureCanvas.needsUpdate = true;
+
+
+		var i, j, uvs,
+			geometryRepeat = new Plane( 100, 100, 1, 1 );
+
+		for( i = 0; i < geometryRepeat.uvs.length; i++ ) {
+
+			uvs = geometryRepeat.uvs[i];
+
+			for ( j = 0; j < uvs.length; j++ ) {
+
+				uvs[j].u *= 1000;
+				uvs[j].v *= 1000;
+
+			}
+
+		}
+
+		var meshCanvas = new THREE.Mesh( geometryRepeat, materialCanvas );
+		meshCanvas.rotation.x = Math.PI / 2;
+		meshCanvas.scale.x = meshCanvas.scale.y = meshCanvas.scale.z = 1000;
+		meshCanvas.doubleSided = true;
+		scene.addObject( meshCanvas );
+
 	}
 	setInterval(exports.main, 33);
 }
