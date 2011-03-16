@@ -40,7 +40,7 @@
 			types.dude = function(){
 				rect.call(this);
 				this.x = this.y = 0;
-				this.color = '00f';
+				this.color = 'blue';
 				this.speed = 5;
 				this.update = function(){
 					if (this.left)  move(this, -this.speed, 0);
@@ -52,7 +52,7 @@
 			types.mob = function(x, y){
 				rect.call(this);
 				this.x = x; this.y = y;
-				this.color = 'f00';
+				this.color = 'red';
 				this.speed = 2.5;
 				this.update = function(){
 					if (this.x > dude.x) move(this, -this.speed, 0);
@@ -65,7 +65,7 @@
 				rect.call(this);
 				this.width = this.height = 20;
 				this.x = x; this.y = y;
-				this.color = '000';
+				this.color = 'black';
 			}
 			var things = [];
 			var dude = new types.dude();
