@@ -12,6 +12,16 @@
 						bounds1.top < bounds2.bottom &&
 						bounds1.bottom > bounds2.top)
 			}
+			var move = function(self, dx, dy){
+				for (var t in things){
+					t = things[t];
+					if (t != self)
+						if (collides(self.bounds(self.x+dx,
+								self.y+dy), t.bounds())) return false;
+				}
+				self.x += dx;
+				self.y += dy;
+			}
 			var rect = function(){
 				this.width = this.height = 20;
 				this.bounds = function(x, y){
@@ -32,36 +42,24 @@
 				this.x = this.y = 0;
 				this.color = '00f';
 				this.speed = 5;
-				this.test = function(x, y){
-					for (var t in this.things){
-						t = this.things[t];
-						if (t != this){
-							if (collides(this.bounds(x, y), t.bounds()))
-								return true;
-						}
-					}
-					return null;
-				}
-				this.move = function(dx, dy){
-					if (!this.test(this.x+dx, this.y+dy)){
-						this.x += dx;
-						this.y += dy;
-					}
-				}
 				this.update = function(){
-					var speed = this.speed;
-					//if ((this.left||this.right)&&(this.up||this.down))
-						//speed *= .7;
-					if (this.left) this.move(-speed, 0);
-					if (this.right) this.move(+speed, 0);
-					if (this.up) this.move(0, -speed);
-					if (this.down) this.move(0, +speed);
+					if (this.left)  move(this, -this.speed, 0);
+					if (this.right) move(this, +this.speed, 0);
+					if (this.up)    move(this, 0, -this.speed);
+					if (this.down)  move(this, 0, +this.speed);
 				}
 			}
-			types.mob = function(){
+			types.mob = function(x, y){
 				rect.call(this);
-				this.x = this.y = 500;
+				this.x = x; this.y = y;
 				this.color = 'f00';
+				this.speed = 2.5;
+				this.update = function(){
+					if (this.x > dude.x) move(this, -this.speed, 0);
+					if (this.x < dude.x) move(this, +this.speed, 0);
+					if (this.y > dude.y) move(this, 0, -this.speed);
+					if (this.y < dude.y) move(this, 0, +this.speed);
+				}
 			}
 			types.wall = function(x, y){
 				rect.call(this);
@@ -69,6 +67,11 @@
 				this.x = x; this.y = y;
 				this.color = '000';
 			}
+			var things = [];
+			var dude = new types.dude();
+			things.push(dude);
+			for (var x = -4; x <= 4; x++)
+				things.push(new types.mob(x*40, 200));
 
 			window.onload = function(){
 				var cvs = document.getElementById('canvas');
@@ -80,13 +83,15 @@
 					for (var t in things) things[t].draw(ctx);
 					ctx.restore();
 				};
-				var things = [];
-				for (var x = -2; x <= 2; x++)
-					for (var y = -2; y <= 2; y++)
-						if (x || y) things.push(new types.wall(x*40, y*40));
-				dude = new types.dude();
-				dude.things = things;
-				things.push(dude);
+				for (var x = -4; x <= 4; x++)
+					for (var y = -4; y <= 4; y++)
+						if (x || y){
+							things.push(new types.wall(x*40, y*40));
+							if (Math.random() > .8)
+								things.push(new types.wall(x*40+20, y*40));
+							if (Math.random() < .2)
+								things.push(new types.wall(x*40, y*40+20));
+						}
 
 				setInterval(function(){
 					for (var t in things)
