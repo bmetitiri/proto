@@ -15,29 +15,49 @@ if (typeof(exports)=='undefined') exports = {}
 exports.world = {};
 
 if(three) {
-	wallGeo = new Cube(40, 40, 40);
-	wallMaterial = new THREE.MeshLambertMaterial( { color: 0x00ff80, opacity: 1, shading: THREE.FlatShading, map: ImageUtils.loadTexture("textures/minecraft/dirt.png" ) } );
-	wallMaterial.color.setHSV( 0.1, 0.7, 1.0 );
 	var camera = new THREE.Camera(75, null, 1, 1000),
 		scene = new THREE.Scene(),
 		renderer = new THREE.WebGLRenderer();
 	scene.fog = new THREE.Fog( 0x000000, 1, 500);
-	var tower_geometry = new Cylinder(16, 20, 20, 40, 0, 0);
-	var mob = new Cube(15, 20, 15, 1, 1, 1, 
-		new THREE.MeshLambertMaterial( { color:
-			0x00ff00, shading:THREE.FlatShading } ));
+
+	wallGeo = new Cube(40, 40, 40);
+	wallMaterial = new THREE.MeshLambertMaterial( { color: 0x00ff80, opacity: 1, shading: THREE.FlatShading, map: ImageUtils.loadTexture("textures/minecraft/dirt.png" ) } );
+	wallMaterial.color.setHSV( 0.1, 0.7, 1.0 );
+
+	healthMaterial = new THREE.MeshLambertMaterial( { color: 0x00ff80, opacity:	1, shading: THREE.FlatShading, map: ImageUtils.loadTexture("textures/health.png" ) } );
+	healthMaterial.color.setHSV( 0.1, 0.7, 1.0 );
+
+	bombMaterial = new THREE.MeshLambertMaterial( { color: 0x00ff80, opacity:	1, shading: THREE.FlatShading, map: ImageUtils.loadTexture("textures/bombs.png" ) } );
+	bombMaterial.color.setHSV( 0.1, 0.7, 1.0 );
+
+	quiverMaterial = new THREE.MeshLambertMaterial( { color: 0x00ff80, opacity:	1, shading: THREE.FlatShading, map: ImageUtils.loadTexture("textures/quivers.png" ) } );
+	quiverMaterial.color.setHSV( 0.1, 0.7, 1.0 );
+
+	mobGeo = new Cube(15, 20, 15);
+	mobMaterial = new THREE.MeshLambertMaterial( { color: 0x00ff80, opacity: 1, shading: THREE.FlatShading, map:ImageUtils.loadTexture("textures/creeper.jpg" ) } );
+	mobMaterial.color.setHSV( 0.1, 0.7, 1.0 );
+	
+	playerGeo = new Cube(15, 20, 15);
+	playerMaterial = new THREE.MeshLambertMaterial( { color: 0x00ff80, opacity:	1, shading: THREE.FlatShading,	map:ImageUtils.loadTexture("textures/Defaulthead.png" ) } );
+	playerMaterial.color.setHSV( 0.1, 0.7, 1.0 );
+
+	towerGeo = new Cylinder(16, 20, 20, 40, 0, 0);
 	var arrow = new Cube(4, 4, 4, 1, 1, 1, 
 		new THREE.MeshLambertMaterial( { color:
 			0x00ffff, shading:THREE.FlatShading } ));
+
 	var player_model = new Cube( 15, 20, 15, 1, 1, 1,
 			new THREE.MeshLambertMaterial( { color:
 				Math.random() * 0xffffff, shading:THREE.FlatShading } ));
-	var bomb = new Cube(5, 5, 5, 1, 1, 1,
+
+	var bomb = new Cube(10, 10, 10, 1, 1, 1,
 		new THREE.MeshLambertMaterial( { color:
 			0xaaaaaa, shading:THREE.FlatShading } ));
-	var pickup = new Cube(5, 5, 5, 1, 1, 1,
+
+	var pickup = new Cube(10, 10, 10, 1, 1, 1,
 		new THREE.MeshLambertMaterial( { color:
 			0xf0ff0f, shading:THREE.FlatShading } ));
+
 	var spawn = new Cube(20, 20, 20, 1, 1, 1,
 		new THREE.MeshLambertMaterial( { color:
 			0xffff00, shading:THREE.FlatShading } ));
@@ -155,7 +175,7 @@ types.bomb = function(data){
 	if(three){
 		this.model = new THREE.Mesh(bomb, new THREE.MeshFaceMaterial());
 		this.model.position.x = this.x;
-		this.model.position.y = 20;
+		this.model.position.y = 5;
 		this.model.position.z = this.y;
 		this.model.overdraw = true;
 		scene.addObject(this.model);
@@ -187,16 +207,16 @@ types.pickup = function(data){
 	}
 	if(three){
          if (this.item_type == 'healthpack'){
-		 	this.model = new THREE.Mesh(pickup, new THREE.MeshFaceMaterial());
+		 	this.model = new THREE.Mesh(pickup, healthMaterial);
          }
          else if (this.item_type =='quiver'){
-		 	this.model = new THREE.Mesh(pickup, new THREE.MeshFaceMaterial());
+		 	this.model = new THREE.Mesh(pickup, quiverMaterial);
          }
          else if (this.item_type =='bomb_bag'){
-		 	this.model = new THREE.Mesh(pickup, new THREE.MeshFaceMaterial());
+		 	this.model = new THREE.Mesh(pickup, bombMaterial);
          }
 		this.model.position.x = this.x;
-		this.model.position.y = 20;
+		this.model.position.y = 5;
 		this.model.position.z = this.y;
 		this.model.overdraw = true;
 		scene.addObject(this.model);
@@ -241,7 +261,7 @@ types.hero = function(data){
 	this.draw = function(){
 	}
 	if(three){
-	this.model = new THREE.Mesh( player_model, new THREE.MeshFaceMaterial() );
+	this.model = new THREE.Mesh(playerGeo, playerMaterial);
 		this.model.position.x = this.x;
 		this.model.position.y = 10;
 		this.model.position.z = this.y;
@@ -322,9 +342,9 @@ types.mob = function(data){
 	this.speed  = data.speed  || 5;
 	this.health = data.health || 2;
 	if(three){
-		this.model = new THREE.Mesh(mob, new THREE.MeshFaceMaterial());
+		this.model = new THREE.Mesh(mobGeo, mobMaterial);
 		this.model.position.x = this.x;
-		this.model.position.y = 20;
+		this.model.position.y = 10;
 		this.model.position.z = this.y;
 		this.model.overdraw = true;
 		scene.addObject(this.model);
@@ -448,11 +468,11 @@ types.wall = function(data){
 }
 
 types.tower = function(data){
-	if (three) this.model = new THREE.Mesh(tower_geometry, new THREE.MeshLambertMaterial( 
+	if (three) this.model = new THREE.Mesh(towerGeo, new THREE.MeshLambertMaterial( 
 			{ color: 0xff0000, shading:THREE.FlatShading } ), new THREE.MeshFaceMaterial());
 	types.wall.call(this, data);
 	if(three){
-		this.model = new THREE.Mesh(tower_geometry, new THREE.MeshLambertMaterial( 
+		this.model = new THREE.Mesh(towerGeo, new THREE.MeshLambertMaterial( 
 			{ color: 0xff0000, shading:THREE.FlatShading } ), new THREE.MeshFaceMaterial());
 		this.model.position.x = this.x;
 		this.model.position.y = 0;
