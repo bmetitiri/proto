@@ -3,7 +3,10 @@ from google.appengine.ext import db, webapp
 from google.appengine.ext.webapp import template, util
 from google.appengine.api.urlfetch import fetch
 
-import json, logging, os
+#import json, # Not on AppEngine
+from django.utils import simplejson as json
+
+import logging, os
 
 def log(*args):
 	logging.info('-'*40)
