@@ -1,0 +1,4 @@
+cron:
+- description: Sync all Syndicate Feeds
+  url: /syndicate/sync
+  schedule: every 1 hours synchronized

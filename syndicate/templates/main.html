@@ -1,0 +1,49 @@
+<?docytpe html>
+<html>
+	<head>
+		<title>Syndicate</title>
+		<link href="static/1/css.css" rel="stylesheet" type="text/css" />
+	</head>
+	<body>
+		<form method="post">
+		<header>
+			<nav>
+			<h1><a href="/">Syndicate</a></h1>
+			<input placeholder="New Source URL" name="url"
+				type="url" value="{{feed.url}}"/>
+			<input type="submit" value="&#x2713;" />
+			</nav>
+		</header>
+		<article>
+			{% for record in records %}
+			<div class="record">
+				<a href="{{record.feed.url}}">{{record.html}}</a>
+			</div>
+			{% endfor %}
+			<input name="_url" type="hidden" value="{{feed.url}}"/>
+			<div class="matches">
+				{% for match in matches.items %}
+				<h2>{{match.0}}</h2>
+				<ul>
+					{% for node in match.1 %}
+					<li><input id="{{match.0}}{{forloop.counter0}}"
+						name="{{match.0}}" type="checkbox"
+						{% if node.checked %}
+							checked="checked"
+						{% endif %}
+						value="{{forloop.counter0}}" />
+					<label for="{{match.0}}{{forloop.counter0}}">
+						{{node}}</label></li>
+					{% endfor %}
+				</ul>
+				{% endfor %}
+			</div>
+			{% if raw %}
+			<div class="hide"><h2>raw</h2>
+				<div class="raw">{{raw|escape}}</div>
+			</div>
+			{% endif %}
+		</article>
+		</form>
+	</body>
+<html>

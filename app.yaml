@@ -8,6 +8,13 @@ handlers:
   static_dir: resolvent/static
 - url: /resolvent/.*
   script: resolvent/main.py
+- url: /syndicate/static
+  static_dir: syndicate/static
+- url: /syndicate/sync
+  script: syndicate/main.py
+  login: admin
+- url: /syndicate/.*
+  script: syndicate/main.py
 - url: /
   script: index.py
 

@@ -1,1 +1,1 @@
-print 'Location: /resolvent/'
+print 'Location: /syndicate/'

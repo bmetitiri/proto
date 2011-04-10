@@ -1,8 +1,32 @@
-from google.appengine.api import users
+from google.appengine.api import datastore_types, users
 from google.appengine.ext import db, webapp
 from google.appengine.ext.webapp import template, util
+from google.appengine.api.urlfetch import fetch
 
-import os
+import json, logging, os
+
+def log(*args):
+	logging.info('-'*40)
+	logging.info(*args)
+	logging.info('-'*40)
+
+class JSONProperty(db.Property):
+	def __init__(self, **kwargs):
+		kwargs['indexed'] = False
+		super(JSONProperty, self).__init__(**kwargs)
+	def get_value_for_datastore(self, value):
+		return json.dumps(value)
+	def get_value_for_datastore(self, instance):
+		return json.loads(super(JSONProperty,
+			self).get_value_for_datastore(instance))
+
+class DictProperty(JSONProperty):
+	data_type = dict
+	def validate(self, value):
+		value = super(DictProperty, self).get_value_for_datastore(value)
+		if isinstance(value, dict):
+			return value
+		raise db.BadValueError('Property %s must be a dict.' % self.name)
 
 class Page(webapp.RequestHandler):
 	def get(self): self.out()
@@ -22,12 +46,23 @@ class Page(webapp.RequestHandler):
 		}
 		self.response.out.write(template.render(template_file, kwargs))
 	def process(self, instance): #TODO: Process Model class
-		for f,t in instance.fields().iteritems():
-			v = self.request.get(f)
-			if v:
-				if t.data_type != basestring: v = t.data_type(v)
-				setattr(instance, f, v)
+		fields = instance.fields()
+		for arg in self.request.arguments():
+			if arg in fields:
+				type = fields[arg].data_type
+				if type == list:
+					value = [self.type_check(fields[arg].item_type, v)
+						for v in self.request.get_all(arg)]
+				else: value = self.type_check(type, self.request.get(arg))
+			
+				setattr(instance, arg, value)
 		return instance
+	@staticmethod
+	def type_check(type, value):
+		if type == datastore_types.Link:
+			if '://' not in value: value = 'http://'+value
+		elif type != basestring: value = type(value)
+		return value
 	@property
 	def user(self):
 		if not hasattr(self, '_user'):
@@ -39,6 +74,9 @@ def setup(*args):
 	application = webapp.WSGIApplication(args)#, debug=True)
 	def inner(): return util.run_wsgi_app(application)
 	return inner
+
+def from_key(model, key):
+	return model.get_by_key_name(key) or model(key_name=key)
 
 #application = webapp.WSGIApplication([('/', Main)], debug=True)
 #def main(): util.run_wsgi_app(application)
