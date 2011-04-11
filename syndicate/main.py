@@ -42,6 +42,7 @@ class Main(common.Page):
 			matches[k] = soup.findAll(v)
 		for i in matches['images']:
 			if '//' not in i['src']: i['src'] = '%s/%s' % (feed.url,i['src'])
+			del i['style'], i['height'], i['width']
 		for k in props:
 			for i in getattr(feed, k):
 				match = matches[k][i]
