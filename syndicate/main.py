@@ -42,6 +42,7 @@ class Main(common.Page):
 			matches[k] = soup.findAll(v)
 		for i in matches['images']:
 			if '//' not in i['src']: i['src'] = '%s/%s' % (feed.url,i['src'])
+			del i['style'], i['height'], i['width'], i['onload']
 		for k in props:
 			for i in getattr(feed, k):
 				match = matches[k][i]
@@ -72,6 +73,10 @@ class Sync(common.Page): #TODO: Extract parts up?
 				matches = soup.findAll(v)
 				for i in getattr(feed, k):
 					match = matches[i]
+					if '//' not in match['src']: #TODO: Just images?
+						match['src'] = '%s/%s' % (feed.url,match['src'])
+					del match['style'], match['height'], \
+						match['width'], match['onload']
 					record = Record.get_or_insert(str(match)[-50:],
 							feed=feed, html=unicode(match))
 			feed.save()
