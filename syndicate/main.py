@@ -12,7 +12,7 @@ class Feed(common.db.Model):
 	next   = common.db.DateTimeProperty()
 	images = common.db.ListProperty(int)
 	def save(self, *args, **kwargs):
-		self.next = datetime.now()+timedelta(seconds=7200)
+		self.next = datetime.now()+timedelta(seconds=2400)
 		super(Feed, self).save(*args, **kwargs)
 
 #for k in props: setattr(Feed, k, common.db.ListProperty(int, indexed=False))
