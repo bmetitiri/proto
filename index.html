@@ -1,5 +1,25 @@
 <?docytpe html> 
 <html>
-	<head><title>joncaldwell.com</title></head>
-	<body>(hi)</body>
+	<head>
+		<style type="text/css">
+a {color:#00f; text-decoration:none;}
+body {font-family:monospace; margin:0;}
+iframe {border:0; height:100%; width:100%;}
+.desc {background:#fff; margin:-20px; padding:20px; position:relative; top:-140px;}
+.desc, .site {box-shadow:0 10px 20px #333;}
+.hide {display:none;}
+.site {border:0; display:block; height:400px;
+	margin:-200px auto 0; position:relative; top: 50%; width:400px;}
+.show:hover .hide {display:block;}
+		</style>
+		<title>joncaldwell.com</title>
+	</head>
+	<body>
+		<div class="show site">
+			<iframe src="http://app.joncaldwell.com/syndicate/"></iframe>
+			<p class="desc hide">
+			<a href="http://app.joncaldwell.com/syndicate/">Syndicate</a> (<a href="http://githube.com/arkie/app.joncaldwell.com">Github</a>) allows for the polling of a URL to extract images by position (via <a href="http://code.google.com/appengine/">Google App Engine</a> and <a href="http://www.crummy.com/software/BeautifulSoup/">Beautiful Soup</a>)
+			</p>
+		</div>
+	</body>
 </html>
