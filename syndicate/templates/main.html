@@ -7,12 +7,14 @@
 	<body>
 		<form method="post">
 		<header>
-			<nav>
-			<h1><a href="/">Syndicate</a></h1>
-			<input placeholder="New Source URL" name="url"
-				type="url" value="{{feed.url}}"/>
-			<input type="submit" value="&#x2713;" />
-			</nav>
+			<div class="header">
+				<nav>
+				<h1><a href="/">Syndicate</a></h1>
+				<input placeholder="New Source URL" name="url"
+					type="url" value="{{feed.url}}"/>
+				<input type="submit" value="&#x2713;" />
+				</nav>
+			</div>
 		</header>
 		<article>
 			{% for record in records %}
