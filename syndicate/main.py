@@ -2,8 +2,6 @@ import common
 from BeautifulSoup import BeautifulSoup
 from datetime import datetime, timedelta
 
-per_page = 10
-
 props = {'images': 'img'} #Tracked properties
 
 class Feed(common.db.Model):
@@ -23,10 +21,15 @@ class Record(common.db.Model):
 	html = common.db.TextProperty()
 	feed = common.db.ReferenceProperty(Feed)
 
-class Main(common.Page):
+	def data(self):
+		return {'date': str(self.date), 'html': self.html, 'url':self.feed.url}
+
+class Main(common.JSONPage):
 	url = '/.*'
 	def get(self):
-		self.out(records = Record.all().order('-date').fetch(10))
+		offset  = int(self.request.get('o', 0))
+		records = Record.all().order('-date')
+		self.out(records = records.fetch(10, offset), next=offset+10)
 	def post(self):
 		key  = self.request.get('url')
 		_url = self.request.get('_url')

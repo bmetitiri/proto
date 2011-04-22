@@ -72,6 +72,17 @@ class Page(webapp.RequestHandler):
 			self._user = users.get_current_user()
 		return self._user
 
+class JSONEncoder(json.JSONEncoder): # Why it's not real json compatible
+	def default(self, obj):
+		return hasattr(obj, 'data') and obj.data() or str(obj)
+
+class JSONPage(Page):
+	def out(self, **kwargs):
+		if self.request.path[-4:] == 'json':
+			self.response.headers['Content-Type'] = 'application/json'
+			self.response.out.write(json.dumps(kwargs, cls=JSONEncoder))
+		else: super(JSONPage, self).out(**kwargs)
+
 def setup(*args):
 	args = [hasattr(a, 'url') and (a.url, a) or a for a in args]
 	application = webapp.WSGIApplication(args)#, debug=True)

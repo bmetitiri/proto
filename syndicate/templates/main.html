@@ -14,7 +14,7 @@
 			<input type="submit" value="&#x2713;" />
 			</nav>
 		</header>
-		<article>
+		<article id="main">
 			{% for record in records %}
 			<div class="record">
 				<a href="{{record.feed.url}}">{{record.html}}</a>
@@ -44,6 +44,9 @@
 			</div>
 			{% endif %}
 		</article>
+		<a data-next="{{next}}" href="?o={{next}}"
+			id="more">...</a>
 		</form>
+		<script type="text/javascript" src="static/1/js.js"></script>
 	</body>
 </html>
