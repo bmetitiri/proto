@@ -44,9 +44,11 @@
 			</div>
 			{% endif %}
 		</article>
+		</form>
+		{% if not raw %}
 		<a data-next="{{next}}" href="?o={{next}}"
 			id="more">...</a>
-		</form>
+		{% endif %}
 		<script type="text/javascript" src="static/1/js.js"></script>
 	</body>
 </html>
