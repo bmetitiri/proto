@@ -1,0 +1,72 @@
+<!doctype html> 
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<style type="text/css">
+			body {overflow:hidden;}
+			#interact {background:#fff; box-shadow:0px 0px 20px #333;
+				padding: 10px; position:fixed; right:20px;}
+			input[type="text"] {width:100px;}
+			input[type="submit"] {width:25px;}
+		</style>
+	</head>
+	<body>
+		<ul id="interact">
+			<li><form method="post">
+				<input name="delta" type="submit" value="+" />
+				<input name="keyword" type="text" />
+			</form></li>
+			<!---->
+		</ul>
+		</form>
+		<div id="tweets">
+			<!---->
+		</div>
+		<script src="/socket.io/socket.io.js" type="text/javascript"></script>
+		<script type="text/javascript">
+			var post_form = function(){
+				var http = new XMLHttpRequest(),
+					data = '',
+					inputs = this.parentElement.children;
+				for (var i = 0; i < inputs.length; i++){
+					var child = inputs[i];
+					if (child.tagName == 'INPUT' && child.name){
+						data += child.name + '=' +
+							encodeURIComponent(child.value) + '&';
+						if (child.type == 'text') child.value = '';
+					}
+				}
+				//http.onload = function(){}
+				http.open('post', '');
+				http.send(data);
+				return false;
+			}
+			var tweets   = document.getElementById('tweets'),
+				interact = document.getElementById('interact'),
+				buttons  = document.querySelectorAll('input[type="submit"]'),
+				socket   = new io.Socket().on('message', function(data){
+					if (data.text)
+						tweets.innerHTML += data.text;
+					else if (data.add){
+						var li = document.createElement('li');
+						li.innerHTML = '<form method="post">' +
+						'<input name="delta" type="submit" value="-" /> '+
+						data.add+'<input name="keyword" type="hidden" value="'+
+						data.add+'" /></form>';
+						li.firstElementChild.firstElementChild.onclick = post_form;
+						interact.appendChild(li);
+					} else if (data.remove){
+						var remove = document.querySelectorAll('input[value="'+
+							data.remove+'"]');
+						for (var i = 0; i < remove.length; i++)
+							remove[i].parentElement.parentElement.parentElement.removeChild(
+								remove[i].parentElement.parentElement);
+					};
+					//console.log(data);
+					window.scrollTo(0, document.body.scrollHeight);
+				}).connect();
+			for (var i = 0; i < buttons.length; i++)
+				buttons[i].onclick = post_form;
+		</script>
+	</body>
+</html>
