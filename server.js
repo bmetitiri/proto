@@ -72,7 +72,7 @@ var stream = function(){
 	twit.trackKeywords = [];
 	for (k in keywords) twit.track(k);
 	console.log('tracking: ' + twit.trackKeywords);
-	if (twit.trackKeywords.length) twit.method = 'filter';
+	if (twit.trackKeywords.length) twit.action = 'filter';
 	else twit.action = 'sample';
 	twit.stream();
 }
