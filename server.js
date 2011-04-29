@@ -78,7 +78,6 @@ var stream = function(){
 }
 
 setInterval(function(){
-	console.log(time);
 	if (time-- < 1 && reset){
 		console.log('reset stream at ' + new Date());
 		stream();
