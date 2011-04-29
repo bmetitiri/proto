@@ -8,7 +8,9 @@ var http = require('http'),
 	TwitterNode = require('twitter-node').TwitterNode;
 
 // variables
-var keywords = {'hello':1, 'node':1}
+var keywords = {'hello':1, 'node':1},
+	reset    = true,
+	time     = 1;
 
 // "template"
 var cwd   = __filename.slice(0, __filename.lastIndexOf('/')+1),
@@ -19,6 +21,7 @@ var cwd   = __filename.slice(0, __filename.lastIndexOf('/')+1),
 					'<input name="delta" type="submit" value="-" /> ' + k +
 					'<input name="keyword" type="hidden" value="'+k+'" />' +
 				'</form></li>');
+			res.write('<li class="info">Reset in <span id="time">'+ (time>0?time:0) +'</span> seconds</li>');
 		}, function(req, res){
 		}]
 
@@ -37,7 +40,7 @@ var server = http.createServer(function(req, res){
 					delete keywords[post.keyword]
 					socket.broadcast({remove:post.keyword});
 				}
-				reset();
+				reset = true;
 			}
 			res.writeHead(303, {'Location':req.url});
 			res.end();
@@ -62,13 +65,24 @@ var socket = io.listen(server);
 
 var twit = new TwitterNode({user:process.env.TWITTER_USERNAME,
 		password:process.env.TWITTER_PASSWORD}).addListener('tweet',
-			function(tweet){socket.broadcast(tweet)});
+			function(tweet){socket.broadcast(tweet)}).addListener('error',
+			function(){console.log(arguments)});
 
-var reset = function(){
+var stream = function(){
 	twit.trackKeywords = [];
 	for (k in keywords) twit.track(k);
 	if (twit.trackKeywords.length) twit.method = 'filter';
 	else twit.action = 'sample';
 	twit.stream();
 }
-reset();
+
+setInterval(function(){
+	console.log(time);
+	if (time-- < 1 && reset){
+		console.log('reset stream at ' + new Date());
+		stream();
+		reset = false;
+		time = 30;
+		socket.broadcast({time:time});
+	}
+}, 1000);
