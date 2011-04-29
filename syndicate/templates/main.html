@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<title>Syndicate</title>
-		<link href="static/1/css.css" rel="stylesheet" type="text/css" />
+		<link href="static/css.css" rel="stylesheet" type="text/css" />
 	</head>
 	<body>
 		<form method="post">
@@ -46,9 +46,11 @@
 		</article>
 		</form>
 		{% if not raw %}
-		<a data-next="{{next}}" href="?o={{next}}"
-			id="more">...</a>
+			{% if records|length_is:10 %}
+			<a data-next="{{next}}" href="?o={{next}}"
+				id="more">...</a>
+			{% endif %}
 		{% endif %}
-		<script type="text/javascript" src="static/1/js.js"></script>
+		<script type="text/javascript" src="static/js.js"></script>
 	</body>
 </html>
