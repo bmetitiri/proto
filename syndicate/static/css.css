@@ -3,17 +3,21 @@ article img {max-width:100%;}
 body {font-family:monospace; margin:0;}
 h1 {display:inline; text-shadow: 0 1px 2px #333;}
 h1 a {color:#000; text-decoration:none;}
-header {box-shadow: 0 2px 5px #333; position:fixed; width:100%;
+header {position:fixed; width:100%;
+	background:-moz-linear-gradient(-90deg, #eef, rgba(150,150,250,.5));
 	background:-webkit-gradient(linear, left top, left bottom,
-	from(#eef), to(rgba(150,150,250,.5)));}
+		from(#eef), to(rgba(150,150,250,.5)));}
 header input {position:relative; top:-2px;}
+header, .record img{box-shadow: 0 2px 5px #333; 
+	-moz-box-shadow: 0 2px 5px #333; -webkit-box-shadow: 0 2px 5px #333;}
 li, ul {padding:0; list-style:none}
 nav {display:block; float:right; margin:50px 10px 10px;}
+img {border:0;}
 input[type="checkbox"] {margin:10px 5px; position:absolute;}
 input[type="url"] {border-radius:8px;}
 .hide div {display:none;}
 .hide:hover div {display:block;}
 .raw {font-size:x-small;}
 .record {margin-bottom:20px;}
-.record img {box-shadow: 0 2px 5px #333; display:block; margin:auto;}
+.record img {display:block; margin:auto;}
 #more {color:#00c; display:block; text-align:center;}

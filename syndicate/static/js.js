@@ -5,7 +5,6 @@ if (more){
 		load = function(offset){
 		var http = new XMLHttpRequest();
 		http.onload = function(){
-			console.log(http)
 			var data = JSON.parse(http.responseText); next = data.next;
 			for (var i = 0; i < data.records.length; i++){
 				var record = data.records[i];
