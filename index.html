@@ -9,7 +9,10 @@
 			.info {font-size:small;}
 			#interact {background:#fff; border-radius:10px;
 				box-shadow:0px 0px 20px #333; padding: 10px;
-				position:fixed; right:20px; list-style:none;}
+				position:fixed; right:20px; list-style:none;
+				-moz-border-radius:10px; -webkit-border-radius:10px;
+				-moz-box-shadow:0px 0px 20px #333;
+				-webkit-box-shadow:0px 0px 20px #333;}
 		</style>
 	</head>
 	<body>
@@ -29,7 +32,7 @@
 			var post_form = function(){
 				var http = new XMLHttpRequest(),
 					data = '',
-					inputs = this.parentElement.children;
+					inputs = this.children;
 				for (var i = 0; i < inputs.length; i++){
 					var child = inputs[i];
 					if (child.tagName == 'INPUT' && child.name){
@@ -63,18 +66,18 @@
 						var remove = document.querySelectorAll('input[value="'+
 							data.remove+'"]');
 						for (var i = 0; i < remove.length; i++)
-							remove[i].parentElement.parentElement.parentElement.removeChild(
-								remove[i].parentElement.parentElement);
+							remove[i].parentNode.parentNode.parentNode.removeChild(
+								remove[i].parentNode.parentNode);
 					} else if (data.time){
 						time = data.time;
-						clock.parentElement.parentElement.appendChild(
-							clock.parentElement);
+						clock.parentNode.parentNode.appendChild(
+							clock.parentNode);
 					};
 					//console.log(data);
 					window.scrollTo(0, document.body.scrollHeight);
 				}).connect();
 			for (var i = 0; i < buttons.length; i++)
-				buttons[i].onclick = post_form;
+				buttons[i].parentNode.onsubmit = post_form;
 			setInterval(function(){
 					clock.innerHTML = (--time>0)?time:0;
 			}, 1000);
