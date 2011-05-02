@@ -66,7 +66,7 @@ var socket = io.listen(server);
 var twit = new TwitterNode({user:process.env.TWITTER_USERNAME,
 		password:process.env.TWITTER_PASSWORD}).addListener('tweet',
 			function(tweet){socket.broadcast(tweet)}).addListener('error',
-			function(){console.log(arguments)});
+			function(error){console.log(error)});
 
 var stream = function(){
 	twit.trackKeywords = [];

@@ -60,7 +60,7 @@
 						'<input name="delta" type="submit" value="-" /> '+
 						data.add+'<input name="keyword" type="hidden" value="'+
 						data.add+'" /></form>';
-						li.firstElementChild.firstElementChild.onclick = post_form;
+						li.firstElementChild.onsubmit = post_form;
 						interact.appendChild(li);
 					} else if (data.remove){
 						var remove = document.querySelectorAll('input[value="'+
