@@ -7,7 +7,8 @@ a {color:#00f; text-decoration:none;}
 body {font-family:monospace; margin:50px;}
 iframe {border:0; height:100%; width:100%;}
 .desc {background:#fff; margin:-20px; padding:20px; position:relative; top:-140px;}
-.desc, .site {box-shadow:0 10px 20px #333;}
+.desc, .site {box-shadow:0 10px 20px #333;
+	-moz-box-shadow:0 10px 20px #333; -webkit-box-shadow:0 10px 20px #333;}
 .hide {display:none;}
 .site {border:0; display:block; float:left; height:400px; margin:30px; width:400px;}
 .show:hover .hide {display:block;}
@@ -34,7 +35,9 @@ iframe {border:0; height:100%; width:100%;}
 			frame.parentNode.style.setProperty('opacity', 0);
 			frame.onload = function(){
 				var par = this.parentNode;
+				par.style.setProperty('transition', 'opacity .8s linear');
 				par.style.setProperty('-webkit-transition', 'opacity .8s linear');
+				par.style.setProperty('-moz-transition', 'opacity .8s linear');
 				par.style.setProperty('opacity', 1);
 			}
 		}
