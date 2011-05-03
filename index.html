@@ -6,10 +6,10 @@
 			input[type="text"] {width:100px;}
 			input[type="submit"] {width:25px;}
 			.info {font-size:small;}
-			.tweet {border:1px solid #000; font-size:x-small; float:left;
+			#tweets img {float:left;}
+			#tweets li {border:1px solid #000; font-size:x-small; float:left;
 				height:100px; list-style:none; overflow:hidden;
 				margin:10px; width:150px;}
-			.tweet img {float:left;}
 			#interact {background:#fff; border-radius:10px;
 				box-shadow:0px 0px 20px #333; padding: 10px;
 				position:fixed; right:20px; list-style:none;
@@ -33,20 +33,6 @@
 		</ul>
 		<script src="/socket.io/socket.io.js" type="text/javascript"></script>
 		<script type="text/javascript">
-			var process = function(tweet){
-				console.log(tweet);
-				return '<li class="tweet"><img src="'+
-					tweet.user.profile_image_url+
-					'" /><div class="author" style="background:#'+
-					tweet.user.profile_sidebar_fill_color+'; color:#'+
-					tweet.user.profile_text_color+'"><a style="color:#'+
-					tweet.user.profile_link_color+
-					'" href="http://twitter.com/'+tweet.user.screen_name+
-					'" title="'+tweet.user.description+'">'+tweet.user.name+
-					'</a> ('+tweet.user.followers_count+')</div> via '+
-					tweet.source+'<br />'+
-					tweet.text+'</li>';
-			}
 			var post_form = function(){
 				var http = new XMLHttpRequest(),
 					data = '',
@@ -64,28 +50,36 @@
 				http.send(data);
 				return false;
 			}
+			<!---->
 			var tweets   = document.getElementById('tweets'),
 				interact = document.getElementById('interact'),
 				clock    = document.getElementById('time'),
 				time     = parseInt(clock.innerHTML),
-				buttons  = document.querySelectorAll('input[type="submit"]'),
-				socket   = new io.Socket().on('message', function(data){
+				deltas   = document.querySelectorAll('input[type="hidden"]');
+				buttons  = document.querySelectorAll('input[type="submit"]');
+			for (var i = 0; i < buttons.length; i++)
+				buttons[i].parentNode.onsubmit = post_form;
+			var socket   = new io.Socket().on('message', function(data){
 					if (data.text){
-						tweets.innerHTML += process(data);
-					} else if (data.add){
 						var li = document.createElement('li');
-						li.innerHTML = '<form method="post">' +
-						'<input name="delta" type="submit" value="-" /> '+
-						data.add+'<input name="keyword" type="hidden" value="'+
-						data.add+'" /></form>';
+						li.innerHTML = handle(data);
+						tweets.appendChild(li);
+						for (var i = 0; i < deltas.length; i++)
+							deltas[i].previousElementSibling.innerText = keywords[deltas[i].value];
+					} else if (data.add){
+						if (!keywords[data.add]) keywords[data.add] = 0;
+						var li = document.createElement('li');
+						li.innerHTML = delta(data.add);
 						li.firstElementChild.onsubmit = post_form;
 						interact.appendChild(li);
+						deltas   = document.querySelectorAll('input[type="hidden"]');
 					} else if (data.remove){
 						var remove = document.querySelectorAll('input[value="'+
 							data.remove+'"]');
 						for (var i = 0; i < remove.length; i++)
 							remove[i].parentNode.parentNode.parentNode.removeChild(
 								remove[i].parentNode.parentNode);
+						deltas   = document.querySelectorAll('input[type="hidden"]');
 					} else if (data.time){
 						time = data.time;
 						clock.parentNode.parentNode.appendChild(
@@ -93,8 +87,6 @@
 					};
 					//window.scrollTo(0, document.body.scrollHeight);
 				}).connect();
-			for (var i = 0; i < buttons.length; i++)
-				buttons[i].parentNode.onsubmit = post_form;
 			setInterval(function(){
 					clock.innerHTML = (--time>0)?time:0;
 			}, 1000);

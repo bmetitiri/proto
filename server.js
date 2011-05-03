@@ -8,21 +8,44 @@ var http = require('http'),
 	TwitterNode = require('twitter-node').TwitterNode;
 
 // variables
-var keywords = {'hello':1, 'node':1},
+var keywords = {'☺':0},
 	reset    = true,
-	time     = 1;
+	time     = 1,
+	tweets   = [];
+
+// shared code
+var handle = function(tweet){
+	for (k in keywords)
+		if (tweet.text.toLowerCase().indexOf(k)+1) keywords[k]++;
+	return '<img src="'+tweet.user.profile_image_url+
+		'" /><div class="author" style="background:#'+
+		tweet.user.profile_sidebar_fill_color+'; color:#'+
+		tweet.user.profile_text_color+'"><a style="color:#'+
+		tweet.user.profile_link_color+
+		'" href="http://twitter.com/'+tweet.user.screen_name+
+		'" title="'+tweet.user.description+'">'+tweet.user.name+
+		'</a> ('+tweet.user.followers_count+')</div> via '+
+		tweet.source+'<br />'+tweet.text;
+}
+var delta = function(keyword){
+	return '<form method="post"><input name="delta" type="submit" value="-" /> ' +
+		keyword + ' (<span class="count">' + keywords[keyword] +
+		'</span>)<input name="keyword" type="hidden" value="'+
+		keyword +'" /></form>';
+}
 
 // "template"
 var cwd   = __filename.slice(0, __filename.lastIndexOf('/')+1),
 	index = fs.readFileSync(cwd+'index.html').toString().split('<!---->'),
 	funcs = [function(req, res){
-			for (k in keywords)
-				res.write('<li><form method="post">' +
-					'<input name="delta" type="submit" value="-" /> ' + k +
-					'<input name="keyword" type="hidden" value="'+k+'" />' +
-				'</form></li>');
+			for (k in keywords) res.write('<li>'+delta(k)+'</li>');
 			res.write('<li class="info">Reset in <span id="time">'+ (time>0?time:0) +'</span> seconds</li>');
 		}, function(req, res){
+			for (var i = 0; i < tweets.length; i++)
+				res.write('<li>'+tweets[i]+'</li>');
+		}, function(req, res){
+			res.write('var keywords = '+JSON.stringify(keywords) + ', handle = ' +
+					handle.toString() + ', delta = ' + delta.toString());
 		}]
 
 var server = http.createServer(function(req, res){
@@ -65,7 +88,11 @@ var socket = io.listen(server);
 
 var twit = new TwitterNode({user:process.env.TWITTER_USERNAME,
 		password:process.env.TWITTER_PASSWORD}).addListener('tweet',
-			function(tweet){socket.broadcast(tweet)}).addListener('error',
+			function(tweet){
+				tweets.push(handle(tweet));
+				socket.broadcast(tweet);
+				if (tweets.length > 100) tweets.shift();
+			}).addListener('error',
 			function(error){console.log(error)});
 
 var stream = function(){
@@ -82,7 +109,7 @@ setInterval(function(){
 		console.log('reset stream at ' + new Date());
 		stream();
 		reset = false;
-		time = 30;
+		time = 60;
 		socket.broadcast({time:time});
 	}
 }, 1000);
