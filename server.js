@@ -57,7 +57,7 @@ var server = http.createServer(function(req, res){
 			//console.log(post);
 			if (post.keyword){
 				if (post.delta == '+' && !keywords[post.keyword]){
-					keywords[post.keyword] = 1;
+					keywords[post.keyword] = 0;
 					socket.broadcast({add:post.keyword});
 				} else if (post.delta == '-' && keywords[post.keyword]){
 					delete keywords[post.keyword]
