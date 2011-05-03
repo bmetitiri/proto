@@ -91,7 +91,7 @@ var twit = new TwitterNode({user:process.env.TWITTER_USERNAME,
 			function(tweet){
 				tweets.push(handle(tweet));
 				socket.broadcast(tweet);
-				if (tweets.length > 100) tweets.shift();
+				if (tweets.length > 24) tweets.shift();
 			}).addListener('error',
 			function(error){console.log(error)});
 
