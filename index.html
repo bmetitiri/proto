@@ -62,11 +62,15 @@
 				buttons[i].parentNode.onsubmit = post_form;
 			var socket   = new io.Socket().on('message', function(data){
 					if (data.text){
+						var scroll = false;
+						if (window.innerHeight + window.scrollY
+							== document.body.scrollHeight) scroll=true;
 						var li = document.createElement('li');
 						li.innerHTML = handle(data);
 						tweets.appendChild(li);
 						for (var i = 0; i < deltas.length; i++)
 							deltas[i].previousElementSibling.innerText = keywords[deltas[i].value];
+						if (scroll) window.scrollTo(0, document.body.scrollHeight);
 					} else if (data.add){
 						if (!keywords[data.add]) keywords[data.add] = 0;
 						var li = document.createElement('li');
@@ -86,7 +90,6 @@
 						clock.parentNode.parentNode.appendChild(
 							clock.parentNode);
 					};
-					//window.scrollTo(0, document.body.scrollHeight);
 				}).connect();
 			setInterval(function(){
 					clock.innerHTML = (--time>0)?time:0;
