@@ -1,6 +1,9 @@
-var things = [];
-var world = [
-	[
+var utils = {
+	roll : function(n){return Math.floor(Math.random()*n)},
+}
+
+var chunk = 16, things = [], world = [];
+/*	[
 		[1,0,0,0,1],
 		[1,0,0,0,0],
 		[1,0,0,0,0],
@@ -21,7 +24,40 @@ var world = [
 		[1,1,1,1,1],
 		[1,1,1,1,1],
 	],
-]
+]*/
+
+var z = 0;
+while (z++ < chunk/4){
+	var y = 0, row = [];
+	while (y++ < chunk){
+		var x = 0, column = [];
+		while (x++ < chunk)
+			column.push(z==4?1:0);
+		row.push(column);
+	}
+	world.push(row);
+}
+
+var hill = function(x, y, z){
+	world[z][y][x] = 2;
+	z++;
+	if (world[z]){
+		if (x < chunk-1) hill(x+1, y, z);
+		if (x > 0) hill(x-1, y, z);
+		if (y < chunk-1) hill(x, y+1, z);
+		if (y > 0) hill(x, y-1, z);
+	}
+	while (z < chunk/4-1)
+		world[z++][y][x] = 1;
+}
+
+var i;
+for (i = 0; i < 50; i++){
+	var x = utils.roll(chunk);
+	var y = utils.roll(chunk);
+	var z = utils.roll(chunk/4);
+	hill(x, y, z);
+}
 
 var blocks = function(x, y, z){
 	var level = world[Math.floor(z / tile)];
@@ -62,9 +98,9 @@ Pleb.prototype.update = function(){
 };
 
 var keys = {}, codes = {37:'left', 38:'up', 39:'right', 40:'down',}
-var tile = 16, chunk = 5;
+var tile = 16;
 var init = function(){
-	things.push(new Pleb(tile, tile, tile));
+	things.push(new Pleb(tile, tile, 0));
 }
 
 var main = function(ctx){
@@ -75,9 +111,9 @@ var draw = function(ctx){
 	ctx.clearRect(-ctx.canvas.width/2, -ctx.canvas.height/2,
 		ctx.canvas.width, ctx.canvas.height);
 	var x = -1, block;
-	while (++x < 5){
+	while (++x < world[0][0].length){
 		var y = -1;
-		while (++y < 5){
+		while (++y < world[0].length){
 			var z = -1;
 			while (++z < world.length){
 				block = world[z][y][x];
