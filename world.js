@@ -2,39 +2,46 @@ var utils = {
 	roll : function(n){return Math.floor(Math.random()*n)},
 }
 
-var chunk = 16, things = [], world = [], focus = {x:0, y:0};
+var chunk_size = 16, things = [], focus = {x:0, y:0}, offset = {x:0, y:0};
 
-var z = 0;
-while (z++ < chunk/4){
-	var y = 0, row = [];
-	while (y++ < chunk){
-		var x = 0, column = [];
-		while (x++ < chunk)
-			column.push(z==chunk/4?1:0);
-		row.push(column);
+var Chunk = function(x, y, z){
+	this.x = x, this.y = y, this.z = z;
+	this.blocks = [];
+
+	var z = 0;
+	while (z++ < chunk_size/4){
+		var y = 0, row = [];
+		while (y++ < chunk_size){
+			var x = 0, column = [];
+			while (x++ < chunk_size)
+				column.push(z==chunk_size/4?1:0);
+			row.push(column);
+		}
+		this.blocks.push(row);
 	}
-	world.push(row);
 }
+
+var world = new Chunk().blocks;
 
 var hill = function(x, y, z){
 	if (world[z][y][x]) return;
 	world[z][y][x] = 2;
 	z++;
 	if (world[z]){
-		if (x < chunk-1) hill(x+1, y, z);
+		if (x < chunk_size-1) hill(x+1, y, z);
 		if (x > 0) hill(x-1, y, z);
-		if (y < chunk-1) hill(x, y+1, z);
+		if (y < chunk_size-1) hill(x, y+1, z);
 		if (y > 0) hill(x, y-1, z);
 	}
-	while (z < chunk/4-1)
+	while (z < chunk_size/4-1)
 		world[z++][y][x] = 1;
 }
 
 var i;
 for (i = 0; i < 50; i++){
-	var x = utils.roll(chunk);
-	var y = utils.roll(chunk);
-	var z = utils.roll(chunk/4);
+	var x = utils.roll(chunk_size);
+	var y = utils.roll(chunk_size);
+	var z = utils.roll(chunk_size/4);
 	hill(x, y, z);
 }
 
@@ -94,9 +101,10 @@ Pleb.prototype.update = function(){
 var codes = {37:'left', 38:'up', 39:'right', 40:'down', 17:'dig'}
 var tile = 16;
 var init = function(){
-	things.push(focus = new Pleb(tile*utils.roll(chunk),
-				tile*utils.roll(chunk), 0));
-	things.push(new Pleb(tile*utils.roll(chunk), tile*utils.roll(chunk), 0));
+	things.push(focus = new Pleb(tile*utils.roll(chunk_size),
+				tile*utils.roll(chunk_size), 0));
+	things.push(new Pleb(tile*utils.roll(chunk_size),
+				tile*utils.roll(chunk_size), 0));
 }
 
 var main = function(ctx){
@@ -107,7 +115,9 @@ var draw = function(ctx){
 	ctx.clearRect(-ctx.canvas.width/2, -ctx.canvas.height/2,
 		ctx.canvas.width, ctx.canvas.height);
 	ctx.save();
-	if (focus) ctx.translate(-focus.x, -focus.y);
+	if (focus)
+		offset.x = (offset.x-focus.x)/2, offset.y = (offset.y-focus.y)/2;
+	ctx.translate(offset.x, offset.y);
 	var x = -1, block;
 	while (++x < world[0][0].length){
 		var y = -1;
@@ -154,7 +164,7 @@ window.onload = function(){
 		if (focus) focus[codes[e.keyCode]] = e.type == 'keydown';
 	}
 	window.onclick = function(e){
-		var x = e.x-cvs.width/2+focus.x, y = e.y-cvs.height/2+focus.y;
+		var x = e.x-cvs.width/2-offset.x, y = e.y-cvs.height/2-offset.y;
 		//focus = {x:0, y:0};
 		things.forEach(function(o){
 			var s = o.size();
