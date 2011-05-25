@@ -2,29 +2,7 @@ var utils = {
 	roll : function(n){return Math.floor(Math.random()*n)},
 }
 
-var chunk = 16, things = [], world = [];
-/*	[
-		[1,0,0,0,1],
-		[1,0,0,0,0],
-		[1,0,0,0,0],
-		[0,0,0,0,2],
-		[0,0,2,2,2],
-	],
-	[
-		[1,1,1,1,1],
-		[1,1,0,0,2],
-		[0,0,0,0,2],
-		[0,0,0,2,1],
-		[0,0,2,1,1],
-	],
-	[
-		[1,1,1,1,1],
-		[1,1,1,1,1],
-		[1,1,1,1,1],
-		[1,1,1,1,1],
-		[1,1,1,1,1],
-	],
-]*/
+var chunk = 16, things = [], world = [], focus = {x:0, y:0};
 
 var z = 0;
 while (z++ < chunk/4){
@@ -32,7 +10,7 @@ while (z++ < chunk/4){
 	while (y++ < chunk){
 		var x = 0, column = [];
 		while (x++ < chunk)
-			column.push(z==4?1:0);
+			column.push(z==chunk/4?1:0);
 		row.push(column);
 	}
 	world.push(row);
@@ -84,6 +62,7 @@ var single = function(x, y, z){
 var Pleb = function(x, y, z){
 	this.x = x; this.y = y; this.z = z; this.speed = 1;
 }
+Pleb.prototype.size = function(){return {width:tile, height:tile}};
 Pleb.prototype.draw = function(ctx){
 	var o = 2*this.z / tile;
 	if (o > tile/2) o = tile/2;
@@ -96,10 +75,9 @@ Pleb.prototype.move = function(dx, dy){
 		this.x += dx;
 		this.y += dy;
 	}
-	if (keys.dig && target){
+	if (this.dig && target){
 		var o = (tile)/this.speed;
 		var block = single(this.x+dx*o, this.y+dy*o, this.z-1);
-		console.log(block.x, block.y, block.z);
 		if (block) world[block.z][block.y][block.x] = 0;
 	} else if (target&2)
 		if (!blocks(this.x, this.y, this.z-tile))
@@ -107,15 +85,17 @@ Pleb.prototype.move = function(dx, dy){
 };
 Pleb.prototype.update = function(){
 	if (!blocks(this.x, this.y, this.z)) this.z+=2;
-	if (keys.left)  this.move(-this.speed, 0)
-	if (keys.right) this.move( this.speed, 0)
-	if (keys.up)   this.move(0, -this.speed)
-	if (keys.down) this.move(0,  this.speed)
+	if (this.left)  this.move(-this.speed, 0)
+	if (this.right) this.move( this.speed, 0)
+	if (this.up)   this.move(0, -this.speed)
+	if (this.down) this.move(0,  this.speed)
 };
 
-var keys = {}, codes = {37:'left', 38:'up', 39:'right', 40:'down', 17:'dig'}
+var codes = {37:'left', 38:'up', 39:'right', 40:'down', 17:'dig'}
 var tile = 16;
 var init = function(){
+	things.push(focus = new Pleb(tile*utils.roll(chunk),
+				tile*utils.roll(chunk), 0));
 	things.push(new Pleb(tile*utils.roll(chunk), tile*utils.roll(chunk), 0));
 }
 
@@ -126,6 +106,8 @@ var main = function(ctx){
 var draw = function(ctx){
 	ctx.clearRect(-ctx.canvas.width/2, -ctx.canvas.height/2,
 		ctx.canvas.width, ctx.canvas.height);
+	ctx.save();
+	if (focus) ctx.translate(-focus.x, -focus.y);
 	var x = -1, block;
 	while (++x < world[0][0].length){
 		var y = -1;
@@ -133,9 +115,9 @@ var draw = function(ctx){
 			var z = -1;
 			while (++z < world.length){
 				block = world[z][y][x];
-//				if (block) break;
-//			}
-//			if (block){
+				if (block) break;
+			}
+			if (block){
 				var s = (z)*2;
 				switch(block){
 					case 1:
@@ -155,6 +137,7 @@ var draw = function(ctx){
 		}
 	}
 	things.forEach(function(o){o.draw(ctx)});
+	ctx.restore();
 };
 
 window.onload = function(){
@@ -168,7 +151,16 @@ window.onload = function(){
 	})();
 	window.onkeydown = window.onkeyup = function(e){
 		//console.log(e.keyCode);
-		keys[codes[e.keyCode]] = e.type == 'keydown';
+		if (focus) focus[codes[e.keyCode]] = e.type == 'keydown';
+	}
+	window.onclick = function(e){
+		var x = e.x-cvs.width/2+focus.x, y = e.y-cvs.height/2+focus.y;
+		//focus = {x:0, y:0};
+		things.forEach(function(o){
+			var s = o.size();
+			if (x > o.x && x < o.x+s.width&& y > o.y && y < o.y+s.height)
+				return focus = o;
+		});
 	}
 	init();
 	window.setInterval(function(){
