@@ -1,14 +1,15 @@
-var things = [], world = [
+var things = [];
+var world = [
 	[
 		[1,0,0,0,1],
-		[0,0,0,0,0],
-		[0,0,0,0,0],
+		[1,0,0,0,0],
+		[1,0,0,0,0],
 		[0,0,0,0,2],
-		[0,0,0,2,2],
+		[0,0,2,2,2],
 	],
 	[
 		[1,1,1,1,1],
-		[2,1,0,0,2],
+		[1,1,0,0,2],
 		[0,0,0,0,2],
 		[0,0,0,2,1],
 		[0,0,2,1,1],
@@ -24,6 +25,7 @@ var things = [], world = [
 
 var blocks = function(x, y, z){
 	var level = world[Math.floor(z / tile)];
+	if (!level) return null;
 	if (x%16 || y%16){
 		 x1 = Math.floor(x / tile);
 		 x2 = Math.ceil( x / tile);
@@ -38,23 +40,28 @@ var Pleb = function(x, y, z){
 }
 Pleb.prototype.draw = function(ctx){
 	var o = 2*this.z / tile;
+	if (o > tile/2) o = tile/2;
 	ctx.fillStyle = '#00f';
 	ctx.fillRect(this.x+o, this.y+o, tile-o*2, tile-o*2);
 	ctx.strokeRect(this.x, this.y, tile, tile);
 };
+Pleb.prototype.move = function(dx, dy){
+	target = blocks(this.x+dx, this.y+dy, this.z-1);
+	if (!target&1){
+		this.x += dx;
+		this.y += dy;
+	}
+	if (target&2) this.z -= 4;
+};
 Pleb.prototype.update = function(){
 	if (!blocks(this.x, this.y, this.z)) this.z+=2;
-	if (keys.left && !blocks(this.x-this.speed, this.y, this.z-1))
-		this.x -= this.speed;
-	if (keys.right && !blocks(this.x+this.speed, this.y, this.z-1))
-		this.x += this.speed;
-	if (keys.up && !blocks(this.x, this.y-this.speed, this.z-1))
-		this.y -= this.speed;
-	if (keys.down && !blocks(this.x, this.y+this.speed, this.z-1))
-		this.y += this.speed;
+	if (keys.left)  this.move(-this.speed, 0)
+	if (keys.right) this.move( this.speed, 0)
+	if (keys.up)   this.move(0, -this.speed)
+	if (keys.down) this.move(0,  this.speed)
 };
 
-var keys = {}, codes = {37:'left', 38:'up', 39:'right', 40:'down'};
+var keys = {}, codes = {37:'left', 38:'up', 39:'right', 40:'down',}
 var tile = 16, chunk = 5;
 var init = function(){
 	things.push(new Pleb(tile, tile, tile));
