@@ -63,12 +63,21 @@ var blocks = function(x, y, z){
 	var level = world[Math.floor(z / tile)];
 	if (!level) return null;
 	if (x%16 || y%16){
-		 x1 = Math.floor(x / tile);
-		 x2 = Math.ceil( x / tile);
-		 y1 = Math.floor(y / tile);
-		 y2 = Math.ceil( y / tile);
-		 return level[y1][x1]|level[y1][x2]|level[y2][x1]|level[y2][x2];
+		var x1 = Math.floor(x / tile),
+		 	x2 = Math.ceil( x / tile),
+		 	y1 = Math.floor(y / tile),
+		 	y2 = Math.ceil( y / tile);
+		return level[y1][x1]|level[y1][x2]|level[y2][x1]|level[y2][x2];
 	} else return level[y/16][x/16];
+}
+
+var single = function(x, y, z){
+	var z = Math.floor(z / tile);
+	var level = world[z];
+	if (!level) return null;
+	var x = Math.round(x/tile);
+	var y = Math.round(y/tile);
+	return {x:x, y:y, z:z}
 }
 
 var Pleb = function(x, y, z){
@@ -79,15 +88,19 @@ Pleb.prototype.draw = function(ctx){
 	if (o > tile/2) o = tile/2;
 	ctx.fillStyle = '#00f';
 	ctx.fillRect(this.x+o, this.y+o, tile-o*2, tile-o*2);
-	ctx.strokeRect(this.x, this.y, tile, tile);
 };
 Pleb.prototype.move = function(dx, dy){
-	target = blocks(this.x+dx, this.y+dy, this.z-1);
+	var target = blocks(this.x+dx, this.y+dy, this.z-1);
 	if (!target&1){
 		this.x += dx;
 		this.y += dy;
 	}
-	if (target&2) this.z -= 4;
+	if (keys.dig && target){
+		var o = (tile)/this.speed;
+		var block = single(this.x+dx*o, this.y+dy*o, this.z-1);
+		console.log(block.x, block.y, block.z);
+		if (block) world[block.z][block.y][block.x] = 0;
+	} else if (target&2) this.z -= 4;
 };
 Pleb.prototype.update = function(){
 	if (!blocks(this.x, this.y, this.z)) this.z+=2;
@@ -97,10 +110,10 @@ Pleb.prototype.update = function(){
 	if (keys.down) this.move(0,  this.speed)
 };
 
-var keys = {}, codes = {37:'left', 38:'up', 39:'right', 40:'down',}
+var keys = {}, codes = {37:'left', 38:'up', 39:'right', 40:'down', 17:'dig'}
 var tile = 16;
 var init = function(){
-	things.push(new Pleb(tile, tile, 0));
+	things.push(new Pleb(tile*utils.roll(chunk), tile*utils.roll(chunk), 0));
 }
 
 var main = function(ctx){
@@ -117,9 +130,9 @@ var draw = function(ctx){
 			var z = -1;
 			while (++z < world.length){
 				block = world[z][y][x];
-				if (block) break;
-			}
-			if (block){
+//				if (block) break;
+//			}
+//			if (block){
 				var s = (z)*2;
 				switch(block){
 					case 1:
@@ -135,7 +148,6 @@ var draw = function(ctx){
 						ctx.fill();
 						break;
 				}
-				ctx.strokeRect(x*tile, y*tile, tile, tile);
 			}
 		}
 	}
@@ -152,6 +164,7 @@ window.onload = function(){
 		draw(ctx);
 	})();
 	window.onkeydown = window.onkeyup = function(e){
+		//console.log(e.keyCode);
 		keys[codes[e.keyCode]] = e.type == 'keydown';
 	}
 	init();
