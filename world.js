@@ -39,6 +39,7 @@ while (z++ < chunk/4){
 }
 
 var hill = function(x, y, z){
+	if (world[z][y][x]) return;
 	world[z][y][x] = 2;
 	z++;
 	if (world[z]){
@@ -100,7 +101,9 @@ Pleb.prototype.move = function(dx, dy){
 		var block = single(this.x+dx*o, this.y+dy*o, this.z-1);
 		console.log(block.x, block.y, block.z);
 		if (block) world[block.z][block.y][block.x] = 0;
-	} else if (target&2) this.z -= 4;
+	} else if (target&2)
+		if (!blocks(this.x, this.y, this.z-tile))
+			this.z -= 4;
 };
 Pleb.prototype.update = function(){
 	if (!blocks(this.x, this.y, this.z)) this.z+=2;
