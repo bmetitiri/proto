@@ -20,6 +20,29 @@ var Chunk = function(x, y, z){
 		this.blocks.push(row);
 	}
 }
+Chunk.prototype.hill = function(x, y, z){
+	if (this.blocks[z][y][x]) return;
+	this.blocks[z][y][x] = 2;
+	z++;
+	if (this.blocks[z]){
+		if (x < chunk_size-1) this.hill(x+1, y, z);
+		if (x > 0) this.hill(x-1, y, z);
+		if (y < chunk_size-1) this.hill(x, y+1, z);
+		if (y > 0) this.hill(x, y-1, z);
+	}
+	while (z < chunk_size/4-1)
+		this.blocks[z++][y][x] = 1;
+}
+Chunk.prototype.generate = function(){
+	var i;
+	for (i = 0; i < 50; i++){
+		var x = utils.roll(chunk_size);
+		var y = utils.roll(chunk_size);
+		var z = utils.roll(chunk_size/4);
+		this.hill(x, y, z);
+	}
+	return this;
+}
 
 var terrain = {
 	blocks : function(x, y, z){
@@ -43,31 +66,7 @@ var terrain = {
 	}
 }
 
-var world = new Chunk().blocks;
-
-var hill = function(x, y, z){
-	if (world[z][y][x]) return;
-	world[z][y][x] = 2;
-	z++;
-	if (world[z]){
-		if (x < chunk_size-1) hill(x+1, y, z);
-		if (x > 0) hill(x-1, y, z);
-		if (y < chunk_size-1) hill(x, y+1, z);
-		if (y > 0) hill(x, y-1, z);
-	}
-	while (z < chunk_size/4-1)
-		world[z++][y][x] = 1;
-}
-
-var i;
-for (i = 0; i < 50; i++){
-	var x = utils.roll(chunk_size);
-	var y = utils.roll(chunk_size);
-	var z = utils.roll(chunk_size/4);
-	hill(x, y, z);
-}
-
-
+var world = new Chunk().generate().blocks;
 
 var Pleb = function(x, y, z){
 	this.x = x; this.y = y; this.z = z; this.speed = 1;
