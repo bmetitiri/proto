@@ -69,7 +69,7 @@ Terrain.prototype.draw = function(ctx){
 				if (block) break;
 			}
 			if (block){
-				var s = 2*z+this.z*chunk_size;
+				var s = z+this.z*chunk_size;
 				if (s > tile/2 - 1) s = tile/2 - 1;
 				switch(block){
 					case 1:
@@ -124,7 +124,7 @@ var Pleb = function(x, y, z){
 }
 Pleb.prototype.size = function(){return {width:tile, height:tile}};
 Pleb.prototype.draw = function(ctx){
-	var o = 2*this.z / tile;
+	var o = this.z / tile;
 	if (o > tile/2) o = tile/2-1;
 	ctx.fillStyle = '#00f';
 	ctx.fillRect(this.x+o, this.y+o, tile-o*2, tile-o*2);
