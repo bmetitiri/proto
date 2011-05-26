@@ -9,7 +9,7 @@ var Terrain = function(x, y, z){
 	this.blocks = [];
 
 	var z = 0;
-	while (z++ < chunk_size/4){
+	while (z++ < chunk_size){
 		var y = 0, row = [];
 		while (y++ < chunk_size){
 			var x = 0, column = [];
@@ -24,7 +24,7 @@ Terrain.world = {};
 Terrain.lookup = function(x, y, z){
 	x = Math.floor(x/chunk_size);
 	y = Math.floor(y/chunk_size);
-	z = Math.floor(z/(chunk_size/4));
+	z = Math.floor(z/chunk_size);
 	if (Terrain.world[z]==undefined) Terrain.world[z] = {}
 	if (Terrain.world[z][y]==undefined) Terrain.world[z][y] = {}
 	if (Terrain.world[z][y][x]==undefined){
@@ -47,10 +47,10 @@ Terrain.get = function(x, y, z){ //TODO: Optimize
 	y = Math.floor(y/tile);
 	z = Math.floor(z/tile);
 	var terrain = Terrain.lookup(x, y, z);
-	x %= chunk_size, y %= chunk_size, z %= chunk_size/4;
+	x %= chunk_size, y %= chunk_size, z %= chunk_size;
 	if (x < 0) x+=chunk_size;
 	if (y < 0) y+=chunk_size;
-	if (z < 0) z+=chunk_size/4;
+	if (z < 0) z+=chunk_size;
 	if (!terrain) return {t:null}
 	try {
 	return {x:x, y:y, z:z, T:terrain, t:terrain.blocks[z][y][x]}
@@ -69,7 +69,7 @@ Terrain.prototype.draw = function(ctx){
 				if (block) break;
 			}
 			if (block){
-				var s = 2*z+this.z*chunk_size/4;
+				var s = 2*z+this.z*chunk_size;
 				if (s > tile/2 - 1) s = tile/2 - 1;
 				switch(block){
 					case 1:
@@ -97,7 +97,7 @@ Terrain.prototype.generate = function(){
 		for (i = 0; i < 50; i++){
 			var x = utils.roll(chunk_size);
 			var y = utils.roll(chunk_size);
-			var z = utils.roll(chunk_size/4);
+			var z = utils.roll(chunk_size);
 			this.hill(x, y, z);
 		}
 	}
@@ -113,7 +113,7 @@ Terrain.prototype.hill = function(x, y, z){
 		if (y < chunk_size-1) this.hill(x, y+1, z);
 		if (y > 0) this.hill(x, y-1, z);
 	}
-	while (z < chunk_size/4-1)
+	while (z < chunk_size-1)
 		this.blocks[z++][y][x] = 1;
 }
 
