@@ -47,9 +47,14 @@ Terrain.get = function(x, y, z){ //TODO: Optimize
 	y = Math.floor(y/tile);
 	z = Math.floor(z/tile);
 	var terrain = Terrain.lookup(x, y, z);
-	x %= chunk_size; y %= chunk_size; z %= chunk_size/4;
-	if (!terrain.blocks) return {t:null}
+	x %= chunk_size, y %= chunk_size, z %= chunk_size/4;
+	if (x < 0) x+=chunk_size;
+	if (y < 0) y+=chunk_size;
+	if (z < 0) z+=chunk_size/4;
+	if (!terrain) return {t:null}
+	try {
 	return {x:x, y:y, z:z, T:terrain, t:terrain.blocks[z][y][x]}
+	} catch (e){console.log(terrain, z, y, x)}
 }
 Terrain.prototype.draw = function(ctx){
 	var x_o = this.x*chunk_size*tile;
@@ -65,6 +70,7 @@ Terrain.prototype.draw = function(ctx){
 			}
 			if (block){
 				var s = 2*z+this.z*chunk_size/4;
+				if (s > tile/2 - 1) s = tile/2 - 1;
 				switch(block){
 					case 1:
 						ctx.fillStyle = '#330';
