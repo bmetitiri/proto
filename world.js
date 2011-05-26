@@ -21,6 +21,28 @@ var Chunk = function(x, y, z){
 	}
 }
 
+var terrain = {
+	blocks : function(x, y, z){
+		var level = world[Math.floor(z / tile)];
+		if (!level) return null;
+		if (x%16 || y%16){
+			var x1 = Math.floor(x / tile),
+				x2 = Math.ceil( x / tile),
+				y1 = Math.floor(y / tile),
+				y2 = Math.ceil( y / tile);
+			return level[y1][x1]|level[y1][x2]|level[y2][x1]|level[y2][x2];
+		} else return level[y/16][x/16];
+	},
+	single : function(x, y, z){
+		var z = Math.floor(z / tile);
+		var level = world[z];
+		if (!level) return null;
+		var x = Math.round(x/tile);
+		var y = Math.round(y/tile);
+		return {x:x, y:y, z:z}
+	}
+}
+
 var world = new Chunk().blocks;
 
 var hill = function(x, y, z){
@@ -45,26 +67,7 @@ for (i = 0; i < 50; i++){
 	hill(x, y, z);
 }
 
-var blocks = function(x, y, z){
-	var level = world[Math.floor(z / tile)];
-	if (!level) return null;
-	if (x%16 || y%16){
-		var x1 = Math.floor(x / tile),
-		 	x2 = Math.ceil( x / tile),
-		 	y1 = Math.floor(y / tile),
-		 	y2 = Math.ceil( y / tile);
-		return level[y1][x1]|level[y1][x2]|level[y2][x1]|level[y2][x2];
-	} else return level[y/16][x/16];
-}
 
-var single = function(x, y, z){
-	var z = Math.floor(z / tile);
-	var level = world[z];
-	if (!level) return null;
-	var x = Math.round(x/tile);
-	var y = Math.round(y/tile);
-	return {x:x, y:y, z:z}
-}
 
 var Pleb = function(x, y, z){
 	this.x = x; this.y = y; this.z = z; this.speed = 1;
@@ -77,21 +80,21 @@ Pleb.prototype.draw = function(ctx){
 	ctx.fillRect(this.x+o, this.y+o, tile-o*2, tile-o*2);
 };
 Pleb.prototype.move = function(dx, dy){
-	var target = blocks(this.x+dx, this.y+dy, this.z-1);
+	var target = terrain.blocks(this.x+dx, this.y+dy, this.z-1);
 	if (!target&1){
 		this.x += dx;
 		this.y += dy;
 	}
 	if (this.dig && target){
 		var o = (tile)/this.speed;
-		var block = single(this.x+dx*o, this.y+dy*o, this.z-1);
+		var block = terrain.single(this.x+dx*o, this.y+dy*o, this.z-1);
 		if (block) world[block.z][block.y][block.x] = 0;
 	} else if (target&2)
-		if (!blocks(this.x, this.y, this.z-tile))
+		if (!terrain.blocks(this.x, this.y, this.z-tile))
 			this.z -= 4;
 };
 Pleb.prototype.update = function(){
-	if (!blocks(this.x, this.y, this.z)) this.z+=2;
+	if (!terrain.blocks(this.x, this.y, this.z)) this.z+=2;
 	if (this.left)  this.move(-this.speed, 0)
 	if (this.right) this.move( this.speed, 0)
 	if (this.up)   this.move(0, -this.speed)
