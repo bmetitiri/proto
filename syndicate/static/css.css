@@ -14,7 +14,7 @@ li, ul {padding:0; list-style:none}
 nav {display:block; float:right; margin:50px 10px 10px;}
 img {border:0;}
 input[type="checkbox"] {margin:10px 5px; position:absolute;}
-input[type="url"] {border-radius:8px;}
+input[type="url"] {border-radius:8px; width:150px;}
 .hide div {display:none;}
 .hide:hover div {display:block;}
 .raw {font-size:x-small;}
