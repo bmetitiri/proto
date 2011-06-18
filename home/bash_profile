@@ -2,10 +2,13 @@ alias ls="ls -Gh"
 alias la="ls -a"
 alias ll="ls -l"
 alias l="ls -la"
-#alias vim="vim -u $HOME/.vim/rc"
 
 alias pstree="pstree -g 2"
 
 PS1="\[\033[34m\]\W\[\033[0m\] "
 
 export NODE_PATH="/usr/local/lib/node"
+export EDITOR=vim
+export DISPLAY=:0 # Useful for Linux
+
+shopt -s globstar >/dev/null 2>&1  # Bash 4+ only
