@@ -1,0 +1,19 @@
+#!/bin/bash
+FILE=$0
+while [ -L $FILE ]
+do
+	FILE=$(readlink $FILE)
+done
+cd $(dirname $FILE)/../home;
+FILES=`pwd`
+shopt -s nullglob
+for f in $FILES/*
+do
+	t=$HOME/.$(basename $f)
+	if [ -e $t ]; then
+		echo "$t exists"
+	else
+		echo "linking $f to $t"
+		ln -s $f $t
+	fi
+done
