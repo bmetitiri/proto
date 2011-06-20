@@ -1,11 +1,11 @@
-alias ls="ls -Gh"
+alias ls="ls -h --color"
 alias la="ls -a"
 alias ll="ls -l"
 alias l="ls -la"
 
 alias pstree="pstree -g 2"
 
-PS1="\[\033[34m\]\W\[\033[0m\] "
+PS1="\[\033[1;34m\]\W\[\033[0m\] "
 
 export NODE_PATH="/usr/local/lib/node"
 export EDITOR=vim
