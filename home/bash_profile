@@ -1,4 +1,4 @@
-if [ $TERM_PROGRAM = "Apple_Terminal" ]; then
+if [ "$TERM_PROGRAM" == "Apple_Terminal" ]; then
 	alias ls="ls -hG"
 	PS1="\t \[\033[34m\]\W\[\033[0m\] "
 else
