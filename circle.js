@@ -13,11 +13,9 @@ Circle.prototype.collide = function(circle){
 			Math.pow(this.y - circle.y, 2)) > this.r + circle.r;
 }
 
-var Bullet = function(x, y, d){
+var Bullet = function(x, y, dx, dy){
 	Circle.call(this, x, y, 2);
-	this.speed = 7;
-	this.dx    = Math.cos(d) * this.speed;
-	this.dy    = Math.sin(d) * this.speed;
+	this.dx = dx, this.dy = dy;
 }
 Bullet.prototype = new Circle;
 Bullet.prototype.update = function(){
@@ -26,45 +24,34 @@ Bullet.prototype.update = function(){
 }
 
 var Ship = function(x, y){
+	this.left = this.right = this.up = this.down = false;
 	Circle.call(this, x, y, 5);
+	this.px = this.x;
+	this.py = this.y - 100;
 	this.speed  = 3;
-	this.delta  = .1;
-	this.arc_r  = Math.PI * 2 - 1;
-	this.arc_l  = Math.PI + 1;
+	this.bullet = 7;
 }
 Ship.prototype = new Circle;
 Ship.prototype.update = function(){
-	if (this.left){
-		if (!this.fire){
-			this.arc_l += this.delta;
-			this.arc_r += this.delta;
-		}
-		this.x -= this.speed;
-	}
-	if (this.right){
-		if (!this.fire){
-			this.arc_l -= this.delta;
-			this.arc_r -= this.delta;
-		}
-		this.x += this.speed;
-	}
-	if (this.up){
-		if (!this.fire && this.arc_r - this.arc_l < Math.PI){
-			this.arc_l -= this.delta;
-			this.arc_r += this.delta;
-		}
-		this.y -= this.speed;
-	}
-	if (this.down){
-		if (!this.fire && this.arc_r - this.arc_l > this.delta*2){
-			this.arc_l += this.delta;
-			this.arc_r -= this.delta;
-		}
-		this.y += this.speed;
-	}
+	var dx = this.px-this.x, dy = this.py-this.y,
+		dist = 1-Math.min(.9, Math.sqrt(Math.pow(dx, 2)+Math.pow(dy, 2))/100),
+		arc = Math.atan2(dy, dx);
+	this.arc_r = arc+dist;
+	this.arc_l = arc-dist;
+	this.dx  = (this.right-this.left) * this.speed;
+	this.dy  = (this.down-this.up)    * this.speed;
+	this.x  += this.dx;
+	this.y  += this.dy;
+	this.px += this.dx;
+	this.py += this.dy;
 	if (this.fire){
-		things.push(new Bullet(this.x, this.y, Math.random() *
-				(this.arc_l - this.arc_r) + this.arc_r));
+		var d = Math.random() * (this.arc_l - this.arc_r) + this.arc_r;
+		things.push(new Bullet(this.x, this.y,
+					Math.cos(d) * this.bullet + this.dx,
+					Math.sin(d) * this.bullet + this.dy));
+	} else {
+		if (Math.abs(this.x - (this.px - 2*this.dx))<100) this.px -= 2*this.dx;
+		if (Math.abs(this.y - (this.py - 2*this.dy))<100) this.py -= 2*this.dy;
 	}
 }
 Ship.prototype.draw = function(ctx){
@@ -72,6 +59,10 @@ Ship.prototype.draw = function(ctx){
 	ctx.beginPath();
 	ctx.arc(this.x, this.y, this.r*4, this.arc_l-.1, this.arc_r+.1); 
 	ctx.stroke();
+
+	/* ctx.beginPath();
+	ctx.arc(this.px, this.py, 1, 0, Math.PI*2); 
+	ctx.stroke(); */
 }
 
 var init = function(){
