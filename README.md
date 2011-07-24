@@ -1,5 +1,8 @@
 This repo contains a number of disparate code sketches -- largely to cut down on the number of abandoned, largely unusable repos in github.
 
+###1%
+ - Node.js twitter stream, predates node.joncaldwell.com
+
 ###baad
  - Webkit with transparency
 
@@ -25,3 +28,7 @@ This repo contains a number of disparate code sketches -- largely to cut down on
 
 ###space
  - Spinning ships with a node.js socket.io (echo) server behind.
+
+<hr>
+
+Created with ```git fetch ../repo/ master:repo``` from existing checkouts
