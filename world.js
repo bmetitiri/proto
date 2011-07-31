@@ -108,10 +108,10 @@ Terrain.prototype.hill = function(x, y, z){
 	this.blocks[z][y][x] = 2;
 	z++;
 	if (this.blocks[z]){
-		if (x < chunk_size-1) this.hill(x+1, y, z);
-		if (x > 0) this.hill(x-1, y, z);
-		if (y < chunk_size-1) this.hill(x, y+1, z);
-		if (y > 0) this.hill(x, y-1, z);
+		if (x < chunk_size-1 && !this.blocks[z][y][x+1]) this.hill(x+1, y, z);
+		if (x > 0 && !this.blocks[z][y][x-1]) this.hill(x-1, y, z);
+		if (y < chunk_size-1 && !this.blocks[z][y+1][x]) this.hill(x, y+1, z);
+		if (y > 0 && !this.blocks[z][y-1][x]) this.hill(x, y-1, z);
 	}
 	while (z < chunk_size-1)
 		this.blocks[z++][y][x] = 1;
