@@ -43,12 +43,13 @@ Character.prototype.draw = function(ctx){
 	ctx.fillStyle = '#000';
 	ctx.fill();
 
+	var x = this.dir%2==0?7:8;
 	ctx.beginPath(); //Body
-	ctx.moveTo(8, 10); 
+	ctx.moveTo(x, 10); 
 	ctx.lineTo(4, 0); 
 	ctx.lineTo(-4, 0); 
-	ctx.lineTo(-8, 10); 
-	ctx.arcTo(0, 20, 8, 10, 10); 
+	ctx.lineTo(-x, 10); 
+	ctx.arcTo(0, 2*x, x, 10, 10); 
 	ctx.stroke();
 	ctx.fillStyle = this.uniform;
 	ctx.fill();
