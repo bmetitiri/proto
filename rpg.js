@@ -85,11 +85,11 @@ Character.prototype.draw = function(ctx){
 	if (this.dir%2==0){
 		var x = 6*this.dir/2;
 		ctx.fillStyle = '#000';
-		ctx.fillRect(x-1, -5, 2, 7); 
+		ctx.fillRect(x-1, -5, 2, 6); 
 	} else if (this.dir > 0){
 		ctx.fillStyle = '#000';
-		ctx.fillRect(-5, -4, 2, 7); 
-		ctx.fillRect(3, -4, 2, 7); 
+		ctx.fillRect(-5, -4, 2, 6); 
+		ctx.fillRect( 3, -4, 2, 6); 
 	}
 
 	ctx.restore()
