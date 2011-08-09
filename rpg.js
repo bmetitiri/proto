@@ -76,7 +76,7 @@ Character.prototype.draw = function(ctx){
 	ctx.fill();
 
 	ctx.beginPath(); //Head
-	ctx.arc(0, -5, 12, 0, Math.PI*2); 
+	ctx.arc(0, -5, 10, 0, Math.PI*2); 
 	ctx.stroke();
 	ctx.fillStyle = this.skin;
 	ctx.fill();
