@@ -13,6 +13,12 @@ Square.prototype.collide = function(square){
 }
 Square.prototype.update = function(){}
 
+var Item = function(type){
+	this.type = type;
+}
+Item.prototype.draw = function(ctx){}
+Item.prototype.update = function(){}
+
 var Character = function(x, y){
 	Square.call(this, x, y, 20);
 	this.speed = 4;
