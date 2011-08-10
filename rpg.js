@@ -1,5 +1,5 @@
-var key_codes = {37:'left', 38:'up', 39:'right', 40:'down', 17:'fire',
-	65:'left', 87:'up', 68:'right', 83:'down', 32:'fire'}
+var key_codes = {37:'left', 38:'up', 39:'right', 40:'down', 17:'attack',
+	65:'left', 87:'up', 68:'right', 83:'down', 32:'attack'}
 
 var Square = function(x, y, size){
 	this.x = x, this.y = y, this.size = size;
@@ -75,6 +75,10 @@ Character.prototype.draw = function(ctx){
 	ctx.fillStyle = this.uniform;
 	ctx.fill();
 
+	//Weapon
+	//ctx.fillStyle = '#000';
+	//ctx.fillRect(this.dir*6-5, 10, 10, 2); 
+
 	ctx.beginPath(); //Head
 	ctx.arc(0, -5, 10, 0, Math.PI*2); 
 	ctx.stroke();
@@ -101,22 +105,24 @@ var Hero = function(x, y){
 Hero.prototype = new Character;
 Hero.prototype.update = function(){
 	this.dx = this.dy = 0;
+	var dir = 0;
 	if (this.up){
 		this.dy -= this.speed;
-		this.dir = -1;
+		dir = -1;
 	}
 	if (this.down){
 		this.dy += this.speed;
-		this.dir = 1;
+		dir = 1;
 	}
 	if (this.left){
 		this.dx -= this.speed;
-		this.dir = -2;
+		dir = -2;
 	}
 	if (this.right){
 		this.dx += this.speed;
-		this.dir = 2;
+		dir = 2;
 	}
+	if (dir && !this.attack) this.dir = dir;
 	this.x += this.dx;
 	this.y += this.dy;
 }
