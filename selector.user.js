@@ -7,7 +7,7 @@
 (function() {
 	if (top != window) return;
  	var self = arguments.callee,
-		actions = {download:'\u2193', link:'\u2192', source:'\u25cf'},
+		actions = {download:'\u2193', follow:'\u2192', source:'\u25cf'},
 		history = JSON.parse(localStorage.getItem('selector')) || [];
 
 	// DOM Helpers
@@ -44,7 +44,7 @@
 		if (follow.href) {
 			if (confirm('Follow link?')) {
 				original = follow;
-				action   = 'link';
+				action   = 'follow';
 			} else cancel(e);
 		}
 		if (original.id) {
