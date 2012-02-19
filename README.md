@@ -10,7 +10,7 @@ This repo contains a number of disparate, largely abandoned code sketches -- lar
  - Node playground (destination: microframework?)
 
 ###jiki
- - example ni (see below) project for a simple wiki-like site.
+ - Example ni (see below) project for a simple wiki-like site.
 
 ###ni
  - (abandoned) Web framework development, yeah! Reinventing the wheel, yeah! (Supports appengine, tornado.py)
