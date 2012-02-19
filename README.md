@@ -34,4 +34,4 @@ This repo contains a number of disparate, largely abandoned code sketches -- lar
 
 <hr>
 
-Created by using ```git fetch ../repo/ master:repo; git push origin repo``` with existing checkouts.
+Created by using ```read repo; git fetch ../$repo/ master:$repo; git push origin $repo``` with existing checkouts.
