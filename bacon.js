@@ -46,11 +46,11 @@ var id = function(target) {
 }
 
 var movie = function(target) {
-	return target['title'] + ' (' + target['releaseYear'] + ')';
+	return target.title + ' (' + target.releaseYear + ')';
 }
 
 var actor = function(target) {
-	return target['name'] + ' (' + target['role'] + ')';
+	return target.name + (target.role ? ' (' + target.role + ')' : '');
 }
 
 var actors = function(req, source) {
@@ -58,10 +58,12 @@ var actors = function(req, source) {
 		for (k in cast) {
 			var member = cast[k];
 			console.log(member);
+			req.write('<div><a href="/actor/' + id(member.id) + '">')
 			if (member.thumbnail) {
-			req.write('<a href="/actor/' + id(member.id) + '"><img src="' +
-				member.thumbnail + '" title="' + actor(member) + '"></a>');
+				req.write('<img src="' + member.thumbnail +
+					'" title="' + actor(member) + '">');
 			}
+			req.write(actor(member) + '</a></div>');
 		}
 		req.end();
 	});
