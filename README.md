@@ -1,4 +1,4 @@
-This repo contains a number of disparate, largely abandoned code sketches -- largely to cut down on the number of abandoned, largely unusable repos in github.
+This repo contains a number of disparate, abandoned code sketches -- largely to cut down on the number of abandoned, largely unused repos in github.
 
 ###1%
  - Node.js twitter stream, predates node.joncaldwell.com
@@ -12,8 +12,12 @@ This repo contains a number of disparate, largely abandoned code sketches -- lar
 ###jiki
  - Example ni (see below) project for a simple wiki-like site.
 
+###nego
+ - **android** Android port of nego/c.
+ - **c** Falling blocks game similar to Lumines, with different clearing mechanisms.
+
 ###ni
- - (abandoned) Web framework development, yeah! Reinventing the wheel, yeah! (Supports appengine, tornado.py)
+ - Web framework development, yeah! Reinventing the wheel, yeah! (Supports appengine, tornado.py)
 
 ###selector
  - Greasemonkey style add-on to download the media content of a target site.
