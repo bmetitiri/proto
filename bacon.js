@@ -38,17 +38,25 @@ var rovio = function(resource, params, callback) {
 		});
 }
 
-var logger = function(items) {
-	console.log(items);
+var start = function(req) {
+	rovio('moviegenres', {include:'subgenres'}, function(genres) {
+		rovio('significantmovies', {
+			genreids:genres[0].id.replace(/ /g, '+')
+		}, function(movies) {
+			var from = movies[0];
+			var to = movies[1];
+			req.end('Go from <img src="' + from['thumbnail'] +
+				'"> to <img src="' + to['thumbnail'] + '">.');
+		});
+	});
 }
 
-rovio('moviegenres', {include:'subgenres'}, function(genres) {
-	rovio('significantmovies', {
-		genreids:genres[0].id.replace(/ /g, '+')
-	}, logger);
-});
-
-/*http.createServer(
+http.createServer(
 	function(res, req) {
-	});
-server.listen(8080, '0.0.0.0');*/
+		switch (res.url) {
+			case '/':
+			req.writeHead(200, {'Content-Type': 'text/html'});
+			start(req);
+			break;
+		}
+	}).listen(8080, '0.0.0.0');
