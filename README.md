@@ -1,4 +1,4 @@
-This repo contains a number of disparate, abandoned code sketches -- largely to cut down on the number of abandoned, largely unused repos in github.
+This repo contains a number of disparate code sketches -- largely to cut down on the number of abandoned, largely unused repos in github.
 
 ###1%
  - Node.js twitter stream, predates node.joncaldwell.com
