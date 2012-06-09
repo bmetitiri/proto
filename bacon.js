@@ -2,15 +2,15 @@
 
 var crypto = require('crypto');
 var http = require('http');
+var fs = require('fs');
 
-var key = '5sqj7bgxvacspnpqbnwqmpwe';
-var secret = '42bNwNTgJg';
+var conf = JSON.parse(fs.readFileSync('conf'));
 
 var sign = function(){
 	var time = Math.floor(new Date().getTime()/1000);
 	return (crypto.createHash('md5')
-			.update(key)
-			.update(secret)
+			.update(conf.key)
+			.update(conf.secret)
 			.update(time.toString())).digest('hex');
 }
 
@@ -19,7 +19,7 @@ var returns = {moviegenres: 'genres', significantmovies: 'movies'};
 var rovio = function(resource, params, callback) {
 	var path = '/data/v1/descriptor/' + resource +
 		'?country=US&language=en&format=json&apikey=' +
-		key + '&sig=' + sign();
+		conf.key + '&sig=' + sign();
 	for (var k in params) {
 		path += '&' + k + '=' + params[k];
 	}
