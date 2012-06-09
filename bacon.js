@@ -14,7 +14,7 @@ var sign = function(){
 			.update(time.toString())).digest('hex');
 }
 
-var returns = {moviegenres: 'genres'};
+var returns = {moviegenres: 'genres', significantmovies: 'movies'};
 
 var rovio = function(resource, params, callback) {
 	var path = '/data/v1/descriptor/' + resource +
@@ -38,13 +38,17 @@ var rovio = function(resource, params, callback) {
 		});
 }
 
-var init = function(genres) {
-	var ret = {};
-	for (var k in genres) {
-		var genre = genres[k];
-		ret[genre['name']] = genre['id'];
-	}
-	console.log(ret);
+var logger = function(items) {
+	console.log(items);
 }
 
-rovio('moviegenres', {include:'subgenres'}, init);
+rovio('moviegenres', {include:'subgenres'}, function(genres) {
+	rovio('significantmovies', {
+		genreids:genres[0].id.replace(/ /g, '+')
+	}, logger);
+});
+
+/*http.createServer(
+	function(res, req) {
+	});
+server.listen(8080, '0.0.0.0');*/
