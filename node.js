@@ -44,7 +44,8 @@ var init = function(current) {
 				});
 				break;
 			default:
-				var session = current.get(client.sessionId);
+				var session = current.get(client.sessionId) ||
+					current.join(client.sessionId);
 				session.fetch(message, function(results) {
 					client.send(JSON.stringify({type:'update', results:results}));
 				});
@@ -60,7 +61,7 @@ var init = function(current) {
 	setInterval(function() {
 		if (new Date() > current.end) {
 			rovio.getPath(function(from, to) {
-				current = (new game.Game(from, to));
+				current = new game.Game(from, to);
 				io.sockets.emit(JSON.stringify(
 					{type:'init', to:current.to, from:current.from,
 						remaining:current.end - current.start - 1})); 
