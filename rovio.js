@@ -82,17 +82,34 @@ exports.getMovies = function(callback, source) {
 
 var getPathCache = [];
 
+exports.getGenres = function(callback) {
+	rovio('descriptor/moviegenres',
+			{include:'subgenres'}, function(genres) {
+		callback(genres);
+	});
+}
+
+var loadMovies = function(genre, callback) {
+	rovio('descriptor/significantmovies', {
+		genreids:id(genre)
+	}, function(movies) {
+		console.log('Loaded:', genre);
+		getPathCache = getPathCache.concat(movies);
+		callback();
+	});
+}
+
 exports.getPath = function(callback) {
 	if (!getPathCache.length) {
-		rovio('descriptor/moviegenres', {include:'subgenres'}, function(genres) {
-			rovio('descriptor/significantmovies', {
-				genreids:id(genres[0].id)
-			}, function(movies) {
-				getPathCache = movies;
-				callback(toMovie(movies[random(movies.length)]),
-					toMovie(movies[random(movies.length)]));
-			});
-		});
+		loadMovies('D   652', // SCI-FI
+		function(){loadMovies('D   650', // Fantasy
+		function(){loadMovies('D   657', // Epic
+		function(){loadMovies('D   648', // Comedy
+		function(){
+		callback(toMovie(getPathCache[random(getPathCache.length)]),
+			toMovie(getPathCache[random(getPathCache.length)]));
+		}
+		)})})});
 	} else {
 		callback(toMovie(getPathCache[random(getPathCache.length)]),
 			toMovie(getPathCache[random(getPathCache.length)]));
