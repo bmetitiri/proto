@@ -1,6 +1,7 @@
 // this.(from|to) = {id:..., type:(actor|movie), name:...}
+var rovio = require('./rovio');
 
-var Game = function(from, to) {
+exports.Game = function(from, to) {
 	this.start = new Date();
 	this.end = new Date().setMinutes(this.start.getMinutes() + 1);
 	this.from = from;
@@ -8,24 +9,43 @@ var Game = function(from, to) {
 	this.sessions = {};
 };
 
-Game.prototype.join = function(session) {
-	this.sessions[session] = new GameState(this, session);
+exports.Game.prototype.get = function(session) {
+	return this.sessions[session];
 };
 
-var GameState = function(game, session) {
+exports.Game.prototype.join = function(session) {
+	this.sessions[session] = new exports.GameState(this, session);
+	return this.sessions[session];
+};
+
+exports.Game.prototype.leave = function(session) {
+	delete this.sessions[session];
+};
+
+exports.GameState = function(game, session) {
 	this.game = game;
-	this.session = session;
 	this.current = this.game.from;
+	this.path = []
 	this.results = {}
-	this.results[this.pointer.id] = this.pointer;
-	this.fetch(this.current.id);
+	this.results[this.current.id] = this.current;
+	this.session = session;
 };
 
-GameState.prototype.fetch = function(next) {
+exports.GameState.prototype.fetch = function(next, callback) {
 	if (!this.results[next]) {
-		console.log('Invalid selection.');
+		console.log('Invalid selection:', next);
 		return;
 	}
 	this.current = this.results[next];
+	this.path.push(this.current);
 	this.results = {};
+	var fetcher = (this.current.type == 'movie') ? rovio.getActors : rovio.getMovies;
+	var self = this;
+	fetcher(function(ret) {
+		for (k in ret) {
+			var result = ret[k];
+			self.results[result.id] = result;
+		}
+		callback(ret);
+	}, next);
 };
