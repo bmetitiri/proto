@@ -1,0 +1,46 @@
+<?doctype html>
+<html>
+	<head>
+		<title>bacon!</title>
+		<script src="/socket.io/socket.io.js" type="text/javascript"></script>
+		<style type="text/css">
+			body {font-size:large; text-align:center;}
+			li {border:1px solid #000; cursor:pointer; margin:5px;}
+			.movie {font-size:x-large;}
+		</style>
+	</head>
+	<body>
+		<span class="movie" id="from"></span> &raquo;
+		<span class="movie" id="to"></span>
+		<input id="join" type="submit" value="Join">
+		<ul id="choices"></ul>
+		<script type="text/javascript">
+			socket = new io.connect();
+			socket.on('message', function(data){
+				var data = (JSON.parse(data));
+				switch(data.type) {
+				case 'init':
+					from.innerText = data.from.name;
+					to.innerText = data.to.name;
+					break;
+				case 'update':
+					choices.innerHTML = '';
+					for (var k in data.results) {
+						var item = data.results[k];
+						var li = document.createElement('li');
+						li.id = item.id;
+						li.innerHTML = item.name;
+						li.onclick = function() {
+							socket.send(this.id);
+						}
+						choices.appendChild(li);
+					}
+					break;
+				}
+			});
+			join.onclick = function() {
+				socket.send('join');
+			}
+		</script>
+	</body>
+</html>
