@@ -45,11 +45,14 @@ var id = function(target) {
 }
 
 var toActor = function(actor) {
-	return {name:actor.name, id:actor.id, type:'actor', image:actor.thumbnail};
+	var name = actor.name;
+	if (actor.role) name += '<br />(' + actor.role + ')';
+	return {name:name, id:actor.id, type:'actor', image:actor.thumbnail};
 }
 
 var toMovie = function(movie) {
-	return {name:movie.title + ' (' + (movie.releaseYear || movie.year) + ')',
+	var year = movie.releaseYear || movie.year;
+	return {name:movie.title + (year ? ' (' + year + ')' : ''),
 			id:movie.id, type:'movie', image:movie.thumbnail};
 }
 
