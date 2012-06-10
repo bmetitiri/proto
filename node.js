@@ -33,7 +33,7 @@ var init = function(current) {
 	io.on('connection', function(client){
 		client.send(JSON.stringify(
 			{type:'init', to:current.to, from:current.from,
-				remaining:current.end - current.start})); 
+				remaining:current.end - current.start - 1})); 
 
 		client.on('message', function(message){
 			switch(message) {
