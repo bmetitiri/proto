@@ -50,8 +50,10 @@
 					choices.innerHTML = '';
 					from.innerText = data.from.name;
 					to.innerText = data.to.name;
-					a.innerHTML = '<img class="thumbnail pull-right" src="'+data.from.image+'" alt>';
-					b.innerHTML = '<img class="thumbnail" src="'+data.to.image+'" alt>';
+					//a.innerHTML = '<img class="thumbnail pull-right" src="'+data.from.image+'" alt>';
+					//b.innerHTML = '<img class="thumbnail" src="'+data.to.image+'" alt>';
+					a.innerHTML = '<iframe src="http://www.youtube.com/embed?listType=search&autoplay=1&list=' + data.from.name.replace(/ /g, '%20') + '">';
+					b.innerHTML = '<iframe src="http://www.youtube.com/embed?listType=search&autoplay=1&list='+ data.to.name.replace(/ /g, '%20') +'">';
 					break;
 				case 'update':
 					choices.innerHTML = '';
