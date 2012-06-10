@@ -52,6 +52,10 @@ var toMovie = function(movie) {
 	return {name:movie.title, id:movie.id, type:'movie', image:movie.thumbnail};
 }
 
+var random = function(max) {
+	return Math.floor(Math.random() * max);
+}
+
 exports.getActors = function(callback, source) {
 	rovio('movie/cast', {movieId: id(source)}, function(cast) {
 		var ret = [];
@@ -73,12 +77,21 @@ exports.getMovies = function(callback, source) {
 	});
 }
 
+var getPathCache = [];
+
 exports.getPath = function(callback) {
-	rovio('descriptor/moviegenres', {include:'subgenres'}, function(genres) {
-		rovio('descriptor/significantmovies', {
-			genreids:id(genres[0].id)
-		}, function(movies) {
-			callback(toMovie(movies[0]), toMovie(movies[1]));
+	if (!getPathCache.length) {
+		rovio('descriptor/moviegenres', {include:'subgenres'}, function(genres) {
+			rovio('descriptor/significantmovies', {
+				genreids:id(genres[0].id)
+			}, function(movies) {
+				getPathCache = movies;
+				callback(toMovie(movies[random(movies.length)]),
+					toMovie(movies[random(movies.length)]));
+			});
 		});
-	});
+	} else {
+		callback(toMovie(getPathCache[random(getPathCache.length)]),
+			toMovie(getPathCache[random(getPathCache.length)]));
+	}
 };

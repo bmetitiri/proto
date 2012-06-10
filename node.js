@@ -62,9 +62,9 @@ var init = function(current) {
 		if (new Date() > current.end) {
 			rovio.getPath(function(from, to) {
 				current = new game.Game(from, to);
-				io.sockets.emit(JSON.stringify(
+				io.sockets.send(JSON.stringify(
 					{type:'init', to:current.to, from:current.from,
-						remaining:current.end - current.start - 1})); 
+						remaining:current.end - new Date() - 1})); 
 			});
 		}
 	}, 1000);
