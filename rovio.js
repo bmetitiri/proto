@@ -117,6 +117,8 @@ var loadMovies = function(genre, callback) {
 exports.getPath = function(callback) {
 	if (!getPathCache.length) {
 		loadMovies('D   652', // SCI-FI
+		function(){loadMovies('D   646', // Action
+		function(){loadMovies('D   647', // Adventure
 		function(){loadMovies('D   650', // Fantasy
 		function(){loadMovies('D   657', // Epic
 		function(){loadMovies('D   648', // Comedy
@@ -124,7 +126,7 @@ exports.getPath = function(callback) {
 		callback(getPathCache[random(getPathCache.length)],
 			getPathCache[random(getPathCache.length)]);
 		}
-		)})})});
+		)})})})})});
 	} else {
 		callback(getPathCache[random(getPathCache.length)],
 			getPathCache[random(getPathCache.length)]);
