@@ -60,7 +60,9 @@ exports.getActors = function(callback, source) {
 	rovio('movie/cast', {movieId: id(source)}, function(cast) {
 		var ret = [];
 		for (k in cast) {
-			ret.push(toActor(cast[k]));
+			if (cast[k].thumbnail !== "") {
+				ret.push(toActor(cast[k]));
+			}
 		}
 		callback(ret);
 	});
