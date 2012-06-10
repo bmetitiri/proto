@@ -64,7 +64,8 @@ var init = function(current) {
 				current = new game.Game(from, to);
 				io.sockets.send(JSON.stringify(
 					{type:'init', to:current.to, from:current.from,
-						remaining:current.end - new Date() - 1})); 
+						remaining:current.end - new Date() - 1,
+						elapsed: new Date() - current.start})); 
 			});
 		}
 	}, 1000);

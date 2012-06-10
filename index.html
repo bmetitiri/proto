@@ -49,8 +49,8 @@
 				switch(data.type) {
 				case 'init':
 					choices.innerHTML = '';
-					a.innerHTML = '<iframe class="thumbnail" src="http://www.youtube.com/embed?listType=search&autoplay=1&list=' + data.from.name.replace(/ /g, '%20') + '">';
-					b.innerHTML = '<iframe class="thumbnail pull-right" src="http://www.youtube.com/embed?listType=search&autoplay=1&list='+ data.to.name.replace(/ /g, '%20') +'">';
+					a.innerHTML = '<iframe class="thumbnail" src="http://www.youtube.com/embed?listType=search&autoplay=1&start=' + data.elapsed + '&list=' + data.from.name.replace(/ /g, '%20') + '">';
+					b.innerHTML = '<iframe class="thumbnail pull-right" src="http://www.youtube.com/embed?listType=search&autoplay=1&start=' + data.elapsed + '&list='+ data.to.name.replace(/ /g, '%20') +'">';
 					from.innerHTML = data.from.name;
 					to.innerHTML = data.to.name;
 					timer.innerHTML = parseInt((data.remaining / 1000), 10);
