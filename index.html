@@ -22,10 +22,20 @@
 		</div>
 		<div class="container">
 			<div class="row">
+				<div class="span6" id="a">
+				</div>
+				<div class="span6" id="b">
+				</div>
+			</div>
+			<div class="row">
 				<div class="span12">
 					<h1><span id="from"></span> &raquo;
 						<span id="to"></span></h1>
 					<input class="btn btn-large btn-primary" id="join" type="submit" value="Join">
+				</div>
+			</div>
+			<div class="row">
+				<div class="span12">
 					<h3>Actors</h3>
 					<ul id="choices" class="thumbnails"></ul>
 				</div>
@@ -40,6 +50,8 @@
 					choices.innerHTML = '';
 					from.innerText = data.from.name;
 					to.innerText = data.to.name;
+					a.innerHTML = '<img class="thumbnail pull-right" src="'+data.from.image+'" alt>';
+					b.innerHTML = '<img class="thumbnail" src="'+data.to.image+'" alt>';
 					break;
 				case 'update':
 					choices.innerHTML = '';

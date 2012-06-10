@@ -1,5 +1,6 @@
 ul.players li {height:50px;margin: 5px 0;background-color:#efefef;}
 .player-details {margin-left:60px;padding:5px 0;}
 body {font-size:large; text-align:center;padding-top:60px;}
-li {border:1px solid #000; cursor:pointer; margin:5px;}
+li {cursor:pointer;}
 .movie {font-size:x-large;}
+ul.lineup li{position:relative;float:left;}
