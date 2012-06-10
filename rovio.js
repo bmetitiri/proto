@@ -72,7 +72,10 @@ exports.getMovies = function(callback, source) {
 		console.log(films);
 		var ret = [];
 		for (k in films) {
-			ret.push(toMovie(films[k]));
+			var movie = films[k];
+			if (isMovie(movie)) {
+				ret.push(toMovie(movie));
+			}
 		}
 		callback(ret);
 	});
@@ -87,6 +90,14 @@ exports.getGenres = function(callback) {
 	});
 }
 
+var isMovie = function(movie) {
+	return movie.title.indexOf('[') == -1 &&
+		movie.title.indexOf(':') == -1 &&
+		movie.title.indexOf('TV') == -1 &&
+		movie.title.indexOf('Episode') == -1 &&
+		movie.title.indexOf('Anime') == -1;
+}
+
 var loadMovies = function(genre, callback) {
 	rovio('descriptor/significantmovies', {
 		genreids:id(genre)
@@ -94,12 +105,8 @@ var loadMovies = function(genre, callback) {
 		console.log('Loaded:', genre);
 		for (k in movies) {
 			var movie = movies[k];
-			if (movie.releaseYear > 1975 &&
-				movie.title.indexOf('[') == -1 &&
-				movie.title.indexOf(':') == -1 &&
-				movie.title.indexOf('TV') == -1 &&
-				movie.title.indexOf('Episode') == -1 &&
-				movie.title.indexOf('Anime') == -1) {
+			if (movie.releaseYear > 2000 &&
+				isMovie(movie)) {
 				getPathCache.push(toMovie(movie));
 			}
 		}
