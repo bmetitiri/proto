@@ -1,0 +1,84 @@
+<html>
+	<head>
+		<title>The Bacon Branch</title>
+		<script src="/socket.io/socket.io.js"></script>
+		<link href="http://twitter.github.com/bootstrap/assets/css/bootstrap.css" rel="stylesheet">
+		<link href="bacon.css" rel="stylesheet">
+		<link href="http://twitter.github.com/bootstrap/assets/css/bootstrap-responsive.css" rel="stylesheet">
+	</head>
+	<body>
+		<div class="navbar navbar-fixed-top">
+			<div class="navbar-inner">
+				<div class="container">
+					<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					</a>
+					<a class="brand" href="/"><img src="bacon.png" alt> BACON! </a> 
+				</div>
+			</div>
+		</div>
+		<div class="container">
+			<div class="row">
+				<div class="span8">
+					<h3>CURRENT GAME: <small>GOLDFINGER (1969) VS MAD MAX (1979)</small><span class="pull-right">n Seconds left</span></h3>
+						<ul class="thumbnails">
+							<li class="span4"><div class="thumbnail"><a href=""><div style="background:url('http://placehold.it/240x240'); background-position:center;background-size:cover;width:100%;height:240px;"></div></a><div class="caption"><h5>GOLDFINGER</h5></div></div></li>
+							<li class="span4"><div class="thumbnail"><a href=""><div style="background:url('http://placehold.it/240x240'); background-position:center;background-size:cover;width:100%;height:240px;"></div></a><div class="caption"><h5>MAD MAX</h5></div></div></li>
+						</ul>
+						<div class="actors">
+							<h3>Actors</h3>
+							<ul class="thumbnails">
+								<li class="span2"><div class="thumbnail"><a href=""><div style="background:url('http://placehold.it/120x120');background-position:center;background-size:cover;width:100%;height:120px;"></div></a><div class="caption"><h5><a href="#">Actor</a></h5></div></div></li>
+								<li class="span2"><div class="thumbnail"><a href=""><div style="background:url('http://placehold.it/120x120');background-position:center;background-size:cover;width:100%;height:120px;"></div></a><div class="caption"><h5><a href="#">Actor</a></h5></div></div></li>
+								<li class="span2"><div class="thumbnail"><a href=""><div style="background:url('http://placehold.it/120x120');background-position:center;background-size:cover;width:100%;height:120px;"></div></a><div class="caption"><h5><a href="#">Actor</a></h5></div></div></li>
+								<li class="span2"><div class="thumbnail"><a href=""><div style="background:url('http://placehold.it/120x120');background-position:center;background-size:cover;width:100%;height:120px;"></div></a><div class="caption"><h5><a href="#">Actor</a></h5></div></div></li>
+								<li class="span2"><div class="thumbnail"><a href=""><div style="background:url('http://placehold.it/120x120');background-position:center;background-size:cover;width:100%;height:120px;"></div></a><div class="caption"><h5><a href="#">Actor</a></h5></div></div></li>
+								<li class="span2"><div class="thumbnail"><a href=""><div style="background:url('http://placehold.it/120x120');background-position:center;background-size:cover;width:100%;height:120px;"></div></a><div class="caption"><h5><a href="#">Actor</a></h5></div></div></li>
+								<li class="span2"><div class="thumbnail"><a href=""><div style="background:url('http://placehold.it/120x120');background-position:center;background-size:cover;width:100%;height:120px;"></div></a><div class="caption"><h5><a href="#">Actor</a></h5></div></div></li>
+								<li class="span2"><div class="thumbnail"><a href=""><div style="background:url('http://placehold.it/120x120');background-position:center;background-size:cover;width:100%;height:120px;"></div></a><div class="caption"><h5><a href="#">Actor</a></h5></div></div></li>
+							</ul>
+						</div>
+				</div>
+				<div class="span4">
+					<div class="tabbable">
+						<ul class="nav nav-tabs">
+							<li class="active"><a href="#last-game" data-toggle="tab">Last Game</a></li>
+							<li><a href="#todays-best" data-toggle="tab">Today's Best</a></li>
+							<li><a href="#all-time-best" data-toggle="tab">All time best</a></li>
+						</ul>
+						<div class="tab-content">
+							<div class="tab-pane active" id="last-game">
+								<ul class="unstyled players">
+									<li><div style="float:left"><img src="http://placehold.it/50x50"></div><div class="player-details">Player </div></li>
+									<li><div style="float:left"><img src="http://placehold.it/50x50"></div><div class="player-details">Player </div></li>
+									<li><div style="float:left"><img src="http://placehold.it/50x50"></div><div class="player-details">Player </div></li>
+								</ul>
+							</div>
+							<div class="tab-pane" id="todays-best">
+								<ul class="unstyled players">
+									<li><div style="float:left"><img src="http://placehold.it/50x50"></div><div class="player-details">Player </div></li>
+									<li><div style="float:left"><img src="http://placehold.it/50x50"></div><div class="player-details">Player </div></li>
+									<li><div style="float:left"><img src="http://placehold.it/50x50"></div><div class="player-details">Player </div></li>
+								</ul>
+							</div>
+							<div class="tab-pane" id="all-time-best">
+								<ul class="unstyled players">
+									<li><div style="float:left"><img src="http://placehold.it/50x50"></div><div class="player-details">Player </div></li>
+									<li><div style="float:left"><img src="http://placehold.it/50x50"></div><div class="player-details">Player </div></li>
+									<li><div style="float:left"><img src="http://placehold.it/50x50"></div><div class="player-details">Player </div></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+		</div>
+	</body>
+	<script src="http://twitter.github.com/bootstrap/assets/js/jquery.js"></script>
+	<script src="http://s3.amazonaws.com/fadio/static/bootstrap/js/bootstrap.min.js"></script>
+	<script src="client.js"></script>
+	<script type="text/javascript">
+	$('a[rel=tooltip],div[rel=tooltip]').tooltip({placement: 'bottom'});
+	</script>
+</html>

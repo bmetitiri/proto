@@ -7,7 +7,7 @@ var http = require('http'),
 var game  = require('./game'),
 	rovio = require('./rovio');
 
-mime = {'html':'text/html', 'js':'text/javascript'}
+mime = {'html':'text/html', 'js':'text/javascript', 'css': 'text/css'}
 
 var server = http.createServer(
 	function(req, res){
