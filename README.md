@@ -6,6 +6,9 @@ This repo contains a number of disparate code sketches -- largely to cut down on
 ###baad
  - Webkit with transparency
 
+###bacon
+ - Wiki Game style movie traversal use Rovi data apis.
+
 ###glomp
  - Node playground (destination: microframework?)
 
