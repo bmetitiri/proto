@@ -20,6 +20,7 @@
 				var data = (JSON.parse(data));
 				switch(data.type) {
 				case 'init':
+					choices.innerHTML = '';
 					from.innerText = data.from.name;
 					to.innerText = data.to.name;
 					break;
