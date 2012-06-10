@@ -33,7 +33,8 @@ var init = function(current) {
 	io.on('connection', function(client){
 		client.send(JSON.stringify(
 			{type:'init', to:current.to, from:current.from,
-				remaining:current.end - new Date() - 1})); 
+				remaining:current.end - new Date() - 1,
+				elapsed: new Date() - current.start})); 
 
 		client.on('message', function(message){
 			switch(message) {

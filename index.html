@@ -28,14 +28,16 @@
 				</div>
 			</div>
 			<div class="row">
-				<div class="span12">
-					<h1><span id="from"></span> &raquo;
-						<span id="to"></span> <small id="timer"></small></h1>
-					<input class="btn btn-large btn-primary" id="join" type="submit" value="Join">
+				<div class="span6">
+					<h1><span id="from"></span></h1>
+				</div>
+				<div class="span6">
+					<h1><span id="to"></span></h1>
 				</div>
 			</div>
 			<div class="row">
 				<div class="span12">
+					<a class="btn btn-large btn-primary" id="join" style="margin: 0 20px;">JOIN <small id="timer"></small></a> 
 					<h3>Actors</h3>
 					<ul id="choices" class="thumbnails"></ul>
 				</div>
@@ -48,12 +50,13 @@
 				var data = (JSON.parse(data));
 				switch(data.type) {
 				case 'init':
+					var elapsed = Math.floor((data.elapsed / 1000), 10);
 					choices.innerHTML = '';
-					a.innerHTML = '<iframe class="thumbnail" src="http://www.youtube.com/embed?listType=search&autoplay=1&start=' + data.elapsed + '&list=' + data.from.name.replace(/ /g, '%20') + '">';
-					b.innerHTML = '<iframe class="thumbnail pull-right" src="http://www.youtube.com/embed?listType=search&autoplay=1&start=' + data.elapsed + '&list='+ data.to.name.replace(/ /g, '%20') +'">';
+					a.innerHTML = '<iframe class="thumbnail" style="width:100%;height:50%;" src="http://www.youtube.com/embed?listType=search&start=' + elapsed + '&autoplay=1&list=' + data.from.name.replace(/ /g, '%20') + '%20trailer">';
+					b.innerHTML = '<iframe class="thumbnail pull-right" style="width:100%;height:50%;" src="http://www.youtube.com/embed?listType=search&start=' + elapsed + '&autoplay=1&list='+ data.to.name.replace(/ /g, '%20') +'%20trailer">';
 					from.innerHTML = data.from.name;
 					to.innerHTML = data.to.name;
-					timer.innerHTML = parseInt((data.remaining / 1000), 10);
+					timer.innerHTML = Math.floor((data.remaining / 1000), 10);
 					break;
 				case 'update':
 					choices.innerHTML = '';
