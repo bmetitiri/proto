@@ -3,7 +3,7 @@ var rovio = require('./rovio');
 
 exports.Game = function(from, to) {
 	this.start = new Date();
-	this.end = new Date().setMinutes(this.start.getMinutes() + 1);
+	this.end = new Date().setSeconds(this.start.getSeconds() + 10);
 	this.from = from;
 	this.to = to;
 	this.sessions = {};
