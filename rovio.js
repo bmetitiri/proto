@@ -61,9 +61,7 @@ exports.getActors = function(callback, source) {
 	rovio('movie/cast', {movieId: id(source)}, function(cast) {
 		var ret = [];
 		for (k in cast) {
-			if (cast[k].thumbnail !== "") {
-				ret.push(toActor(cast[k]));
-			}
+			ret.push(toActor(cast[k]));
 		}
 		callback(ret);
 	});
@@ -94,7 +92,17 @@ var loadMovies = function(genre, callback) {
 		genreids:id(genre)
 	}, function(movies) {
 		console.log('Loaded:', genre);
-		getPathCache = getPathCache.concat(movies);
+		for (k in movies) {
+			var movie = movies[k];
+			if (movie.releaseYear > 1975 &&
+				movie.title.indexOf('[') == -1 &&
+				movie.title.indexOf(':') == -1 &&
+				movie.title.indexOf('TV') == -1 &&
+				movie.title.indexOf('Episode') == -1 &&
+				movie.title.indexOf('Anime') == -1) {
+				getPathCache.push(toMovie(movie));
+			}
+		}
 		callback();
 	});
 }
@@ -106,12 +114,12 @@ exports.getPath = function(callback) {
 		function(){loadMovies('D   657', // Epic
 		function(){loadMovies('D   648', // Comedy
 		function(){
-		callback(toMovie(getPathCache[random(getPathCache.length)]),
-			toMovie(getPathCache[random(getPathCache.length)]));
+		callback(getPathCache[random(getPathCache.length)],
+			getPathCache[random(getPathCache.length)]);
 		}
 		)})})});
 	} else {
-		callback(toMovie(getPathCache[random(getPathCache.length)]),
-			toMovie(getPathCache[random(getPathCache.length)]));
+		callback(getPathCache[random(getPathCache.length)],
+			getPathCache[random(getPathCache.length)]);
 	}
 };

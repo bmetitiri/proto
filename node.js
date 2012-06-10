@@ -47,9 +47,15 @@ var init = function(current) {
 			default:
 				var session = current.get(client.sessionId) ||
 					current.join(client.sessionId);
-				session.fetch(message, function(results) {
+				var state = session.fetch(message, function(results) {
 					client.send(JSON.stringify({type:'update', results:results}));
 				});
+				if (state == 'win') {
+					console.log('winning');
+					client.send(JSON.stringify({type:'win', path:session.path}));
+					client.broadcast.send(JSON.stringify(
+							{type:'winner', id:client.sessionId}));
+				}
 				break;
 			}
 		});

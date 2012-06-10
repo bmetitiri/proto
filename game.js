@@ -39,6 +39,10 @@ exports.GameState.prototype.fetch = function(next, callback) {
 	this.current = this.results[next];
 	this.path.push(this.current);
 	this.results = {};
+	if (next == this.game.to.id) {
+		console.log('returning win');
+		return 'win';
+	}
 	var fetcher = (this.current.type == 'movie') ? rovio.getActors : rovio.getMovies;
 	var self = this;
 	fetcher(function(ret) {

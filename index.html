@@ -70,6 +70,13 @@
 						choices.appendChild(li);
 					}
 					break;
+				case 'winner':
+					alert(data.id + ' finished!');
+					break;
+				case 'win':
+					alert('You finished!');
+					console.log(data.path);
+					break;
 				}
 			});
 			join.onclick = function() {
