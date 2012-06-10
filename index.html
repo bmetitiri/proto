@@ -1,7 +1,7 @@
 <?doctype html>
 <html>
 	<head>
-		<title>bacon!</title>
+		<title>BACON!</title>
 		<link href="http://twitter.github.com/bootstrap/assets/css/bootstrap.css" rel="stylesheet">
 		<link href="/bacon.css" rel="stylesheet">
 		<link href="http://twitter.github.com/bootstrap/assets/css/bootstrap-responsive.css" rel="stylesheet">
@@ -49,12 +49,10 @@
 				switch(data.type) {
 				case 'init':
 					choices.innerHTML = '';
-					//a.innerHTML = '<img class="thumbnail pull-right" src="'+data.from.image+'" alt>';
-					//b.innerHTML = '<img class="thumbnail" src="'+data.to.image+'" alt>';
-					//a.innerHTML = '<img class="thumbnail pull-right" src="'+data.from.image+'" alt>';
-					//b.innerHTML = '<img class="thumbnail" src="'+data.to.image+'" alt>';
 					a.innerHTML = '<iframe class="thumbnail" src="http://www.youtube.com/embed?listType=search&autoplay=1&list=' + data.from.name.replace(/ /g, '%20') + '">';
 					b.innerHTML = '<iframe class="thumbnail pull-right" src="http://www.youtube.com/embed?listType=search&autoplay=1&list='+ data.to.name.replace(/ /g, '%20') +'">';
+					from.innerHTML = data.from.name;
+					to.innerHTML = data.to.name;
 					timer.innerHTML = parseInt((data.remaining / 1000), 10);
 					break;
 				case 'update':
