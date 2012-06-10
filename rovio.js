@@ -4,13 +4,11 @@ var crypto = require('crypto');
 var http = require('http');
 var fs = require('fs');
 
-var conf = JSON.parse(fs.readFileSync('conf'));
-
 var sign = function(){
 	var time = Math.floor(new Date().getTime()/1000);
 	return (crypto.createHash('md5')
-			.update(conf.key)
-			.update(conf.secret)
+			.update(process.env.ROVIO_KEY)
+			.update(process.env.ROVIO_SECRET)
 			.update(time.toString())).digest('hex');
 }
 
@@ -21,7 +19,7 @@ var returns = {
 var rovio = function(resource, params, callback) {
 	var path = '/data/v1/' + resource +
 		'?country=US&language=en&format=json&apikey=' +
-		conf.key + '&sig=' + sign();
+		process.env.ROVIO_KEY + '&sig=' + sign();
 	for (var k in params) {
 		path += '&' + k + '=' + params[k];
 	}
