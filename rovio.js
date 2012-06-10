@@ -49,7 +49,8 @@ var toActor = function(actor) {
 }
 
 var toMovie = function(movie) {
-	return {name:movie.title, id:movie.id, type:'movie', image:movie.thumbnail};
+	return {name:movie.title + ' (' + (movie.releaseYear || movie.year) + ')',
+			id:movie.id, type:'movie', image:movie.thumbnail};
 }
 
 var random = function(max) {
