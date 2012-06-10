@@ -61,9 +61,7 @@ exports.getActors = function(callback, source) {
 	rovio('movie/cast', {movieId: id(source)}, function(cast) {
 		var ret = [];
 		for (k in cast) {
-			if (cast[k].thumbnail !== "") {
-				ret.push(toActor(cast[k]));
-			}
+			ret.push(toActor(cast[k]));
 		}
 		callback(ret);
 	});
@@ -82,19 +80,46 @@ exports.getMovies = function(callback, source) {
 
 var getPathCache = [];
 
+exports.getGenres = function(callback) {
+	rovio('descriptor/moviegenres',
+			{include:'subgenres'}, function(genres) {
+		callback(genres);
+	});
+}
+
+var loadMovies = function(genre, callback) {
+	rovio('descriptor/significantmovies', {
+		genreids:id(genre)
+	}, function(movies) {
+		console.log('Loaded:', genre);
+		for (k in movies) {
+			var movie = movies[k];
+			if (movie.releaseYear > 1975 &&
+				movie.title.indexOf('[') == -1 &&
+				movie.title.indexOf(':') == -1 &&
+				movie.title.indexOf('TV') == -1 &&
+				movie.title.indexOf('Episode') == -1 &&
+				movie.title.indexOf('Anime') == -1) {
+				getPathCache.push(toMovie(movie));
+			}
+		}
+		callback();
+	});
+}
+
 exports.getPath = function(callback) {
 	if (!getPathCache.length) {
-		rovio('descriptor/moviegenres', {include:'subgenres'}, function(genres) {
-			rovio('descriptor/significantmovies', {
-				genreids:id(genres[0].id)
-			}, function(movies) {
-				getPathCache = movies;
-				callback(toMovie(movies[random(movies.length)]),
-					toMovie(movies[random(movies.length)]));
-			});
-		});
+		loadMovies('D   652', // SCI-FI
+		function(){loadMovies('D   650', // Fantasy
+		function(){loadMovies('D   657', // Epic
+		function(){loadMovies('D   648', // Comedy
+		function(){
+		callback(getPathCache[random(getPathCache.length)],
+			getPathCache[random(getPathCache.length)]);
+		}
+		)})})});
 	} else {
-		callback(toMovie(getPathCache[random(getPathCache.length)]),
-			toMovie(getPathCache[random(getPathCache.length)]));
+		callback(getPathCache[random(getPathCache.length)],
+			getPathCache[random(getPathCache.length)]);
 	}
 };
