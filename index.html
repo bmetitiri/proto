@@ -30,7 +30,7 @@
 			<div class="row">
 				<div class="span12">
 					<h1><span id="from"></span> &raquo;
-						<span id="to"></span></h1>
+						<span id="to"></span> <small id="timer"></small></h1>
 					<input class="btn btn-large btn-primary" id="join" type="submit" value="Join">
 				</div>
 			</div>
@@ -41,6 +41,7 @@
 				</div>
 			</div>
 		</div>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 		<script type="text/javascript">
 			socket = new io.connect();
 			socket.on('message', function(data){
@@ -48,12 +49,13 @@
 				switch(data.type) {
 				case 'init':
 					choices.innerHTML = '';
-					from.innerText = data.from.name;
-					to.innerText = data.to.name;
 					//a.innerHTML = '<img class="thumbnail pull-right" src="'+data.from.image+'" alt>';
 					//b.innerHTML = '<img class="thumbnail" src="'+data.to.image+'" alt>';
-					a.innerHTML = '<iframe src="http://www.youtube.com/embed?listType=search&autoplay=1&list=' + data.from.name.replace(/ /g, '%20') + '">';
-					b.innerHTML = '<iframe src="http://www.youtube.com/embed?listType=search&autoplay=1&list='+ data.to.name.replace(/ /g, '%20') +'">';
+					//a.innerHTML = '<img class="thumbnail pull-right" src="'+data.from.image+'" alt>';
+					//b.innerHTML = '<img class="thumbnail" src="'+data.to.image+'" alt>';
+					a.innerHTML = '<iframe class="thumbnail" src="http://www.youtube.com/embed?listType=search&autoplay=1&list=' + data.from.name.replace(/ /g, '%20') + '">';
+					b.innerHTML = '<iframe class="thumbnail pull-right" src="http://www.youtube.com/embed?listType=search&autoplay=1&list='+ data.to.name.replace(/ /g, '%20') +'">';
+					timer.innerHTML = parseInt((data.remaining / 1000), 10);
 					break;
 				case 'update':
 					choices.innerHTML = '';
@@ -73,6 +75,13 @@
 			join.onclick = function() {
 				socket.send('join');
 			}
+			setInterval(function() { 
+					var timeLeft = parseInt($('#timer').text(), 10);
+					if(timeLeft !== 0) { 
+						timeLeft = timeLeft - 1; 
+						$('#timer').text(timeLeft); 
+					} 
+			},1000);
 		</script>
 	</body>
 </html>
