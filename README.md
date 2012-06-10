@@ -12,6 +12,15 @@ This repo contains a number of disparate code sketches -- largely to cut down on
 ###glomp
  - Node playground (destination: microframework?)
 
+###html-jive
+ - **circle** Ship with variable aim and firing patterns.
+ - **dungeon** Game server with dungeon shooter with destructible walls.
+ - **maze** Maze generator with simple chasing enemies.
+ - **platform** Simple platformer with spriting and double jumping.
+ - **three** Version of dungeon in 3D using three.js.
+ - **untitled** Webkit request animation frame test.
+ - **world** Terrain generation with climbing and falling.
+
 ###jiki
  - Example ni (see below) project for a simple wiki-like site.
 
