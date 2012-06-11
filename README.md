@@ -48,6 +48,9 @@ This repo contains a number of disparate code sketches -- largely to cut down on
 ###space
  - Spinning ships with a node.js socket.io (echo) server behind.
 
+###tubular
+ - Lumines-style game with chain-based clearing overlaid over Youtube.
+
 <hr>
 
 Created by using ```read repo; git fetch ../$repo/ master:$repo; git push origin $repo``` with existing checkouts.
