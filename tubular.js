@@ -21,8 +21,7 @@ Board.prototype.draw = function() {
 }
 
 Board.prototype.setBlockSize = function(size) {
-	this.block_padding = Math.floor(size / 12);
-	this.block_size = size - this.block_padding * 2;
+	this.block_size = size;
 }
 
 Board.prototype.getImage = function(type) {
@@ -34,18 +33,17 @@ Board.prototype.getImage = function(type) {
 }
 
 Board.prototype.drawBlock = function(x, y, type) {
-	var offset = this.block_size + this.block_padding * 2;
 	var image = this.getImage(type);
 	if (image) {
 		this.context.drawImage(image,
-				x * offset + this.block_padding,
-				y * offset + this.block_padding,
+				x * this.block_size,
+				y * this.block_size,
 				this.block_size, this.block_size)
 	} else {
 		this.context.fillStyle = (Math.floor(type) == 1) ? '#0f0' : '#00f';
 		this.context.fillRect(
-				x * offset + this.block_padding,
-				y * offset + this.block_padding,
+				x * this.block_size,
+				y * this.block_size,
 				this.block_size, this.block_size)
 	}
 }
@@ -84,7 +82,7 @@ Board.prototype.gravity = function() {
 }
 
 Board.prototype.findBlocks = function() {
-	var magicCount = {};
+	var magicList = {};
 	for (var x = 0; x < this.width - 1; x++) {
 		for (var y = 0; y < this.height - 1; y++) {
 			b = this;
@@ -107,40 +105,77 @@ Board.prototype.findBlocks = function() {
 					this.magicLeft[magic] = 10000;
 				}
 				this.setMagic(x, y, magic);
-				magicCount[magic] = (magicCount[magic] || 0) + 1;
+				var point = {x:x, y:y};
+				if (magicList[magic]) {
+					magicList[magic].push(point);
+				} else {
+					magicList[magic] = [point];
+				}
 
 				this.setMagic(x + 1, y, magic);
 				this.setMagic(x + 1, y + 1, magic);
 				this.setMagic(x, y + 1, magic);
-				var offset = this.block_size + this.block_padding * 2;
+
+				// Non-image draw code.
 				var left = this.magicLeft[magic];
-				this.context.fillStyle = (Math.floor(type) == 1) ?
-					'rgba(0, 255, 0, ' + left / 10000 + ')' :
-					'rgba(0, 0, 255, ' + left / 10000 + ')';
-				this.context.clearRect(
-						x * offset + this.block_padding,
-						y * offset + this.block_padding,
-						offset * 2 - this.block_padding * 2,
-						offset * 2 - this.block_padding * 2);
 				var image = this.getImage(type);
-				if (image) {
-					this.context.drawImage(image,
-							x * offset + this.block_padding,
-							y * offset + this.block_padding,
-							offset * 2 - this.block_padding * 2,
-							offset * 2 - this.block_padding * 2);
-				} else {
+				if (!image) {
+					this.context.clearRect(
+							x * this.block_size,
+							y * this.block_size,
+							this.block_size * 2,
+							this.block_size * 2);
+					this.context.fillStyle = (Math.floor(type) == 1) ?
+						'rgba(0, 255, 0, ' + left / 10000 + ')' :
+						'rgba(0, 0, 255, ' + left / 10000 + ')';
 					this.context.fillRect(
-							x * offset + this.block_padding,
-							y * offset + this.block_padding,
-							offset * 2 - this.block_padding * 2,
-							offset * 2 - this.block_padding * 2);
+							x * this.block_size,
+							y * this.block_size,
+							this.block_size * 2,
+							this.block_size * 2);
 				}
 			}
 		}
 	}
-	for (var k in magicCount) {
-		this.magicLeft[k] -= magicCount[k];
+	for (var k in magicList) {
+		this.magicLeft[k] -= magicList[k].length;
+
+		var point = magicList[k][0];
+		var image = this.getImage(this.getBlock(point.x, point.y));
+		if (image) {
+			var max_x = 0;
+			var max_y = 0;
+			var min_x = Infinity;
+			var min_y = Infinity;
+			magicList[k].forEach(function(v) {
+				if (v.x > max_x) max_x = v.x;
+				if (v.y > max_y) max_y = v.y;
+				if (v.x < min_x) min_x = v.x;
+				if (v.y < min_y) min_y = v.y;
+			}, this);
+			var width = max_x - min_x;
+			var height = max_y - min_y;
+			var size = Math.max(width, height) + 2;
+
+			var left = this.magicLeft[magic];
+			magicList[k].forEach(function(v) {
+				this.context.save();
+				this.context.globalAlpha = left / 10000;
+				this.context.clearRect(
+						v.x * this.block_size, v.y * this.block_size,
+						this.block_size * 2,
+						this.block_size * 2);
+				this.context.drawImage(image,
+						Math.floor((v.x - min_x) / (size) * image.width),
+						Math.floor((v.y - min_y) / (size) * image.height),
+						Math.floor(2 * image.width / size),
+						Math.floor(2 * image.height / size),
+						v.x * this.block_size, v.y * this.block_size,
+						this.block_size * 2,
+						this.block_size * 2);
+				this.context.restore();
+			}, this);
+		}
 	}
 }
 
