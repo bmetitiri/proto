@@ -21,17 +21,33 @@ Board.prototype.draw = function() {
 }
 
 Board.prototype.setBlockSize = function(size) {
-	this.block_padding = Math.floor(size / 10);
+	this.block_padding = Math.floor(size / 12);
 	this.block_size = size - this.block_padding * 2;
+}
+
+Board.prototype.getImage = function(type) {
+	// TODO Use localized lookups.
+	var index = youtube.getPlaylistIndex();
+	return (Math.floor(type) == 1) ?
+		images[videoAuthor[videoPlaylist[index]]] :
+		images[videoAuthor[videoPlaylist[index+1]]];
 }
 
 Board.prototype.drawBlock = function(x, y, type) {
 	var offset = this.block_size + this.block_padding * 2;
-	this.context.fillStyle = (Math.floor(type) == 1) ? '#0f0' : '#00f';
-	this.context.fillRect(
-			x * offset + this.block_padding,
-			y * offset + this.block_padding,
-			this.block_size, this.block_size)
+	var image = this.getImage(type);
+	if (image) {
+		this.context.drawImage(image,
+				x * offset + this.block_padding,
+				y * offset + this.block_padding,
+				this.block_size, this.block_size)
+	} else {
+		this.context.fillStyle = (Math.floor(type) == 1) ? '#0f0' : '#00f';
+		this.context.fillRect(
+				x * offset + this.block_padding,
+				y * offset + this.block_padding,
+				this.block_size, this.block_size)
+	}
 }
 
 Board.prototype.getBlock = function(x, y) {
@@ -106,11 +122,20 @@ Board.prototype.findBlocks = function() {
 						y * offset + this.block_padding,
 						offset * 2 - this.block_padding * 2,
 						offset * 2 - this.block_padding * 2);
-				this.context.fillRect(
-						x * offset + this.block_padding,
-						y * offset + this.block_padding,
-						offset * 2 - this.block_padding * 2,
-						offset * 2 - this.block_padding * 2);
+				var image = this.getImage(type);
+				if (image) {
+					this.context.drawImage(image,
+							x * offset + this.block_padding,
+							y * offset + this.block_padding,
+							offset * 2 - this.block_padding * 2,
+							offset * 2 - this.block_padding * 2);
+				} else {
+					this.context.fillRect(
+							x * offset + this.block_padding,
+							y * offset + this.block_padding,
+							offset * 2 - this.block_padding * 2,
+							offset * 2 - this.block_padding * 2);
+				}
 			}
 		}
 	}
@@ -169,38 +194,6 @@ Piece.prototype.rotate = function() {
 	this.type = this.type << 3 | this.type >> 1;
 }
 
-var getPlayer = function() {
-	return new YT.Player(container, {
-		events: {
-			onReady: function(event) {
-				youtube = event.target;
-			}
-		},
-		playerVars: {
-			listType: 'search',
-			list: 'mlp',
-			autoplay: 1,
-			controls: 0,
-			loop: 1,
-			showinfo: 0,
-			wmode: 'opaque'
-		}});
-}
-
-var setCanvas = function(width, height) {
-	canvas.width = width;
-	canvas.height = height;
-	canvas.style.position = 'fixed';
-	canvas.style.top = (window.innerHeight - height) / 2 + 'px';
-	canvas.style.left = (window.innerWidth - width) / 2 + 'px';
-}
-
-var canvas = document.createElement('canvas');
-document.body.appendChild(canvas);
-
-var container = document.createElement('div');
-document.body.appendChild(container);
-
 var interval, youtube;
 
 var main = function() {
@@ -211,6 +204,7 @@ var main = function() {
 
 	var context = canvas.getContext('2d');
 	var board = new Board(context, block_row, block_column);
+
 	var player = new Piece(board);
 
 	var timer = 0;
@@ -259,7 +253,80 @@ var main = function() {
 	window.onresize();
 }
 
+var getPlayer = function() {
+	return new YT.Player(container, {
+		events: {
+			onReady: callbacks.player
+		},
+		playerVars: {
+			autoplay: 1,
+			controls: 0,
+			loop: 1,
+			showinfo: 0,
+			wmode: 'opaque'
+		}});
+}
+
+var setCanvas = function(width, height) {
+	canvas.width = width;
+	canvas.height = height;
+	canvas.style.position = 'fixed';
+	canvas.style.top = (window.innerHeight - height) / 2 + 'px';
+	canvas.style.left = (window.innerWidth - width) / 2 + 'px';
+}
+
+var createElement = function(type, params) {
+	var element = document.createElement(type);
+	for (var k in params) {
+		element[k] = params[k];
+	}
+	document.body.appendChild(element);
+	return element;
+}
+
+var callYoutube = function(type, params, positional) {
+	positional = positional ? '/' + positional : '';
+	var src = 'https://gdata.youtube.com/feeds/api/' + type +
+		positional + '?alt=json&callback=callbacks.' + type;
+	for (var k in params) {
+		src += '&' + k + '=' + params[k];
+	}
+	createElement('script', {
+		src: src
+	});
+}
+
+var container = createElement('div');
+var canvas = createElement('canvas');
+var loader = callYoutube('videos', {fields: 'entry', q: 'mlp'});
+
+var videoPlaylist, videoAuthor = {}, images = {};
+callbacks = {
+	users: function(data) {
+		var image = document.createElement('img');
+		image.src = data.entry.media$thumbnail.url;
+		images[data.entry.yt$username.$t.toLowerCase()] = image;
+	},
+	videos: function(data) {
+		videoPlaylist = [];
+		data.feed.entry.forEach(function(video) {
+			var id = video.id.$t;
+			id = id.slice(id.lastIndexOf('/')+1)
+			var user = video.author[0].name.$t.replace(/ /g, '');
+			videoPlaylist.push(id);
+			videoAuthor[id] = user.toLowerCase();
+			callYoutube('users',
+				{fields: 'media:thumbnail,yt:username'}, user);
+		});
+	},
+	player: function(event) {
+		youtube = event.target;
+		youtube.loadPlaylist({playlist:videoPlaylist});
+
+		main();
+	}
+}
+
 function onYouTubePlayerAPIReady() {
 	getPlayer();
-	main();
 }
