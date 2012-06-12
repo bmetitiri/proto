@@ -142,6 +142,8 @@ Board.prototype.findBlocks = function() {
 
 		var point = magicList[k][0];
 		var image = this.getImage(this.getBlock(point.x, point.y));
+		var magic = this.getMagic(point.x, point.y);
+		var left = this.magicLeft[magic];
 		if (image) {
 			var max_x = 0;
 			var max_y = 0;
@@ -153,28 +155,29 @@ Board.prototype.findBlocks = function() {
 				if (v.x < min_x) min_x = v.x;
 				if (v.y < min_y) min_y = v.y;
 			}, this);
-			var width = max_x - min_x;
-			var height = max_y - min_y;
-			var size = Math.max(width, height) + 2;
+			var width = max_x + 2 - min_x;
+			var height = max_y + 2 - min_y;
+			var size = Math.max(width, height);
+			var x_offset = (size - width) / 2;
+			var y_offset = (size - height) / 2;
 
-			var left = this.magicLeft[magic];
+			this.context.save();
+			this.context.globalAlpha = left / 10000;
 			magicList[k].forEach(function(v) {
-				this.context.save();
-				this.context.globalAlpha = left / 10000;
 				this.context.clearRect(
 						v.x * this.block_size, v.y * this.block_size,
 						this.block_size * 2,
 						this.block_size * 2);
 				this.context.drawImage(image,
-						Math.floor((v.x - min_x) / (size) * image.width),
-						Math.floor((v.y - min_y) / (size) * image.height),
-						Math.floor(2 * image.width / size),
-						Math.floor(2 * image.height / size),
+						(v.x - min_x + x_offset) / size * image.width,
+						(v.y - min_y + y_offset) / size * image.height,
+						(2 * image.width / size),
+						(2 * image.height / size),
 						v.x * this.block_size, v.y * this.block_size,
 						this.block_size * 2,
 						this.block_size * 2);
-				this.context.restore();
 			}, this);
+			this.context.restore();
 		}
 	}
 }
