@@ -1,14 +1,14 @@
-var Board = function(context, w, h, block_size, block_padding) {
+var Board = function(context, w, h) {
 	this.context = context;
 	this.width = w;
 	this.height = h;
-	this.block_size = block_size;
-	this.block_padding = block_padding;
 	this.board = [];
 
 	this.magicBlock = 0;
 	this.magicMax = 10000;
 	this.magicLeft = {};
+
+	this.setBlockSize(20); // Pre-initialisation default.
 }
 
 Board.prototype.draw = function() {
@@ -18,6 +18,11 @@ Board.prototype.draw = function() {
 				Math.floor(k/this.width),
 				this.board[k]);
 	}
+}
+
+Board.prototype.setBlockSize = function(size) {
+	this.block_padding = Math.floor(size / 10);
+	this.block_size = size - this.block_padding * 2;
 }
 
 Board.prototype.drawBlock = function(x, y, type) {
@@ -164,20 +169,7 @@ Piece.prototype.rotate = function() {
 	this.type = this.type << 3 | this.type >> 1;
 }
 
-var getCanvas = function(width, height) {
-	var canvas = document.createElement('canvas');
-	canvas.width = width;
-	canvas.height = height;
-	canvas.style.position = 'fixed';
-	canvas.style.top = (window.innerHeight - height) / 2 + 'px';
-	canvas.style.left = (window.innerWidth - width) / 2 + 'px';
-	document.body.appendChild(canvas);
-	return canvas;
-}
-
 var getPlayer = function() {
-	var container = document.createElement('div');
-	document.body.appendChild(container);
 	return new YT.Player(container, {
 		events: {
 			onReady: function(event) {
@@ -195,25 +187,30 @@ var getPlayer = function() {
 		}});
 }
 
-var canvas, interval, youtube;
+var setCanvas = function(width, height) {
+	canvas.width = width;
+	canvas.height = height;
+	canvas.style.position = 'fixed';
+	canvas.style.top = (window.innerHeight - height) / 2 + 'px';
+	canvas.style.left = (window.innerWidth - width) / 2 + 'px';
+}
+
+var canvas = document.createElement('canvas');
+document.body.appendChild(canvas);
+
+var container = document.createElement('div');
+document.body.appendChild(container);
+
+var interval, youtube;
 
 var main = function() {
-	if (canvas) document.body.removeChild(canvas);
 	if (interval) window.clearInterval(interval);
 	/* Constants */
 	var block_row = 30;
-	var block_size = Math.floor(window.innerWidth / block_row);
-	block_column = Math.floor(window.innerHeight / block_size);
-	var block_padding = 2;
-	var block_inset = block_size - block_padding * 2;
+	var block_column = 20;
 
-	canvas = getCanvas(
-			block_row * block_size,
-			block_column * block_size);
 	var context = canvas.getContext('2d');
-	var board = new Board(context,
-			block_row, block_column,
-			block_inset, block_padding);
+	var board = new Board(context, block_row, block_column);
 	var player = new Piece(board);
 
 	var timer = 0;
@@ -249,7 +246,17 @@ var main = function() {
 		player.draw();
 		board.findBlocks();
 	}, 50);
-	window.onresize = main;
+
+	window.onresize = function() {
+		var window_ratio = window.innerWidth / window.innerHeight;
+		var canvas_ratio = block_row / block_column;
+		var size = Math.floor((window_ratio > canvas_ratio) ?
+			window.innerHeight / block_column :
+			window.innerWidth / block_row);
+		board.setBlockSize(size);
+		setCanvas(block_row * size, block_column * size);
+	};
+	window.onresize();
 }
 
 function onYouTubePlayerAPIReady() {
