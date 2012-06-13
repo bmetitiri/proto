@@ -33,18 +33,21 @@ Board.prototype.getImage = function(type) {
 }
 
 Board.prototype.drawBlock = function(x, y, type) {
+	var margin = Math.floor(this.block_size / 10);
 	var image = this.getImage(type);
 	if (image) {
 		this.context.drawImage(image,
-				x * this.block_size,
-				y * this.block_size,
-				this.block_size, this.block_size)
+				x * this.block_size + margin,
+				y * this.block_size + margin,
+				this.block_size - margin * 2,
+				this.block_size - margin * 2)
 	} else {
 		this.context.fillStyle = (Math.floor(type) == 1) ? '#0f0' : '#00f';
 		this.context.fillRect(
-				x * this.block_size,
-				y * this.block_size,
-				this.block_size, this.block_size)
+				x * this.block_size + margin,
+				y * this.block_size + margin,
+				this.block_size - margin * 2,
+				this.block_size - margin * 2)
 	}
 }
 
@@ -102,7 +105,7 @@ Board.prototype.findBlocks = function() {
 						// TODO Don't assign existing blocks.
 						this.magicBlock = 0;
 					}
-					this.magicLeft[magic] = 10000;
+					this.magicLeft[magic] = this.magicMax;
 				}
 				this.setMagic(x, y, magic);
 				var point = {x:x, y:y};
@@ -115,25 +118,6 @@ Board.prototype.findBlocks = function() {
 				this.setMagic(x + 1, y, magic);
 				this.setMagic(x + 1, y + 1, magic);
 				this.setMagic(x, y + 1, magic);
-
-				// Non-image draw code.
-				var left = this.magicLeft[magic];
-				var image = this.getImage(type);
-				if (!image) {
-					this.context.clearRect(
-							x * this.block_size,
-							y * this.block_size,
-							this.block_size * 2,
-							this.block_size * 2);
-					this.context.fillStyle = (Math.floor(type) == 1) ?
-						'rgba(0, 255, 0, ' + left / 10000 + ')' :
-						'rgba(0, 0, 255, ' + left / 10000 + ')';
-					this.context.fillRect(
-							x * this.block_size,
-							y * this.block_size,
-							this.block_size * 2,
-							this.block_size * 2);
-				}
 			}
 		}
 	}
@@ -141,44 +125,48 @@ Board.prototype.findBlocks = function() {
 		this.magicLeft[k] -= magicList[k].length;
 
 		var point = magicList[k][0];
-		var image = this.getImage(this.getBlock(point.x, point.y));
+		var type = this.getBlock(point.x, point.y);
+		var image = this.getImage(type);
 		var magic = this.getMagic(point.x, point.y);
 		var left = this.magicLeft[magic];
-		if (image) {
-			var max_x = 0;
-			var max_y = 0;
-			var min_x = Infinity;
-			var min_y = Infinity;
-			magicList[k].forEach(function(v) {
-				if (v.x > max_x) max_x = v.x;
-				if (v.y > max_y) max_y = v.y;
-				if (v.x < min_x) min_x = v.x;
-				if (v.y < min_y) min_y = v.y;
-			}, this);
-			var width = max_x + 2 - min_x;
-			var height = max_y + 2 - min_y;
-			var size = Math.max(width, height);
-			var x_offset = (size - width) / 2;
-			var y_offset = (size - height) / 2;
+		var max_x = 0;
+		var max_y = 0;
+		var min_x = Infinity;
+		var min_y = Infinity;
+		magicList[k].forEach(function(v) {
+			if (v.x > max_x) max_x = v.x;
+			if (v.y > max_y) max_y = v.y;
+			if (v.x < min_x) min_x = v.x;
+			if (v.y < min_y) min_y = v.y;
+		}, this);
+		var width = max_x + 2 - min_x;
+		var height = max_y + 2 - min_y;
+		var size = Math.max(width, height);
+		var x_offset = (size - width) / 2;
+		var y_offset = (size - height) / 2;
 
-			this.context.save();
-			this.context.globalAlpha = left / 10000;
-			magicList[k].forEach(function(v) {
-				this.context.clearRect(
-						v.x * this.block_size, v.y * this.block_size,
-						this.block_size * 2,
-						this.block_size * 2);
+		var slide = (this.magicMax - left) / this.magicMax * canvas.width;
+		magicList[k].forEach(function(v) {
+			if (image) {
 				this.context.drawImage(image,
 						(v.x - min_x + x_offset) / size * image.width,
 						(v.y - min_y + y_offset) / size * image.height,
 						(2 * image.width / size),
 						(2 * image.height / size),
-						v.x * this.block_size, v.y * this.block_size,
+						(v.x * this.block_size + slide) % canvas.width,
+						v.y * this.block_size,
 						this.block_size * 2,
 						this.block_size * 2);
-			}, this);
-			this.context.restore();
-		}
+			} else {
+				this.context.fillStyle =
+						(Math.floor(type) == 1) ? '#0f0' : '#00f';
+				this.context.fillRect(
+						v.x * this.block_size,
+						v.y * this.block_size,
+						this.block_size * 2,
+						this.block_size * 2)
+			}
+		}, this);
 	}
 }
 
@@ -274,9 +262,9 @@ var main = function() {
 		}
 		board.gravity();
 		context.clearRect(0, 0, canvas.width, canvas.height);
+		board.findBlocks();
 		board.draw();
 		player.draw();
-		board.findBlocks();
 	}, 50);
 
 	window.onresize = function() {
