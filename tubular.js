@@ -15,7 +15,7 @@ Board.prototype.draw = function() {
 	for (var k in this.board) {
 		this.drawBlock(
 				k % this.width,
-				Math.floor(k/this.width),
+				~~(k/this.width),
 				this.board[k]);
 	}
 }
@@ -27,28 +27,27 @@ Board.prototype.setBlockSize = function(size) {
 Board.prototype.getImage = function(type) {
 	// TODO Use localized lookups.
 	var index = youtube.getPlaylistIndex();
-	return (Math.floor(type) == 1) ?
+	return (~~(type) == 1) ?
 		images[videoAuthor[videoPlaylist[index]]] :
 		images[videoAuthor[videoPlaylist[index+1]]];
 }
 
 Board.prototype.drawBlock = function(x, y, type) {
-	var margin = Math.floor(this.block_size / 10);
+	var margin = ~~(this.block_size / 10);
+	var type = (~~(type) == 1);
 	var image = this.getImage(type);
+	var draw_x = x * this.block_size + margin;
+	var draw_y = y * this.block_size + margin;
+	var size = this.block_size - margin * 2;
 	if (image) {
-		this.context.drawImage(image,
-				x * this.block_size + margin,
-				y * this.block_size + margin,
-				this.block_size - margin * 2,
-				this.block_size - margin * 2)
+		this.context.drawImage(image, draw_x, draw_y, size, size)
 	} else {
-		this.context.fillStyle = (Math.floor(type) == 1) ? '#0f0' : '#00f';
-		this.context.fillRect(
-				x * this.block_size + margin,
-				y * this.block_size + margin,
-				this.block_size - margin * 2,
-				this.block_size - margin * 2)
+		this.context.fillStyle = type ? '#0f0' : '#00f';
+		this.context.fillRect(draw_x, draw_y, size, size)
 	}
+	this.context.strokeStyle = type ? '#000' : '#fff'
+	this.context.lineWidth = margin;
+	this.context.strokeRect(draw_x, draw_y, size, size);
 }
 
 Board.prototype.getBlock = function(x, y) {
@@ -61,18 +60,18 @@ Board.prototype.setBlock = function(x, y, type) {
 
 Board.prototype.getMagic = function(x, y) {
 	var block = this.getBlock(x, y);
-	return Math.round((block - Math.floor(block)) * this.magicMax);
+	return Math.round((block - ~~(block)) * this.magicMax);
 }
 
 Board.prototype.setMagic = function(x, y, magic) {
 	var block = this.getBlock(x, y);
-	this.setBlock(x, y, Math.floor(block) + magic / this.magicMax);
+	this.setBlock(x, y, ~~(block) + magic / this.magicMax);
 }
 
 Board.prototype.gravity = function() {
 	for (var i = this.board.length - 1; i >= 0; i--) {
 		var x = i % this.width;
-		var y = Math.floor(i/this.width);
+		var y = ~~(i/this.width);
 		if (this.magicLeft[this.getMagic(x, y)] < 0) {
 			delete this.board[y * this.width + x];
 		} else if (y < this.height - 1 &&
@@ -159,7 +158,7 @@ Board.prototype.findBlocks = function() {
 						this.block_size * 2);
 			} else {
 				this.context.fillStyle =
-						(Math.floor(type) == 1) ? '#0f0' : '#00f';
+						(~~(type) == 1) ? '#0f0' : '#00f';
 				this.context.fillRect(
 						v.x * this.block_size,
 						v.y * this.block_size,
@@ -182,10 +181,10 @@ Piece.prototype.reset = function() {
 		this.board.setBlock(this.x+1, this.y+1, ((this.type & 4) >> 2) + 1);
 		this.board.setBlock(this.x, this.y+1, ((this.type & 8) >> 3) + 1);
 	}
-	this.x = Math.floor((this.board.width - 1) / 2);
+	this.x = ~~((this.board.width - 1) / 2);
 	this.y = 0;
 	if (!this.move(0,0)) return false;
-	this.type = Math.floor(Math.random() * 0x10);
+	this.type = ~~(Math.random() * 0x10);
 	return true;
 }
 
@@ -270,7 +269,7 @@ var main = function() {
 	window.onresize = function() {
 		var window_ratio = window.innerWidth / window.innerHeight;
 		var canvas_ratio = block_row / block_column;
-		var size = Math.floor((window_ratio > canvas_ratio) ?
+		var size = ~~((window_ratio > canvas_ratio) ?
 			window.innerHeight / block_column :
 			window.innerWidth / block_row);
 		board.setBlockSize(size);
@@ -324,7 +323,15 @@ var callYoutube = function(type, params, positional) {
 
 var container = createElement('div');
 var canvas = createElement('canvas');
-var loader = callYoutube('videos', {fields: 'entry', q: 'mlp'});
+var video = window.location.href.match(/[?&]v=([^&]+)/);
+var video = 'Q157zsGvUmA';
+if (video) {
+	var loader = callYoutube('videos', {fields: 'entry'}, video + '/related');
+} else {
+	var loader = callYoutube('videos', {fields: 'entry', q: 'mlp'});
+}
+//var loader = callYoutube('videos', {fields: 'entry', q: 'mlp'});
+//var loader = callYoutube('standardfeeds', {fields: 'entry'}, 'on_the_web');
 
 var videoPlaylist, videoAuthor = {}, images = {};
 callbacks = {
@@ -334,6 +341,7 @@ callbacks = {
 		images[data.entry.yt$username.$t.toLowerCase()] = image;
 	},
 	videos: function(data) {
+	//standardfeeds: function(data) {
 		videoPlaylist = [];
 		data.feed.entry.forEach(function(video) {
 			var id = video.id.$t;
