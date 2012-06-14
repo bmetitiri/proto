@@ -329,8 +329,6 @@ if (video) {
 } else {
 	var loader = callYoutube('videos', {fields: 'entry', time: 'today'});
 }
-//var loader = callYoutube('videos', {fields: 'entry', q: 'mlp'});
-//var loader = callYoutube('standardfeeds', {fields: 'entry'}, 'on_the_web');
 
 var videoPlaylist, videoAuthor = {}, images = {};
 callbacks = {
@@ -340,7 +338,6 @@ callbacks = {
 		images[data.entry.yt$username.$t.toLowerCase()] = image;
 	},
 	videos: function(data) {
-	//standardfeeds: function(data) {
 		videoPlaylist = [];
 		data.feed.entry.forEach(function(video) {
 			var id = video.id.$t;
