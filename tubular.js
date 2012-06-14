@@ -324,11 +324,10 @@ var callYoutube = function(type, params, positional) {
 var container = createElement('div');
 var canvas = createElement('canvas');
 var video = window.location.href.match(/[?&]v=([^&]+)/);
-var video = 'Q157zsGvUmA';
 if (video) {
 	var loader = callYoutube('videos', {fields: 'entry'}, video + '/related');
 } else {
-	var loader = callYoutube('videos', {fields: 'entry', q: 'mlp'});
+	var loader = callYoutube('videos', {fields: 'entry', time: 'today'});
 }
 //var loader = callYoutube('videos', {fields: 'entry', q: 'mlp'});
 //var loader = callYoutube('standardfeeds', {fields: 'entry'}, 'on_the_web');
