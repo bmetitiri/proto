@@ -1,3 +1,6 @@
 [submodule "src/nerdtree"]
 	path = src/nerdtree
 	url = http://github.com/scrooloose/nerdtree.git
+[submodule "src/EasyGrep"]
+	path = src/EasyGrep
+	url = http://github.com/vim-scripts/EasyGrep.git

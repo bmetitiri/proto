@@ -2,7 +2,7 @@ set smartindent
 set tabstop=4
 set shiftwidth=4
 "set expandtab
- 
+
 filetype indent on
 syntax on
  
@@ -45,6 +45,8 @@ imap <Home> <C-o><Home>
 map <C-t> :NERDTreeToggle<cr>
 
 let NERDTreeIgnore=['\.vim$', '\.pyc$']
+
+map <C-o> <leader>vV
 
 :colorscheme desert
 

@@ -1,0 +1,1 @@
+../../../src/EasyGrep/plugin/EasyGrep.vim
