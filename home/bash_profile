@@ -25,7 +25,7 @@ export DISPLAY=:0 # Useful for Linux
 
 shopt -s globstar >/dev/null 2>&1  # Bash 4+ only
 
-COMMON=$(dirname `readlink .bash_profile`)/..
+COMMON=$(dirname `readlink $HOME/.bash_profile`)/..
 if [ -f $COMMON/src/git-completion.bash ]; then
 	. $COMMON/src/git-completion.bash
 fi
