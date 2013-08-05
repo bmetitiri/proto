@@ -31,6 +31,9 @@ This repo contains a number of disparate code sketches -- largely to cut down on
 ###ni
  - Web framework development, yeah! Reinventing the wheel, yeah! (Supports appengine, tornado.py)
 
+###node.no.de
+ - Sampling of the Twitter firehose, from when http://no.de was a thing.
+
 ###selector
  - Greasemonkey style add-on to download the media content of a target site.
 
