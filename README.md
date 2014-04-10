@@ -18,7 +18,7 @@ This repo contains a number of disparate code sketches -- largely to cut down on
 ###[glomp](https://github.com/arkie/proto/tree/glomp)
  - Node playground (destination: microframework?)
 
-###[html-jive](https://github.com/arkie/proto/tree/html-jive)
+###html-jive
  - **[circle](https://github.com/arkie/proto/tree/html-jive/circle)** Ship with variable aim and firing patterns.
  - **[dungeon](https://github.com/arkie/proto/tree/html-jive/dungeon)** Game server with dungeon shooter with destructible walls.
  - **[maze](https://github.com/arkie/proto/tree/html-jive/maze)** Maze generator with simple chasing enemies.
@@ -30,7 +30,7 @@ This repo contains a number of disparate code sketches -- largely to cut down on
 ###[jiki](https://github.com/arkie/proto/tree/jiki)
  - Example ni (see below) project for a simple wiki-like site.
 
-###[nego](https://github.com/arkie/proto/tree/nego)
+###nego
  - **[android](https://github.com/arkie/proto/tree/nego/android)** Android port of nego/c.
  - **[c](https://github.com/arkie/proto/tree/nego/c)** Falling blocks game similar to Lumines, with different clearing mechanisms.
 
