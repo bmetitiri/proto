@@ -3,11 +3,17 @@ This repo contains a number of disparate code sketches -- largely to cut down on
 ###1%
  - Node.js twitter stream, predates node.joncaldwell.com
 
+###app.joncaldwell.com
+ - Python/App Engine image aggregator previously at app.joncaldwell.com
+
 ###baad
  - Webkit with transparency
 
 ###bacon
  - Wiki Game style movie traversal use Rovi data apis.
+
+###common
+ - Common *nix configs, helper scripts.
 
 ###glomp
  - Node playground (destination: microframework?)
