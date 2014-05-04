@@ -1,0 +1,21 @@
+{
+  "name": "read.anothr.co",
+  "version": "0.0.1",
+  "dependencies": {
+    "concat-stream": "1.4.x",
+    "feedparser": "0.16.x",
+    "jsdom": "0.8.x",
+    "mongodb": "1.x.x",
+	"request": "2.x.x"
+  },
+	"repository": {
+		"type": "git",
+		"url": "git@github.com:arkie/anothr.git"
+	},
+  "licenses": [
+    {
+      "name": "CC BY-SA",
+      "url": "http://creativecommons.org/licenses/by-sa/3.0/"
+    }
+  ]
+}

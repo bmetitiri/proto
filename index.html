@@ -1,0 +1,70 @@
+<!doctype html5>
+<html>
+<head>
+	<title>[read]anothr</title>
+	<style>
+		a {color: #333;}
+		body {background:#eee; font:14px cursive; margin:0; text-align:center;}
+		.caption {display:inline-block; margin:2px auto 8px; max-width:400px; text-align:justify;}
+		.item {text-decoration:none;}
+		.item img {display:block; margin:auto; max-width:100%;}
+		#content {background:#fff; border:1px #ccc solid; border-top:0; display:inline-block;}
+		.bookmarklet {
+			background:#000;
+			box-shadow: 0 3px 5px #333;
+			color:#ccc;
+			font:17px monospace;
+			margin-top:10px;
+			position:absolute;
+			right:0;
+			text-decoration:none;
+		}
+		@media (min-width: 1200px) and (orientation:landscape) {
+			#content {margin: 0 10% 0 40%;}
+			.bookmarklet {left:90%; right:auto;}
+		}
+		@media (max-device-width: 12cm) and (orientation:portrait) {
+			.caption {font-size:30px; padding: 0 5px; max-width:100%;}
+			.item img {width:100%;}
+		}
+	</style>
+	<script>
+		var offset = parseInt(location.pathname.match('/\(\\d\*)')[1] || 0);
+		var get = function(url, callback) {
+			var iframe = document.createElement('iframe');
+			iframe.height = '0';
+			iframe.sandbox = 'allow-same-origin';
+			iframe.src = url;
+			iframe.style = 'display:none';
+			iframe.onload = function() {
+				var body = iframe.contentDocument.body;
+				document.body.removeChild(iframe);
+				callback(body);
+			}
+			document.body.appendChild(iframe);
+		}
+		var loading = false;
+		window.onscroll = function(e) {
+			var items = document.querySelectorAll('.item');
+			if (!loading && items[items.length - 1].offsetTop < document.body.scrollTop + window.innerHeight) {
+				loading = true;
+				offset += 5;
+				get(offset, function(body) {
+					if (body) {
+						var items = body.querySelectorAll('.item');
+						if (items.length > 0) loading = false;
+						Array.prototype.forEach.call(items, function(e) {
+							document.getElementById('content').appendChild(e);
+						});
+					}
+				});
+			}
+		}
+	</script>
+</head>
+<body>
+	<div id="content">
+		<a class="bookmarklet" href="javascript:(function(){var s = document.createElement('script'); s.id = 'anothr.js';s.src = 'http://read.anothr.co/read.js'; document.body.appendChild(s)})();" title="drag to bookmark bar">[read]</a>
+<!--/div>
+</body>
+</html-->
