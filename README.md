@@ -40,6 +40,10 @@ This repo contains a number of disparate code sketches -- largely to cut down on
 ###[node.no.de](https://github.com/arkie/proto/tree/node.no.de)
  - Sampling of the Twitter firehose, from when http://no.de was a thing.
 
+###[read](https://github.com/arkie/proto/tree/read)
+ - RSS content aggregator, with selection from script extractor.
+ - [JS script](https://github.com/arkie/proto/blob/read/static/read.js) to look for next/previous links, and find primary content.
+
 ###[selector](https://github.com/arkie/proto/tree/selector)
  - Greasemonkey style add-on to download the media content of a target site.
 
