@@ -21,7 +21,7 @@ This repo contains a number of disparate code sketches -- largely to cut down on
 ###[fastauth](https://github.com/arkie/proto/tree/fastauth)
  - Node middleware for adding a recoverable session token.
 
-###[html-jive](https://github.com/arkie/proto/tree/html-jive)
+###html-jive
  - **[circle](https://github.com/arkie/proto/tree/html-jive/circle)** Ship with variable aim and firing patterns.
  - **[dungeon](https://github.com/arkie/proto/tree/html-jive/dungeon)** Game server with dungeon shooter with destructible walls.
  - **[maze](https://github.com/arkie/proto/tree/html-jive/maze)** Maze generator with simple chasing enemies.
@@ -33,7 +33,7 @@ This repo contains a number of disparate code sketches -- largely to cut down on
 ###[jiki](https://github.com/arkie/proto/tree/jiki)
  - Example ni (see below) project for a simple wiki-like site.
 
-###[nego](https://github.com/arkie/proto/tree/nego)
+###nego
  - **[android](https://github.com/arkie/proto/tree/nego/android)** Android port of nego/c.
  - **[c](https://github.com/arkie/proto/tree/nego/c)** Falling blocks game similar to Lumines, with different clearing mechanisms.
 
@@ -42,6 +42,10 @@ This repo contains a number of disparate code sketches -- largely to cut down on
 
 ###[node.no.de](https://github.com/arkie/proto/tree/node.no.de)
  - Sampling of the Twitter firehose, from when http://no.de was a thing.
+
+###[read](https://github.com/arkie/proto/tree/read)
+ - RSS content aggregator, with selection from script extractor.
+ - [JS script](https://github.com/arkie/proto/blob/read/static/read.js) to look for next/previous links, and find primary content.
 
 ###[selector](https://github.com/arkie/proto/tree/selector)
  - Greasemonkey style add-on to download the media content of a target site.
