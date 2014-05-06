@@ -1,0 +1,60 @@
+<?doctype html>
+<html>
+	<head>
+		<title>anothr</title>
+		<style type="text/css">
+.menu {
+	position: absolute;
+	right: 50px;
+}
+
+.menu a {
+	text-decoration: none;
+}
+
+#fastauth-description {
+	background: #fff;
+	border: 1px solid #ccc;
+	border-right: 0;
+	box-shadow: 2px 2px 6px #ccc;
+	font-size: smaller;
+	padding: 12px;
+	position: absolute;
+	top: -1000px;
+	width: 320px;
+	right: -50px;
+}
+
+#fastauth-description.active {
+	top: 20px;
+}
+		</style>
+	</head>
+	<body>
+	<div class="menu">
+	{if auth}
+		<a href="{logout}">logout</a>
+	{else}
+		<a id="fastauth-login" href="{mint}" title="Drag to bookmark bar and click to log in.">&raquo; anothr</a>
+		<div id="fastauth-description">
+		{description}
+		</div>
+		<script type="text/javascript">
+	var fastauthLogin = document.getElementById('fastauth-login');
+	if (fastauthLogin) {
+		var fastauthDescription = document.getElementById('fastauth-description');
+		document.onclick = function(e) {
+			if (e.target == fastauthLogin) {
+				fastauthDescription.className =
+					fastauthDescription.className == 'active' ? '' : 'active';
+				e.preventDefault();
+			} else if (e.target != fastauthDescription) {
+				fastauthDescription.className = '';
+			}
+		}
+	}
+		</script>
+	{/if}
+	</div>
+	</body>
+</html>
