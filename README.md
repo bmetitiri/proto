@@ -18,6 +18,9 @@ This repo contains a number of disparate code sketches -- largely to cut down on
 ###[glomp](https://github.com/arkie/proto/tree/glomp)
  - Node playground (destination: microframework?)
 
+###[fastauth](https://github.com/arkie/proto/tree/fastauth)
+ - Node middleware for adding a recoverable session token.
+
 ###[html-jive](https://github.com/arkie/proto/tree/html-jive)
  - **[circle](https://github.com/arkie/proto/tree/html-jive/circle)** Ship with variable aim and firing patterns.
  - **[dungeon](https://github.com/arkie/proto/tree/html-jive/dungeon)** Game server with dungeon shooter with destructible walls.
