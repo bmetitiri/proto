@@ -4,7 +4,9 @@ import (
 	"bufio"
 	"fmt"
 	"github.com/nsf/termbox-go"
+	"io"
 	"os"
+	"os/exec"
 )
 
 func GetEventCh() <-chan termbox.Event {
@@ -17,29 +19,46 @@ func GetEventCh() <-chan termbox.Event {
 	return event
 }
 
+func read(source io.Reader, input chan<- string) {
+	reader := bufio.NewReader(source)
+	for {
+		line, err := reader.ReadString('\n')
+		if err != nil {
+			break
+		}
+		input <- line
+	}
+}
+
 func GetInputCh() <-chan string {
-	input := make(chan string)
 	stat, _ := os.Stdin.Stat()
-	if (stat.Mode() & os.ModeCharDevice) != 0 {
+	stdin := (stat.Mode() & os.ModeCharDevice) == 0
+	if !stdin && len(os.Args) <= 1 {
 		return nil
 	}
-	go func() {
-		reader := bufio.NewReader(os.Stdin)
-		for {
-			line, err := reader.ReadString('\n')
-			if err != nil {
-				break
-			}
-			input <- line
+	input := make(chan string, 1024)
+	if stdin {
+		go read(os.Stdin, input)
+	}
+	if len(os.Args) > 1 {
+		cmd := exec.Command(os.Args[1], os.Args[2:]...)
+		cmdout, _ := cmd.StdoutPipe()
+		cmderr, _ := cmd.StderrPipe()
+		go read(cmdout, input)
+		go read(cmderr, input)
+		e := cmd.Start()
+		if e != nil {
+			fmt.Println(e.Error())
+			return nil
 		}
-	}()
+	}
 	return input
 }
 
 func main() {
 	input := GetInputCh()
 	if input == nil {
-		fmt.Println("Usage: [command |] filum [< input_file]")
+		fmt.Println("Usage: [command |] filum [command] [< input_file]")
 		return
 	}
 	termbox.Init()
@@ -64,7 +83,9 @@ main:
 			f.Refresh()
 		case l := <-input:
 			f.Raw = append(f.Raw, l)
-			f.Refresh()
+			if len(input) == 0 {
+				f.Refresh()
+			}
 		}
 	}
 }
