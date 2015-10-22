@@ -82,7 +82,7 @@ main:
 			}
 			f.Refresh()
 		case l := <-input:
-			f.Raw = append(f.Raw, l)
+			f.Add(l)
 			if len(input) == 0 {
 				f.Refresh()
 			}

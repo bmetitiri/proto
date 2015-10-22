@@ -10,10 +10,23 @@ type Filum struct {
 	Y      int
 	W      int
 	H      int
-	Raw    []string
 	filter Edit
-	match  [][]Format
+	corpus []row
+	match  []row
+	focus  int
 	re     *regexp.Regexp
+}
+
+type row struct {
+	line   int
+	format []Format
+	text   string
+}
+
+func (f *Filum) Add(s string) {
+	format, text := Parse(s)
+	r := row{line:len(f.corpus), format:format, text:text}
+	f.corpus = append(f.corpus, r)
 }
 
 func (f *Filum) HandleKey(e termbox.Event) bool {
@@ -41,7 +54,7 @@ func (f *Filum) Refresh() {
 	f.refilter()
 	for i, l := range f.match {
 		offset := 0
-		for _, m := range l {
+		for _, m := range l.format {
 			f.write(offset, len(f.match)-i-1, m.Text, m.Fg, m.Bg)
 			offset += len(m.Text)
 		}
@@ -49,16 +62,16 @@ func (f *Filum) Refresh() {
 }
 
 func (f *Filum) refilter() {
-	f.match = [][]Format{}
-	for i := len(f.Raw) - 1; i >= 0; i-- {
-		format, raw := Parse(f.Raw[i])
+	f.match = []row{}
+	for i := len(f.corpus) - 1; i >= 0; i-- {
+		r := f.corpus[i]
 		if f.re != nil {
-			match := f.re.FindStringIndex(raw)
+			match := f.re.FindStringIndex(r.text)
 			if match != nil {
-				f.match = append(f.match, format)
+				f.match = append(f.match, r)
 			}
 		} else {
-			f.match = append(f.match, format)
+			f.match = append(f.match, r)
 		}
 		if len(f.match) >= f.H-1 {
 			break
