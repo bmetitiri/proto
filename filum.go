@@ -25,16 +25,27 @@ type row struct {
 
 func (f *Filum) Add(s string) {
 	format, text := Parse(s)
-	r := row{line:len(f.corpus), format:format, text:text}
+	r := row{line: len(f.corpus), format: format, text: text}
 	f.corpus = append(f.corpus, r)
 }
 
 func (f *Filum) HandleKey(e termbox.Event) bool {
-	if e.Key == termbox.KeyCtrlC {
+	switch e.Key {
+	case termbox.KeyCtrlK, termbox.KeyArrowUp:
+		if f.focus < len(f.match) {
+			f.focus++
+		}
+	case termbox.KeyCtrlJ, termbox.KeyArrowDown:
+		if f.focus > 0 {
+			f.focus--
+		}
+	case termbox.KeyCtrlC:
 		return false
-	} else if f.filter.HandleKey(e) {
-		re, _ := regexp.Compile(f.filter.Text)
-		f.re = re
+	default:
+		if f.filter.HandleKey(e) {
+			re, _ := regexp.Compile(f.filter.Text)
+			f.re = re
+		}
 	}
 	return true
 }
@@ -53,11 +64,39 @@ func (f *Filum) Refresh() {
 	// TODO: Only refilter when dirty.
 	f.refilter()
 	for i, l := range f.match {
-		offset := 0
+		x := 0
 		for _, m := range l.format {
-			f.write(offset, len(f.match)-i-1, m.Text, m.Fg, m.Bg)
-			offset += len(m.Text)
+			x = f.write(x, len(f.match)-i-1, m.Text, m.Fg, m.Bg)
 		}
+	}
+	if f.focus > 0 && f.focus <= len(f.match) {
+		f.alert(len(f.match)-f.focus, f.match[f.focus-1].text)
+	}
+}
+
+// TODO: Investigate sharing parts with Filum.write
+func (f *Filum) alert(y int, text string) {
+	lines := []string{}
+	line := []rune{}
+	for i, c := range text {
+		if c == '\t' {
+			l := len(line)
+			for i := l; i < (l/8+1)*8; i++ {
+				line = append(line, ' ')
+			}
+		} else {
+			line = append(line, c)
+		}
+		if len(line) > f.W || i >= len(text)-1 {
+			lines = append(lines, string(line))
+			line = []rune{}
+		}
+	}
+	if y+len(lines) >= f.H {
+		y = f.H - len(lines) - 1
+	}
+	for i, l := range lines {
+		f.write(0, y+i, l, termbox.AttrReverse, termbox.ColorDefault)
 	}
 }
 
@@ -79,13 +118,17 @@ func (f *Filum) refilter() {
 	}
 }
 
-func (f *Filum) write(x, y int, line string, Fg, Bg termbox.Attribute) {
+func (f *Filum) write(x, y int, line string, Fg, Bg termbox.Attribute) int {
 	for _, c := range line {
 		if c == '\t' {
-			x = (x/8 + 1) * 8
+			stop := (x/8 + 1) * 8
+			for ; x < stop; x++ {
+				termbox.SetCell(f.X+x, f.Y+y, ' ', Fg, Bg)
+			}
 		} else {
 			termbox.SetCell(f.X+x, f.Y+y, c, Fg, Bg)
 			x++
 		}
 	}
+	return x
 }
