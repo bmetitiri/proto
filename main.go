@@ -2,7 +2,9 @@ package main
 
 import (
 	"bufio"
+	"flag"
 	"fmt"
+	"github.com/kr/pty"
 	"github.com/nsf/termbox-go"
 	"io"
 	"os"
@@ -30,23 +32,30 @@ func read(source io.Reader, input chan<- string) {
 	}
 }
 
-func GetInputCh() <-chan string {
+func GetInputCh(args []string, pt bool) <-chan string {
 	stat, _ := os.Stdin.Stat()
 	stdin := (stat.Mode() & os.ModeCharDevice) == 0
-	if !stdin && len(os.Args) <= 1 {
+	if !stdin && len(args) == 0 {
 		return nil
 	}
 	input := make(chan string, 1024)
 	if stdin {
 		go read(os.Stdin, input)
 	}
-	if len(os.Args) > 1 {
-		cmd := exec.Command(os.Args[1], os.Args[2:]...)
-		cmdout, _ := cmd.StdoutPipe()
-		cmderr, _ := cmd.StderrPipe()
-		go read(cmdout, input)
-		go read(cmderr, input)
-		e := cmd.Start()
+	if len(args) > 0 {
+		cmd := exec.Command(args[0], args[1:]...)
+		var e error
+		if pt {
+			f, err := pty.Start(cmd)
+			e = err
+			go read(f, input)
+		} else {
+			cmdout, _ := cmd.StdoutPipe()
+			cmderr, _ := cmd.StderrPipe()
+			go read(cmdout, input)
+			go read(cmderr, input)
+			e = cmd.Start()
+		}
 		if e != nil {
 			fmt.Println(e.Error())
 			return nil
@@ -56,9 +65,13 @@ func GetInputCh() <-chan string {
 }
 
 func main() {
-	input := GetInputCh()
-	if input == nil {
-		fmt.Println("Usage: [command |] filum [command] [< input_file]")
+	pt := flag.Bool("p", false, "Use a pseudoterminal to run command.")
+	help := flag.Bool("h", false, "Print this message.")
+	flag.Parse()
+	input := GetInputCh(flag.Args(), *pt)
+	if input == nil || *help {
+		fmt.Println("Usage: [command |] filum [-h] [-p] [command] [< input_file]")
+		flag.PrintDefaults()
 		return
 	}
 	termbox.Init()
