@@ -11,6 +11,7 @@ type Filum struct {
 	W      int
 	H      int
 	filter Edit
+	freeze bool
 	corpus []row
 	match  []row
 	focus  int
@@ -39,6 +40,10 @@ func (f *Filum) HandleKey(e termbox.Event) bool {
 		if f.focus > 0 {
 			f.focus--
 		}
+	case termbox.KeyCtrlS:
+		f.freeze = true
+	case termbox.KeyCtrlQ:
+		f.freeze = false
 	case termbox.KeyCtrlC:
 		return false
 	default:
@@ -101,6 +106,9 @@ func (f *Filum) alert(y int, text string) {
 }
 
 func (f *Filum) refilter() {
+	if f.freeze {
+		return
+	}
 	f.match = []row{}
 	for i := len(f.corpus) - 1; i >= 0; i-- {
 		r := f.corpus[i]
