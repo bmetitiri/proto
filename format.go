@@ -12,7 +12,20 @@ type Format struct {
 	Text string
 }
 
-var escape = regexp.MustCompile(`\x{001b}\[(\d+)m`)
+var escape = regexp.MustCompile(`\x{001b}\[(\d+);?(\d*)m`)
+
+func Attribute(style int) termbox.Attribute {
+	switch style {
+	case 1:
+		return termbox.AttrBold
+	case 4:
+		return termbox.AttrUnderline
+	case 7:
+		return termbox.AttrReverse
+	default:
+		return termbox.ColorDefault // 0
+	}
+}
 
 func Parse(s string) ([]Format, string) {
 	f := []Format{}
@@ -20,18 +33,16 @@ func Parse(s string) ([]Format, string) {
 	e := escape.FindAllStringSubmatchIndex(s, -1)
 	if len(e) > 0 {
 		for i, a := range e {
-			Fg := termbox.ColorDefault
-			Bg := termbox.ColorDefault
 			style, _ := strconv.Atoi(s[a[2]:a[3]])
+			attr := 0
+			if len(a) > 4 {
+				attr, _ = strconv.Atoi(s[a[4]:a[5]])
+			}
+			Fg := Attribute(style) | Attribute(attr)
+			Bg := termbox.ColorDefault
 			switch {
-			case style == 1:
-				Fg = termbox.AttrBold
-			case style == 4:
-				Fg = termbox.AttrUnderline
-			case style == 7:
-				Fg = termbox.AttrReverse
 			case style > 30 && style < 40:
-				Fg = termbox.Attribute(style - 29)
+				Fg |= termbox.Attribute(style - 29)
 			case style > 40 && style < 50:
 				Bg = termbox.Attribute(style - 39)
 			}
