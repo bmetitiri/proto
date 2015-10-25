@@ -1,6 +1,6 @@
 ###[hackyslack](http://hacky-slack.appspot.com/)
-[Google app engine](https://appengine.google.com) powered Slack command
-integration basis.
+
+[Google App Engine](https://appengine.google.com) powered [Slack](https://slack.com) commands.
 
 ####Current commands.
 
