@@ -1,0 +1,28 @@
+<!doctype html5>
+<html>
+  <head>
+    <style type="text/css">
+      body {font-family: "Arial"; margin: 40px;}
+    </style>
+    <body>
+      <form method="POST">
+        <input name="read" placeholder="Read Token" type="text">
+        <input name="write" placeholder="Write Token" type="text">
+        <input name="action" type="submit" value="Add">
+      </form>
+      <form method="POST">
+        <input name="read" placeholder="Read Token" type="text">
+        <input name="action" type="submit" value="Remove">
+      </form>
+      <ul>
+        <li>Click Add to enable the Slack integration.</li>
+        <li>Click Remove to disable it.</li>
+        <li>Where to find the:
+        <ul>
+          <li><a href="/static/read.png">Read token</a></li>
+          <li><a href="/static/write.png">Write token</a></li>
+        </ul>
+        </li>
+      </ul>
+    </body>
+  </html>
