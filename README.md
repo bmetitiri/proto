@@ -4,4 +4,4 @@
 
 ####Current commands.
 
- - /roll - Roll 2d6 and have @slackbot message the result.
+ - /roll XdY - Roll X Y-sided dice and have @slackbot message the result. Defaults to 2d6.
