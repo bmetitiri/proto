@@ -25,11 +25,14 @@ func (cmd *Command) Say(text string) int {
 	if cmd.token.Write == "" {
 		return 401
 	}
+	if cmd.ChannelName == "directmessage" {
+		return 404
+	}
 	client := urlfetch.Client(cmd.context)
 	url := "https://" + cmd.TeamDomain + ".slack.com/services/hooks/slackbot?token=" + cmd.token.Write + "&channel=%23" + cmd.ChannelName
 	resp, _ := client.Post(url, "text/plain", strings.NewReader(text))
 	if resp == nil {
-		return 404
+		return 502
 	}
 	return resp.StatusCode
 }
