@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-var dice = regexp.MustCompile(`(\d+)d(\d+)`)
+var dice = regexp.MustCompile(`(\d{1,4})d(\d{1,7})`)
 
 func (cmd Command) Roll() {
 	rand.Seed(time.Now().UnixNano())
