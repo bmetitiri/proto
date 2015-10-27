@@ -11,7 +11,7 @@ import (
 	"os/exec"
 )
 
-func GetEventCh() <-chan termbox.Event {
+func EventCh() <-chan termbox.Event {
 	event := make(chan termbox.Event)
 	go func() {
 		for {
@@ -32,7 +32,7 @@ func read(source io.Reader, input chan<- string) {
 	}
 }
 
-func GetInputCh(args []string, pt bool) <-chan string {
+func InputCh(args []string, pt bool) <-chan string {
 	stat, _ := os.Stdin.Stat()
 	stdin := (stat.Mode() & os.ModeCharDevice) == 0
 	if !stdin && len(args) == 0 {
@@ -68,7 +68,7 @@ func main() {
 	pt := flag.Bool("p", false, "Use a pseudoterminal to run command.")
 	help := flag.Bool("h", false, "Print this message.")
 	flag.Parse()
-	input := GetInputCh(flag.Args(), *pt)
+	input := InputCh(flag.Args(), *pt)
 	if input == nil || *help {
 		fmt.Println("Usage: [command |] filum [-h] [-p] [command] [< input_file]")
 		flag.PrintDefaults()
@@ -76,7 +76,7 @@ func main() {
 	}
 	termbox.Init()
 	defer termbox.Close()
-	event := GetEventCh()
+	event := EventCh()
 	w, h := termbox.Size()
 	f := Filum{W: w, H: h}
 	f.Refresh()

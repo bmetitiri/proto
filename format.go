@@ -7,9 +7,9 @@ import (
 )
 
 type Format struct {
-	Bg   termbox.Attribute
-	Fg   termbox.Attribute
-	Text string
+	Background termbox.Attribute
+	Foreground termbox.Attribute
+	Text       string
 }
 
 var escape = regexp.MustCompile(`\x{001b}\[(\d+);?(\d*)m`)
@@ -38,27 +38,34 @@ func Parse(s string) ([]Format, string) {
 			if len(a) > 4 {
 				attr, _ = strconv.Atoi(s[a[4]:a[5]])
 			}
-			Fg := Attribute(style) | Attribute(attr)
-			Bg := termbox.ColorDefault
+			fg := Attribute(style) | Attribute(attr)
+			bg := termbox.ColorDefault
 			switch {
 			case style > 30 && style < 40:
-				Fg |= termbox.Attribute(style - 29)
+				fg |= termbox.Attribute(style - 29)
 			case style > 40 && style < 50:
-				Bg = termbox.Attribute(style - 39)
+				bg = termbox.Attribute(style - 39)
 			}
 			var t string
 			if i < len(e)-1 {
 				t = s[a[1]:e[i+1][0]]
-				f = append(f, Format{Text: t, Fg: Fg, Bg: Bg})
 			} else {
 				t = s[a[1]:]
-				f = append(f, Format{Text: t, Fg: Fg, Bg: Bg})
 			}
+			f = append(f, Format{
+				Text:       t,
+				Foreground: fg,
+				Background: bg,
+			})
 			text = text + t
 		}
 	} else {
 		text = s
-		f = append(f, Format{Text: text, Fg: termbox.ColorDefault, Bg: termbox.ColorDefault})
+		f = append(f, Format{
+			Text:       text,
+			Foreground: termbox.ColorDefault,
+			Background: termbox.ColorDefault,
+		})
 	}
 	return f, text
 }

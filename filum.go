@@ -26,8 +26,11 @@ type row struct {
 
 func (f *Filum) Add(s string) {
 	format, text := Parse(s)
-	r := row{line: len(f.corpus), format: format, text: text}
-	f.corpus = append(f.corpus, r)
+	f.corpus = append(f.corpus, row{
+		line:   len(f.corpus),
+		format: format,
+		text:   text,
+	})
 }
 
 func (f *Filum) HandleKey(e termbox.Event) bool {
@@ -60,18 +63,18 @@ func (f *Filum) Refresh() {
 	defer termbox.Flush()
 	h := f.H - 1
 	f.write(0, h, ">", termbox.ColorDefault, termbox.ColorDefault)
-	if f.re != nil {
-		f.write(2, h, f.filter.Text, termbox.ColorDefault, termbox.ColorDefault)
-	} else {
-		f.write(2, h, f.filter.Text, termbox.ColorRed, termbox.ColorDefault)
+	color := termbox.ColorDefault
+	if f.re == nil {
+		color = termbox.ColorRed
 	}
+	f.write(2, h, f.filter.Text, color, termbox.ColorDefault)
 	termbox.SetCursor(2+f.filter.Cursor, f.H-1)
 	// TODO: Only refilter when dirty.
 	f.refilter()
 	for i, l := range f.match {
 		x := 0
 		for _, m := range l.format {
-			x = f.write(x, len(f.match)-i-1, m.Text, m.Fg, m.Bg)
+			x = f.write(x, len(f.match)-i-1, m.Text, m.Foreground, m.Background)
 		}
 	}
 	if f.focus > 0 && f.focus <= len(f.match) {
@@ -126,15 +129,15 @@ func (f *Filum) refilter() {
 	}
 }
 
-func (f *Filum) write(x, y int, line string, Fg, Bg termbox.Attribute) int {
+func (f *Filum) write(x, y int, line string, fg, bg termbox.Attribute) int {
 	for _, c := range line {
 		if c == '\t' {
 			stop := (x/8 + 1) * 8
 			for ; x < stop; x++ {
-				termbox.SetCell(f.X+x, f.Y+y, ' ', Fg, Bg)
+				termbox.SetCell(f.X+x, f.Y+y, ' ', fg, bg)
 			}
 		} else {
-			termbox.SetCell(f.X+x, f.Y+y, c, Fg, Bg)
+			termbox.SetCell(f.X+x, f.Y+y, c, fg, bg)
 			x++
 		}
 	}
