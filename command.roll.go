@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-var dice = regexp.MustCompile(`(\d{1,3})d(\d{1,7})`)
+var dice = regexp.MustCompile(`(\d{1,3})d(\d{1,4})`)
 
 func (cmd Command) Roll() {
 	rand.Seed(time.Now().UnixNano())
@@ -19,8 +19,14 @@ func (cmd Command) Roll() {
 		num, _ = strconv.Atoi(m[1])
 		sides, _ = strconv.Atoi(m[2])
 	}
+	if num > 100 {
+		num = 100
+	}
 	if sides < 1 {
 		sides = 1
+	}
+	if sides > 1000 {
+		sides = 1000
 	}
 	total := 0
 	rolls := []int{}
