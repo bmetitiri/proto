@@ -21,6 +21,9 @@ This repo contains a number of disparate code sketches -- largely to cut down on
 ###[fastauth](https://github.com/arkie/proto/tree/fastauth)
  - Node middleware for adding a recoverable session token.
 
+###[hackyslack](https://github.com/arkie/proto/tree/hackyslack)
+ - Google App Engine powered Slack commands.
+
 ###html-jive
  - **[circle](https://github.com/arkie/proto/tree/html-jive/circle)** Ship with variable aim and firing patterns.
  - **[dungeon](https://github.com/arkie/proto/tree/html-jive/dungeon)** Game server with dungeon shooter with destructible walls.
