@@ -18,8 +18,9 @@ class Board: SKNode {
         _ = Gem(board:self, x:x, y:y)
       }
     }
-    scoreLabel.position = CGPoint(x:columns * Gem.size - 5, y:rows * Gem.size + 5)
-    scoreLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Right
+    scoreLabel.fontSize = 60
+    scoreLabel.position = CGPoint(x:columns * Gem.size / 2, y:rows * Gem.size + 70)
+    scoreLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Center
     addChild(scoreLabel)
     update();
   }
@@ -120,6 +121,20 @@ class Board: SKNode {
     }
     score += delta
     scoreLabel.text = String(score)
+    if delta != 0 {
+        let deltaLabel:SKLabelNode = SKLabelNode()
+        deltaLabel.fontSize = 20
+        deltaLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Center
+        deltaLabel.position = CGPoint(x:columns * Gem.size / 2, y:rows * Gem.size + 120)
+        deltaLabel.text = "+" + String(delta)
+        addChild(deltaLabel)
+        deltaLabel.runAction(SKAction.group([
+            SKAction.fadeAlphaTo(0, duration: 0.5),
+            SKAction.moveByX(0, y: 20, duration: 0.3),
+        ])) {
+            deltaLabel.removeFromParent()
+        }
+    }
     if dirty {
       update()
     }
