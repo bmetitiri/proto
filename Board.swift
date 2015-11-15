@@ -60,7 +60,7 @@ class Board: SKNode {
         if extra.count > 0 {
           let gem = extra.removeAtIndex(0)
           addChild(gem)
-          gem.move(x, y:rows, stay:true)
+          gem.move(x, y:rows)
           gem.fall()
           dirty = true;
         } else {

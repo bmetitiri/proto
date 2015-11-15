@@ -71,13 +71,13 @@ class Gem: SKSpriteNode {
     })
   }
   func match(gems: Gem...) -> Bool {
-    if falling {
+    if falling || type < 0 {
       return false
     }
     var test = self.type
     for gem in gems {
       test &= gem.type
-      if gem.falling {
+      if gem.falling || type < 0 {
         return false
       }
     }
