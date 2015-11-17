@@ -61,6 +61,7 @@ func (f *Filum) HandleKey(e termbox.Event) bool {
 					Text: f.filter.Text,
 				},
 			},
+			text: block.Text,
 		})
 	case termbox.KeyCtrlS:
 		f.freeze = true
