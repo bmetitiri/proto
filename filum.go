@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/nsf/termbox-go"
 	"regexp"
+	"time"
 )
 
 type Filum struct {
@@ -19,7 +20,7 @@ type Filum struct {
 }
 
 type row struct {
-	line   int
+	marker bool
 	format []Format
 	text   string
 }
@@ -27,10 +28,14 @@ type row struct {
 func (f *Filum) Add(s string) {
 	format, text := Parse(s)
 	f.corpus = append(f.corpus, row{
-		line:   len(f.corpus),
 		format: format,
 		text:   text,
 	})
+}
+
+var block = Format{
+	Text:       " ▚▚▚▚ ",
+	Foreground: termbox.ColorRed,
 }
 
 func (f *Filum) HandleKey(e termbox.Event) bool {
@@ -43,6 +48,20 @@ func (f *Filum) HandleKey(e termbox.Event) bool {
 		if f.focus > 0 {
 			f.focus--
 		}
+	case termbox.KeyEnter:
+		f.corpus = append(f.corpus, row{
+			marker: true,
+			format: []Format{
+				block,
+				Format{
+					Text: time.Now().Format("15:04:05"),
+				},
+				block,
+				Format{
+					Text: f.filter.Text,
+				},
+			},
+		})
 	case termbox.KeyCtrlS:
 		f.freeze = true
 	case termbox.KeyCtrlQ:
@@ -117,7 +136,7 @@ func (f *Filum) refilter() {
 		r := f.corpus[i]
 		if f.re != nil {
 			match := f.re.FindStringIndex(r.text)
-			if match != nil {
+			if match != nil || r.marker {
 				f.match = append(f.match, r)
 			}
 		} else {
