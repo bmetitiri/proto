@@ -15,6 +15,10 @@ This repo contains a number of disparate code sketches -- largely to cut down on
 ###[common](https://github.com/arkie/proto/tree/common)
  - Common *nix configs, helper scripts.
 
+###[Gems](https://github.com/arkie/proto/tree/Gems)
+ - Simple tile-matching game written in [Swift](https://developer.apple.com/swift/) using [SpriteKit](https://developer.apple.com/library/ios/documentation/GraphicsAnimation/Conceptual/SpriteKit_PG/Introduction/Introduction.html).
+
+
 ###[glomp](https://github.com/arkie/proto/tree/glomp)
  - Node playground (destination: microframework?)
 
