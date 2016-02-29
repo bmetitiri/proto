@@ -1,1 +1,1 @@
-Static page at located at [joncaldwell.com](http://joncaldwell.com).
+Static page at located at [arkie.github.io](http://arkie.github.io).
