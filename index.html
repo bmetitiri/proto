@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Bookmarklets</title>
+    <style>
+      body {
+        font: 16px monospace;
+        text-align: center;
+      }
+      p {
+        margin: 0 auto 10px;
+        max-width: 400px;
+      }
+      ul {display: inline-block;}
+      .bookmarklet {
+        border: 1px solid #ccc;
+        border-radius: 7px;
+        color: #000;
+        display: inline-block;
+        font-size: 18px;
+        margin: 30px;
+        padding: 12px;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <a class="bookmarklet" href="youtube.js">YouTube</a>
+    <p>
+    The YouTube <a href="https://en.wikipedia.org/wiki/Bookmarklet">bookmarklet</a> scans a page for YouTube links and automatically creates playlists of twenty videos each. Try it out on the following:
+      <ul>
+        <li>Reddit's <a href="https://www.reddit.com/r/music/">/r/music</a> subreddit</li>
+        <li>This electro swing <a href="https://www.reddit.com/r/Music/comments/3iv1c9/can_anybody_recommend_me_music_that_fuses_big/">self post</a></li>
+      </ul>
+    </p>
+    <script>
+      var template = function(href) {
+        return `javascript:(function() {
+          var s = document.createElement('script');
+          s.src = '${href}';
+          document.body.appendChild(s);
+        })();`;
+      };
+      var bookmarklets = document.getElementsByClassName('bookmarklet');
+      for (var i = 0; i < bookmarklets.length; i++) {
+        var b = bookmarklets[i];
+        b.title = "Drag to bookmark bar.";
+        b.href = template(b.href).replace(/\s/g, '').replace(/var/g, 'var ');
+      }
+    </script>
+  </body>
+</html>
