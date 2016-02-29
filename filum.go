@@ -115,7 +115,7 @@ func (f *Filum) alert(y int, text string) {
 		} else {
 			line = append(line, c)
 		}
-		if len(line) > f.W || i >= len(text)-1 {
+		if len(line) >= f.W || i >= len(text)-1 {
 			lines = append(lines, string(line))
 			line = []rune{}
 		}
