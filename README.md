@@ -1,7 +1,7 @@
 Marklets
 --------
 
-A collection of bookmarklets for various purposes served on [arkie.github.com/marklets](https://arkie.github.com/marklets)
+A collection of bookmarklets for various purposes served on [arkie.github.com/bookmarklets](https://arkie.github.com/bookmarklets)
 
 Bookmarklets are defined in:
 
