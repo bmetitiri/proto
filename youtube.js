@@ -95,12 +95,19 @@ var group = function(){
       current = [];
     }
   });
-}
+};
 group();
 var remove = function(e) {
   document.body.removeChild(container);
   document.removeEventListener('click', remove);
-}
+  document.removeEventListener('keyup', escape);
+};
+var escape = function(e) {
+  if (e.keyCode == 27) {
+    return remove(e);
+  }
+};
 document.addEventListener('click', remove);
+document.addEventListener('keyup', escape);
 document.body.appendChild(container);
 })();
