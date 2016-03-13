@@ -1,4 +1,4 @@
-Marklets
+Bookmarklets
 --------
 
 A collection of bookmarklets for various purposes served on [arkie.github.io/bookmarklets/](https://arkie.github.io/bookmarklets/)
