@@ -4,36 +4,63 @@
     <title>Bookmarklets</title>
     <style>
       body {
+        margin-top: 40px;
         font: 16px monospace;
         text-align: center;
       }
       p {
-        margin: 0 auto 10px;
+        margin: 0 auto;
         max-width: 400px;
       }
-      ul {display: inline-block;}
+      ul {
+        display: inline-block;
+        list-style-position: outside;
+        margin-bottom: 0;
+      }
+      li {
+        text-align: left;
+      }
       .bookmarklet {
         border: 1px solid #ccc;
         border-radius: 7px;
         color: #000;
         display: inline-block;
         font-size: 18px;
-        margin: 30px;
+        margin: 20px;
         padding: 12px;
         text-decoration: none;
+      }
+      .foot {
+        display: block;
+        margin-top: 20px;
       }
     </style>
   </head>
   <body>
-    <a class="bookmarklet" href="youtube.js">YouTube</a>
     <p>
-    The YouTube <a href="https://en.wikipedia.org/wiki/Bookmarklet" target="_top">bookmarklet</a> scans a page for YouTube links and automatically creates playlists of twenty videos each. Try it out on the following:
+    <a href="https://en.wikipedia.org/wiki/Bookmarklet" target="_top">Bookmarklets</a> are Javascript snippets inside of bookmarks that are executed on the current page when clicked. Drag the boxes below to the bookmark bar to allow access to them on other pages.
+    </p>
+    <div>
+      <a class="bookmarklet" href="autoload.js">Autoload</a>
+      <p>
+      The Autoload bookmarklet scans the current page for next page links and automatically loads them inline. If it can't find a next link, it looks for previous links. Try it out on:
+      </p>
+      <ul>
+        <li>The <a href="https://xkcd.com/" target="_top">XKCD</a> webcomic</li>
+        <li><a href="https://www.penny-arcade.com/comic" target="_top">Penny Arcade</a></li>
+      </ul>
+    </div>
+    <div>
+      <a class="bookmarklet" href="youtube.js">YouTube</a>
+      <p>
+      The YouTube bookmarklet scans a page for YouTube links and automatically creates playlists of twenty videos each. Try it out on:
+      </p>
       <ul>
         <li>Reddit's <a href="https://www.reddit.com/r/music/" target="_top">/r/music</a> subreddit</li>
         <li>This electro swing <a href="https://www.reddit.com/r/Music/comments/3iv1c9/can_anybody_recommend_me_music_that_fuses_big/" target="_top">text post</a></li>
       </ul>
-    </p>
-    <a href="http://github.com/arkie/bookmarklets" target="_top">Github</a>
+    </div>
+    <a class="foot" href="http://github.com/arkie/bookmarklets" target="_top">Github</a>
     <script>
       var template = function(href) {
         return `javascript:(function() {
