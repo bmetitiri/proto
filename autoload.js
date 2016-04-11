@@ -140,6 +140,7 @@ removals.addEventListener('click', function(e){
 menu.appendChild(removals);
 menu.addEventListener('mouseover', stop);
 menu.addEventListener('mouseout', stop);
+var x = document.createElement('div');
 var removing = false;
 var remove = function(e) {
   if (removing) {
@@ -148,6 +149,7 @@ var remove = function(e) {
   }
   stop(e);
   removing = true;
+  x.style.color = '#f00';
   document.addEventListener('mouseover', hide);
   document.addEventListener('mouseout', unhide);
 }
@@ -156,8 +158,8 @@ var unremove = function() {
   document.removeEventListener('mouseover', hide);
   document.removeEventListener('mouseout', unhide);
   removing = false;
+  x.style.color = '#fff';
 }
-var x = document.createElement('div');
 x.className = 'autoload_x';
 x.innerHTML = '&#10006;';
 x.title = 'Remove elements (Shortcut: x)';
