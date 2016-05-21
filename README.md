@@ -5,6 +5,7 @@ A collection of bookmarklets for various purposes served on [arkie.github.io/boo
 
 Bookmarklets are defined in:
 
+- [autoload.js](/autoload.js) Javascript to automatically append the content of next links.
 - [youtube.js](/youtube.js) Javascript to turn YouTube links into playlists.
 
 The rest are support files for the repo:
