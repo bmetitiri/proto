@@ -1,4 +1,13 @@
 (function() {
+// Use hash tags if there's an issue with history.replaceState.
+var autoload = 'autoload+';
+if (window.location.hash.slice(1, 10) == autoload) {
+  var url = window.location.hash.slice(10);
+  if (confirm('Reload ' + url) + '?') {
+    window.location.href = url;
+    return;
+  }
+}
 document.body.removeChild(document.body.lastElementChild);
 
 var NEXT = /forward|next/i;
@@ -71,7 +80,11 @@ var scroll = function() {
     var body = bodies[i];
     var rect = body.getBoundingClientRect();
     if (rect.top >= 0 && rect.top < window.innerHeight) {
-      window.history.replaceState(null, body['data-title'], body['data-url']);
+      try {
+        window.history.replaceState(null, body['data-title'], body['data-url']);
+      } catch (e) {
+        window.location.hash = autoload + body['data-url'];
+      }
       document.title = body['data-title'];
       // Load more at the last body.
       if (i >= bodies.length - 1) {
