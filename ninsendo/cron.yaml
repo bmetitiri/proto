@@ -1,0 +1,4 @@
+cron:
+- description: "Update game prices and send emails."
+  url: /worker
+  schedule: every 1 hours

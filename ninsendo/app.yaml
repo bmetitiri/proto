@@ -1,0 +1,13 @@
+application: ninsend-o
+version: 0
+runtime: go
+api_version: go1
+
+handlers:
+- url: /static
+  static_dir: static
+- url: /worker
+  script: _go_app
+  login: admin
+- url: /
+  script: _go_app

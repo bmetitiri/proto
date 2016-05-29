@@ -1,0 +1,33 @@
+<html>
+  {{template "head.html"}}
+  <body>
+    {{.User}}
+    <a href="{{.Logout}}">🔑</a>
+    <form>
+      <input name="query" value="{{.Query}}"><input type="submit" value="🔍">
+    </form>
+    <form method="POST">
+      <table>
+        {{range .Subscriptions}}
+        <tr>
+          <td><input id="{{.Id}}" checked="checked" type="checkbox" name="game" value="{{.Id}}"></td>
+          {{template "game.html" .}}
+          <td>{{.Price}}</td>
+        </tr>
+        {{end}}
+      </table>
+      <hr>
+      <table>
+        {{if .Result}}
+        {{range .Result.Games}}
+        <tr>
+          <td><input id="{{.Id}}" type="checkbox" name="game" value="{{.Id}}"></td>
+          {{template "game.html" .}}
+        </tr>
+        {{end}}
+        {{end}}
+      </table>
+      <input type="submit" value="✅">
+    </form>
+  </body>
+</html>
