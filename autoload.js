@@ -43,17 +43,11 @@ if (!target) {
 document.body['data-title'] = document.title;
 document.body['data-url'] = clean(window.location.href);
 
-var loading = false;
 var load = function(url, cb) {
-  if (loading || !url) {
-    return;
-  }
-  loading = true;
   var iframe = document.createElement('iframe');
   iframe.addEventListener('load', function() {
     cb(iframe.contentDocument);
     document.body.removeChild(iframe);
-    loading = false;
   });
   iframe.sandbox = 'allow-same-origin';
   iframe.src = url;
@@ -61,7 +55,12 @@ var load = function(url, cb) {
   document.body.appendChild(iframe);
 };
 
+var loading = false;
 var next = function() {
+  if (loading) {
+    return;
+  }
+  loading = true;
   load(target, function(doc) {
     doc.body['data-title'] = doc.title;
     doc.body['data-url'] = target;
@@ -70,6 +69,8 @@ var next = function() {
       doc.body.style.top = document.body.scrollHeight + 'px';
     }
     document.body.appendChild(doc.body);
+    loading = false;
+    scroll();
   });
 };
 next();
@@ -86,8 +87,8 @@ var scroll = function() {
         window.location.hash = autoload + body['data-url'];
       }
       document.title = body['data-title'];
-      // Load more at the last body.
-      if (i >= bodies.length - 1) {
+      // Load more if less than one from the bottom.
+      if (i >= bodies.length - 2) {
         next();
       }
       return;

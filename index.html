@@ -75,7 +75,8 @@
         b.title = "Drag to bookmark bar.";
         b.href = template(b.href).replace(/\s/g, '').replace(/var/g, 'var ');
         if (window.location.hostname.match(/0.0.0.0|127.0.0.1|localhost/)) {
-          b.textContent += ' (Local)';
+          var protocol = window.location.protocol.slice(0,-1).toUpperCase();
+          b.textContent += ' (Local ' + protocol + ')';
         }
       }
     </script>

@@ -12,6 +12,5 @@ The rest are support files for the repo:
 
 - [README.md](/README.md) This file in markdown.
 - [index.html](/index.html) The root HTML file to link bookmarklets.
-- [serve.py](/serve.py) Python script for local HTTPS development.<br>
-  Will generate a self-signed certificate and serve on https://0.0.0.0:8443
-- [.gitignore](/.gitignore) A file to ignore the certificate generated above.
+
+Use an HTTPS development server to enable embedding on HTTPS sites (e.g. [indigo](https://github.com/arkie/indigo/))
