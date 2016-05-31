@@ -1,8 +1,8 @@
 indigo
 ------
 
-**indigo** is an <b>in</b>stant <b>di</b>rectory server in <b>go</b> that
-generates indexes and renders markdown.
+**indigo** is an HTTP(s) <b>in</b>stant <b>di</b>rectory server in <b>go</b>
+that generates indexes and renders markdown.
 
 Run `go get github.com/arkie/indigo` to install indigo, and then run `indigo`
 in any directory to serve locally on HTTP and HTTPS.
