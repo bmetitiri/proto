@@ -12,6 +12,9 @@ const indexHTML = `
 <html>
 	<head>
 		<style>
+			article {
+				font-family: sans;
+			}
 			body {
 				font-family: monospace;
 			}
