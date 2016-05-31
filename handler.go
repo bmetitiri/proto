@@ -33,6 +33,10 @@ type View struct {
 	Render  template.HTML
 }
 
+func init() {
+	http.HandleFunc("/", handler)
+}
+
 func newView(path string, fi os.FileInfo) *View {
 	v := View{}
 	url := strings.Split(path, "/")
@@ -48,7 +52,6 @@ func newView(path string, fi os.FileInfo) *View {
 	return &v
 }
 
-// TODO: Handle symlinks.
 func handler(w http.ResponseWriter, r *http.Request) {
 	file, err := os.Open(path.Join(".", r.URL.Path))
 	defer file.Close()
@@ -62,6 +65,11 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if fi.IsDir() {
+		// Redirect if in a directory without trailing slash (e.g. symlink).
+		if r.URL.Path[len(r.URL.Path)-1:] != "/" {
+			http.Redirect(w, r, r.URL.Path+"/", 301)
+			return
+		}
 		files, err := file.Readdir(-1)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)

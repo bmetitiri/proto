@@ -30,8 +30,6 @@ func init() {
 	flag.IntVar(&httpPort, "http", 8080, "set the HTTP port, disable with 0")
 	flag.IntVar(&httpsPort, "https", 8443, "set the HTTPS port, disable with 0")
 	flag.BoolVar(&open, "open", false, "open the served root in browser")
-
-	http.HandleFunc("/", handler)
 }
 
 func configure() {
