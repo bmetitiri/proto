@@ -79,7 +79,12 @@ const indexHTML = `
 			{{if .Render}}
 			{{.Render}}
 			{{else}}
-			<pre class="render">{{.Content}}</pre>
+			<pre class="render"><code>{{.Content}}</code></pre>
+			<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/styles/github-gist.min.css">
+			<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/highlight.min.js"></script>
+			<script>
+				hljs.initHighlightingOnLoad();
+			</script>
 			{{end}}
 			{{end}}
 		</div>
