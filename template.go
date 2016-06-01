@@ -4,11 +4,7 @@ import (
 	"html/template"
 )
 
-var (
-	indexTemplate = template.Must(template.New("index.html").Parse(indexHTML))
-)
-
-const indexHTML = `
+var indexTemplate = template.Must(template.New("index").Parse(`
 <html>
 	<head>
 		<style>
@@ -17,6 +13,15 @@ const indexHTML = `
 			}
 			body {
 				font-family: monospace;
+			}
+			article code, article pre {
+				background-color: #f7f7f7;
+				border-radius: 4px;
+				padding: 4px;
+				overflow: visible;
+			}
+			article pre>code {
+				background: transparent;
 			}
 			img.render {
 				background: indigo;
@@ -90,4 +95,4 @@ const indexHTML = `
 		</div>
 	</body>
 </html>
-`
+`))

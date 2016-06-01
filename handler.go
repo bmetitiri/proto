@@ -90,6 +90,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		v := newView(r.URL.Path, fi)
 		v.File = fi
 		content, err := ioutil.ReadAll(file)
+		// TODO: Break out rendering.
 		if image.MatchString(fi.Name()) {
 			v.Render = template.HTML(
 				fmt.Sprintf(`<img class="render" src="%s">`, fi.Name()))
