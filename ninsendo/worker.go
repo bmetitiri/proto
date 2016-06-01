@@ -3,6 +3,7 @@ package ninsendo
 import (
 	"fmt"
 	"github.com/arkie/gintendo"
+	"golang.org/x/net/context"
 	"google.golang.org/appengine"
 	"google.golang.org/appengine/datastore"
 	"google.golang.org/appengine/log"
@@ -18,6 +19,7 @@ func init() {
 
 func worker(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
+	c, _ = context.WithTimeout(c, 30*time.Second)
 	q := datastore.NewQuery(gameType).Filter("Updated <", time.Now().
 		Add(-24*time.Hour)).Limit(10)
 	games := []gintendo.Game{}

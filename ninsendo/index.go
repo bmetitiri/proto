@@ -10,6 +10,7 @@ import (
 	"google.golang.org/appengine/user"
 	"html/template"
 	"net/http"
+	"time"
 )
 
 const (
@@ -76,6 +77,7 @@ func subscribe(c context.Context, id string, email string) error {
 
 func index(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
+	c, _ = context.WithTimeout(c, 30*time.Second)
 	u := user.Current(c)
 	if u == nil {
 		login, _ := user.LoginURL(c, "/")
