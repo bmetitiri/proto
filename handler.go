@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"html/template"
 	"io/ioutil"
 	"log"
@@ -10,14 +9,16 @@ import (
 	"path"
 	"regexp"
 	"strings"
-
-	"github.com/shurcooL/github_flavored_markdown"
 )
 
 var (
-	image    = regexp.MustCompile(`(?i)\.(png|bmp|jpe?g)$`)
-	markdown = regexp.MustCompile(`(?i)\.(md|markdown)$`)
+	handlers = []Handler{}
 )
+
+type Handler struct {
+	Path   *regexp.Regexp
+	Render func(v *View)
+}
 
 type Link struct {
 	Name string
@@ -28,13 +29,19 @@ type View struct {
 	Path    []Link
 	Folders []os.FileInfo
 	Files   []os.FileInfo
-	File    os.FileInfo
+	File    *os.File
+	Info    os.FileInfo
 	Content string
-	Render  template.HTML
+	HTML    template.HTML
 }
 
 func init() {
 	http.HandleFunc("/", handler)
+}
+
+func register(re *regexp.Regexp, r func(*View)) {
+	h := Handler{Path: re, Render: r}
+	handlers = append(handlers, h)
 }
 
 func newView(path string, fi os.FileInfo) *View {
@@ -88,26 +95,31 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		}
 	} else if r.URL.RawQuery == "view" {
 		v := newView(r.URL.Path, fi)
-		v.File = fi
-		content, err := ioutil.ReadAll(file)
-		// TODO: Break out rendering.
-		if image.MatchString(fi.Name()) {
-			v.Render = template.HTML(
-				fmt.Sprintf(`<img class="render" src="%s">`, fi.Name()))
-		} else if markdown.MatchString(fi.Name()) {
-			v.Render = template.HTML(
-				fmt.Sprintf(`<article class="render">%s</article>`,
-					string(github_flavored_markdown.Markdown(content))))
-		} else {
-			v.Content = string(content)
-		}
-		if err != nil {
-			log.Print(err)
-		}
+		v.File = file
+		v.Info = fi
+		v.Render()
 		if err := indexTemplate.Execute(w, v); err != nil {
 			log.Print(err)
 		}
 	} else {
 		http.ServeContent(w, r, fi.Name(), fi.ModTime(), file)
 	}
+}
+
+func (v *View) Read() []byte {
+	content, err := ioutil.ReadAll(v.File)
+	if err != nil {
+		log.Print(err)
+	}
+	return content
+}
+
+func (v *View) Render() {
+	for _, h := range handlers {
+		if h.Path.MatchString(v.File.Name()) {
+			h.Render(v)
+			return
+		}
+	}
+	v.Content = string(v.Read())
 }

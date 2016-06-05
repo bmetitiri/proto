@@ -14,6 +14,16 @@ var indexTemplate = template.Must(template.New("index").Parse(`
 			body {
 				font-family: monospace;
 			}
+			th {
+				cursor: pointer;
+				padding: 3px 10px;
+			}
+			th[data-sorted-direction="ascending"]:after {
+				content: " 🔼";
+			}
+			th[data-sorted-direction="descending"]:after {
+				content: " 🔽";
+			}
 			article code, article pre {
 				background-color: #f7f7f7;
 				border-radius: 4px;
@@ -30,13 +40,10 @@ var indexTemplate = template.Must(template.New("index").Parse(`
 			.explorer {
 				margin: 80px;
 			}
-			.file {
+			.file, .file:hover .view {
 				display: inline-block;
 			}
-			.file:hover .view {
-				display: inline-block;
-			}
-			.indigo, .render {
+			table, .indigo, .render {
 				box-shadow: 0 0 5px indigo;
 				margin:10px;
 				padding: 20px;
@@ -79,10 +86,10 @@ var indexTemplate = template.Must(template.New("index").Parse(`
 				</div>
 			{{end}}
 			{{end}}
-			{{if .File}}
-			<h2>{{.File.Name}}</h2>
-			{{if .Render}}
-			{{.Render}}
+			{{if .Info}}
+			<h2>{{.Info.Name}}</h2>
+			{{if .HTML}}
+			{{.HTML}}
 			{{else}}
 			<pre class="render"><code>{{.Content}}</code></pre>
 			<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/styles/github-gist.min.css">
