@@ -1,0 +1,6 @@
+[submodule "pokedex"]
+	path = pokedex
+	url = git@github.com:veekun/pokedex.git
+[submodule "pokedex-media"]
+	path = pokedex-media
+	url = http://git.veekun.com/pokedex-media.git

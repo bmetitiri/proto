@@ -1,0 +1,98 @@
+body {
+  font-family: monospace;
+  margin: 0;
+  min-height: 455px;
+  text-align: center;
+}
+table, tr, td {
+  border-spacing: 0;
+  margin: 0;
+  padding: 0;
+}
+table {
+  box-shadow: 0 0 1px #000;
+}
+ul {
+  margin: 0;
+  padding-left: 15px;
+}
+.err {
+  color: red;
+}
+.id {
+  float: left;
+}
+.image{
+  background-image: url(pokedex.png);
+  display: inline-block;
+  height:30px;
+  vertical-align: top;
+  width:40px;
+}
+.breed, .catch {
+  display: inline-block;
+  text-align: left;
+  padding-right: 5px;
+}
+.breed, .name {
+  line-height: 29px;
+}
+.catch {
+  font-size: small;
+}
+.name, .breed, .catch {
+  background: white;
+  box-shadow: 0 0 2px #000;
+  margin: 5px;
+  padding-left: 5px;
+  position: relative;
+}
+.name {
+  font-weight: bold;
+}
+.preview {
+  float: right;
+}
+#boxes {
+  display: inline-block;
+  text-align: left;
+  margin: 320px 0 60px;
+}
+#info {
+  background: aliceblue;
+  box-sizing: border-box;
+  height: 215px;
+  left: 0;
+  margin: auto;
+  overflow: hidden;
+  padding: 5px;
+  position: fixed;
+  right: 0;
+  top: -215px;
+  width: 320px;
+  z-index: 1;
+}
+#query {
+  position: fixed;
+  bottom: 20px;
+  width: 150px;
+  margin-left: -75px;
+  left: 50vw;
+  text-align: center;
+  z-index: 1;
+}
+[data-filter=false] {
+  display: none;
+}
+td {
+  opacity: .5;
+}
+[data-capture=true] {
+  opacity: 1;
+}
+@media screen and (min-width: 400px) {
+  #info {
+    box-shadow: 0 0 5px #000;
+    top: 60px;
+  }
+}
