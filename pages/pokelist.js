@@ -1,4 +1,46 @@
 var capture = {};
+document.location.hash.slice(2).split(',').forEach(function(range) {
+  var s = range.split('-');
+  if (!s[1]) {
+    capture[range] = true;
+    return;
+  }
+  for (var i = parseInt(s[0], 10); i <= parseInt(s[1], 10); i++) {
+    capture['' + i] = true;
+  }
+});
+function rehash() {
+  var hash = [];
+  var start;
+  var end;
+  for (var k in capture) {
+    if (capture[k]) {
+      var next = parseInt(k, 10);
+      if (!start) {
+        start = next;
+        end = next;
+        continue;
+      }
+      if (end + 1 == next) {
+        end = next;
+        continue;
+      }
+      if (start != end) {
+        hash.push(start + '-' + end);
+      } else {
+        hash.push(start);
+      }
+      start = next;
+      end = next;
+    }
+  }
+  if (start && end && start != end) {
+    hash.push(start + '-' + end);
+  } else if (end) {
+    hash.push(start);
+  }
+  document.location.replace('#v' + hash.join(','));
+}
 var boxes = document.getElementById('boxes');
 var count = 0;
 loop: while (true) {
@@ -152,6 +194,12 @@ query.addEventListener('input', function(e) {
     query.className = 'err';
   }
 });
+var qrcode = document.getElementById("qrcode");
+qrcode.addEventListener('click', function(e) {
+  e.preventDefault();
+  rehash();
+  window.open('http://qrf.in/?url=' + encodeURIComponent(window.location.href), '_blank');
+});
 for (var i = 0; i < pokelist.length; i++) {
   var p = pokelist[i];
   p.addEventListener('click', function(e){
@@ -162,6 +210,7 @@ for (var i = 0; i < pokelist.length; i++) {
     var id = e.target.id;
     capture[id] = !capture[id];
     e.target.parentNode.dataset.capture = capture[id];
+    rehash();
   });
   p.addEventListener('mouseover', function(e){
     showInfo(e.target.id);

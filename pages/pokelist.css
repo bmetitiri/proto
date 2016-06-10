@@ -72,6 +72,11 @@ ul {
   width: 320px;
   z-index: 1;
 }
+#qrcode {
+  display: block;
+  margin: 0 auto 80px;
+  text-decoration: none;
+}
 #query {
   position: fixed;
   bottom: 20px;
