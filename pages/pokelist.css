@@ -12,6 +12,9 @@ table, tr, td {
 table {
   box-shadow: 0 0 1px #000;
 }
+td {
+  opacity: .5;
+}
 ul {
   margin: 0;
   padding-left: 15px;
@@ -53,6 +56,10 @@ ul {
 .preview {
   float: right;
 }
+.tail {
+  margin: 0 auto 80px;
+  text-decoration: none;
+}
 #boxes {
   display: inline-block;
   text-align: left;
@@ -72,11 +79,6 @@ ul {
   width: 320px;
   z-index: 1;
 }
-#qrcode {
-  display: block;
-  margin: 0 auto 80px;
-  text-decoration: none;
-}
 #query {
   position: fixed;
   bottom: 20px;
@@ -88,9 +90,6 @@ ul {
 }
 [data-filter=false] {
   display: none;
-}
-td {
-  opacity: .5;
 }
 [data-capture=true] {
   opacity: 1;
