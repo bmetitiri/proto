@@ -7,7 +7,7 @@ import (
 )
 
 func init() {
-	register(regexp.MustCompile(`(?i)\.(png|bmp|jpe?g)$`), func(v *View) {
+	register(regexp.MustCompile(`(?i)\.(bmp|gif|jpe?g|png)$`), func(v *View) {
 		v.HTML = template.HTML(
 			fmt.Sprintf(`<img class="render" src="%s">`, v.Info.Name()))
 	})
