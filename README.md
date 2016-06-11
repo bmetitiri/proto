@@ -12,12 +12,12 @@ The following are archived with history in various branches off of master:
    Wiki Game style movie traversal use Rovi data apis.
  - [common](https://github.com/arkie/proto/tree/common)
    Common \*nix configs, helper scripts.
+ - [fastauth](https://github.com/arkie/proto/tree/fastauth)
+   Node middleware for adding a recoverable session token.
  - [Gems](https://github.com/arkie/proto/tree/Gems)
    Simple tile-matching game written in [Swift](https://developer.apple.com/swift/) using [SpriteKit](https://developer.apple.com/library/ios/documentation/GraphicsAnimation/Conceptual/SpriteKit_PG/Introduction/Introduction.html).
  - [glomp](https://github.com/arkie/proto/tree/glomp)
    Node playground (destination: microframework?)
- - [fastauth](https://github.com/arkie/proto/tree/fastauth)
-   Node middleware for adding a recoverable session token.
  - [hackyslack](https://github.com/arkie/proto/tree/hackyslack)
    Google App Engine powered Slack commands.
  - html-jive
