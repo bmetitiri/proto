@@ -19,7 +19,7 @@ const (
 )
 
 var (
-	config, host        string
+	config, host, style string
 	httpPort, httpsPort int
 	open                bool
 )
@@ -30,6 +30,7 @@ func init() {
 	flag.IntVar(&httpPort, "http", 8080, "set the HTTP port, disable with 0")
 	flag.IntVar(&httpsPort, "https", 8443, "set the HTTPS port, disable with 0")
 	flag.BoolVar(&open, "open", false, "open the served root in browser")
+	flag.StringVar(&style, "style", "github-v2", "select a style from tiny.cc/csses")
 }
 
 func configure() {

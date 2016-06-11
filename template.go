@@ -10,9 +10,21 @@ var indexTemplate = template.Must(template.New("index").Parse(`
 		<title>
 			{{.Title}}
 		</title>
+		{{if .Theme}}
+		<link rel="stylesheet" type="text/css" href="https://jmblog.github.io/color-themes-for-google-code-prettify/themes/{{.Theme}}.min.css">
+		{{end}}
 		<style>
 			article {
 				font-family: sans;
+			}
+			article code, article pre {
+				background-color: #f7f7f7;
+				border-radius: 4px;
+				padding: 4px;
+				overflow: visible;
+			}
+			article pre>code {
+				background: transparent;
 			}
 			body {
 				font-family: monospace;
@@ -27,29 +39,20 @@ var indexTemplate = template.Must(template.New("index").Parse(`
 			th[data-sorted-direction="descending"]:after {
 				content: " 🔽";
 			}
-			article code, article pre {
-				background-color: #f7f7f7;
-				border-radius: 4px;
-				padding: 4px;
-				overflow: visible;
-			}
-			article pre>code {
-				background: transparent;
-			}
 			img.render {
 				background: indigo;
 				padding: 0;
+			}
+			table, .indigo, .render {
+				box-shadow: 0 0 5px indigo;
+				margin:10px;
+				padding: 20px;
 			}
 			.explorer {
 				margin: 80px;
 			}
 			.file, .file:hover .view {
 				display: inline-block;
-			}
-			table, .indigo, .render {
-				box-shadow: 0 0 5px indigo;
-				margin:10px;
-				padding: 20px;
 			}
 			.indigo {
 				background: indigo;
@@ -90,16 +93,7 @@ var indexTemplate = template.Must(template.New("index").Parse(`
 			{{end}}
 			{{if .Info}}
 			<h2>{{.Info.Name}}</h2>
-			{{if .HTML}}
 			{{.HTML}}
-			{{else}}
-			<pre class="render"><code>{{.Content}}</code></pre>
-			<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/styles/github-gist.min.css">
-			<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/highlight.min.js"></script>
-			<script>
-				hljs.initHighlightingOnLoad();
-			</script>
-			{{end}}
 			{{end}}
 		</div>
 	</body>

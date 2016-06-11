@@ -9,6 +9,8 @@ import (
 	"path"
 	"regexp"
 	"strings"
+
+	"github.com/sourcegraph/syntaxhighlight"
 )
 
 var (
@@ -26,13 +28,13 @@ type Link struct {
 }
 
 type View struct {
+	Theme   string
 	Title   string
 	Path    []Link
 	Folders []os.FileInfo
 	Files   []os.FileInfo
 	File    *os.File
 	Info    os.FileInfo
-	Content string
 	HTML    template.HTML
 }
 
@@ -54,7 +56,10 @@ func newView(path string, fi os.FileInfo) *View {
 	} else {
 		title = ".." + title
 	}
-	v := View{Title: title + strings.Join(url[s:], "/")}
+	v := View{
+		Theme: style,
+		Title: title + strings.Join(url[s:], "/"),
+	}
 	base := ""
 	for _, f := range url[:len(url)-1] {
 		f += "/"
@@ -129,5 +134,10 @@ func (v *View) Render() {
 			return
 		}
 	}
-	v.Content = string(v.Read())
+	highlighted, err := syntaxhighlight.AsHTML(v.Read())
+	if err != nil {
+		log.Print(err)
+	}
+	v.HTML = template.HTML(`<pre class="prettyprint">` +
+		string(highlighted) + `</pre>`)
 }
