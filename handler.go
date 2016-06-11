@@ -26,6 +26,7 @@ type Link struct {
 }
 
 type View struct {
+	Title   string
 	Path    []Link
 	Folders []os.FileInfo
 	Files   []os.FileInfo
@@ -45,8 +46,15 @@ func register(re *regexp.Regexp, r func(*View)) {
 }
 
 func newView(path string, fi os.FileInfo) *View {
-	v := View{}
 	url := strings.Split(path, "/")
+	s := len(url) - 3
+	title := "/"
+	if s <= 1 {
+		s = 1
+	} else {
+		title = ".." + title
+	}
+	v := View{Title: title + strings.Join(url[s:], "/")}
 	base := ""
 	for _, f := range url[:len(url)-1] {
 		f += "/"

@@ -7,6 +7,9 @@ import (
 var indexTemplate = template.Must(template.New("index").Parse(`
 <html>
 	<head>
+		<title>
+			{{.Title}}
+		</title>
 		<style>
 			article {
 				font-family: sans;
@@ -81,8 +84,7 @@ var indexTemplate = template.Must(template.New("index").Parse(`
 			<h2>Files</h2>
 			{{range .Files}}
 				<div class="file">
-					<a class="indigo" href="{{.Name}}" title="{{.ModTime}}">{{.Name}}</a>
-					<a class="indigo view" href="{{.Name}}?view">view</a>
+					<a class="indigo" href="{{.Name}}" title="{{.ModTime}}">{{.Name}}</a><a class="indigo view" href="{{.Name}}?view">view</a>
 				</div>
 			{{end}}
 			{{end}}
