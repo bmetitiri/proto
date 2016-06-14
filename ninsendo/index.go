@@ -20,7 +20,7 @@ const (
 
 var templates = template.Must(template.ParseGlob("template/*.html"))
 
-// TODO: Add an updated to filter out.
+// TODO: Add a sent field to prevent resends.
 type Subscription struct {
 	Game  string
 	Email string
