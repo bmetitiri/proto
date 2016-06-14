@@ -24,7 +24,9 @@ func worker(w http.ResponseWriter, r *http.Request) {
 		Add(-24*time.Hour)).Limit(10)
 	games := []gintendo.Game{}
 	_, err := q.GetAll(c, &games)
-	log.Infof(c, "Updating %v games", len(games))
+	if len(games) != 0 {
+		log.Infof(c, "Updating %v games", len(games))
+	}
 	if err != nil {
 		log.Errorf(c, err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
