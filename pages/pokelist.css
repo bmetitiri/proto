@@ -1,8 +1,10 @@
 body {
   font-family: monospace;
   margin: 0;
-  min-height: 455px;
   text-align: center;
+}
+input, table, .selected {
+  box-shadow: 0 1px 3px #000;
 }
 table, tr, td {
   border-spacing: 0;
@@ -10,14 +12,25 @@ table, tr, td {
   padding: 0;
 }
 table {
-  box-shadow: 0 0 1px #000;
+  margin: 8px 0;
 }
-td {
+.image {
   opacity: .5;
 }
 ul {
   margin: 0;
   padding-left: 15px;
+}
+.breed, .catch {
+  display: inline-block;
+  text-align: left;
+  padding-right: 5px;
+}
+.breed, .name {
+  line-height: 29px;
+}
+.catch {
+  font-size: small;
 }
 .err {
   color: red;
@@ -32,59 +45,47 @@ ul {
   vertical-align: top;
   width:40px;
 }
-.breed, .catch {
-  display: inline-block;
-  text-align: left;
-  padding-right: 5px;
-}
-.breed, .name {
-  line-height: 29px;
-}
-.catch {
-  font-size: small;
-}
 .name, .breed, .catch {
   background: white;
   box-shadow: 0 0 2px #000;
   margin: 5px;
   padding-left: 5px;
-  position: relative;
+  vertical-align: bottom;
 }
 .name {
   font-weight: bold;
+  padding-top: 5px;
 }
 .preview {
   float: right;
 }
-.tail {
-  margin: 0 auto 80px;
+.selected {
+  background: aliceblue;
+  border-radius: 20px;
+  box-sizing: border-box;
 }
 #boxes {
   display: inline-block;
-  text-align: left;
-  margin: 320px 0 60px;
+  text-align: right;
+  position: absolute;
+  right: 50vw;
 }
 #info {
-  background: aliceblue;
-  box-sizing: border-box;
-  height: 215px;
-  left: 0;
-  margin: auto;
-  overflow: hidden;
-  padding: 5px;
+  bottom: 0;
+  left: 50vw;
+  overflow: scroll;
+  padding: 10px;
   position: fixed;
-  right: 0;
-  top: -215px;
+  top: 44px;
   width: 320px;
   z-index: 1;
 }
 #query {
-  position: fixed;
-  bottom: 20px;
-  width: 150px;
-  margin-left: -75px;
   left: 50vw;
+  margin: 20px 8px 0;
   text-align: center;
+  position: fixed;
+  width: 150px;
   z-index: 1;
 }
 [data-filter=false] {
@@ -93,9 +94,27 @@ ul {
 [data-capture=true] {
   opacity: 1;
 }
-@media screen and (min-width: 400px) {
+@media (device-width: 320px) {
+  .other {
+    display: none;
+  }
+  .selected {
+    box-shadow: initial;
+  }
   #info {
-    box-shadow: 0 0 5px #000;
-    top: 60px;
+    background: aliceblue;
+    height: 215px;
+    bottom: auto;
+    left: 0;
+    padding: 0;
+    top: -215px;
+  }
+  #boxes {
+    margin-top: 340px;
+    right: 40px;
+  }
+  #query {
+    left: 82.5px;
+    margin: 20px 0;
   }
 }
