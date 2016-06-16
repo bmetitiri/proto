@@ -61,7 +61,7 @@ loop: while (true) {
       a.className = 'image ' + p.identifier;
       a.href = 'http://veekun.com/dex/pokemon/' + p.name.replace(' ', '');
       a.title = p.id + ': ' + p.name;
-      data.dataset.capture = !!capture[p.id];
+      a.dataset.capture = !!capture[p.id];
       data.appendChild(a);
       row.appendChild(data);
       if (count % 6 == 0) {
