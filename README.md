@@ -16,6 +16,8 @@ This repo contains a number of disparate code sketches with history in branches 
    Common \*nix configs, helper scripts.
  - [fastauth](https://github.com/arkie/proto/tree/fastauth)
    Node middleware for adding a recoverable session token.
+ - [filum](https://github.com/arkie/proto/tree/filum)
+   Command line tool to enable continuous interactive filtering of piped input.
  - [glomp](https://github.com/arkie/proto/tree/glomp)
    Node playground (destination: microframework?)
  - [hackyslack](https://github.com/arkie/proto/tree/hackyslack)
