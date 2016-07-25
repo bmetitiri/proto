@@ -47,6 +47,10 @@ def archive(repo, user, this):
     mid.append(r)
     mid.extend(repos[r])
   open("README.md", "w").writelines(pre + mid + post)
+  subprocess.call(["git", "add", "README.md"])
+  subprocess.call(["git", "commit", "-m",
+    "Added %s to README.md" % repo["name"]])
+  subprocess.call(["git", "push"])
   webbrowser.open(link, new=2)
   webbrowser.open("%s/settings" % repo["html_url"], new=2)
   return "Archived %s" % repo["name"]
