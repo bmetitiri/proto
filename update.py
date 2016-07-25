@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # vim:fileencoding=utf-8
+import codecs
 import httplib
 import json
 import os
@@ -42,11 +43,13 @@ def archive(repo, user, this):
       post.append(l)
     else:
       pre.append(l)
+  repos[" - [%s](%s)\n" % (repo["name"], link)] = [
+      "   %s\n" % repo["description"]]
   mid = []
   for r in sorted(repos):
     mid.append(r)
     mid.extend(repos[r])
-  open("README.md", "w").writelines(pre + mid + post)
+  codecs.open("README.md", "w", encoding="utf-8").writelines(pre + mid + post)
   subprocess.call(["git", "add", "README.md"])
   subprocess.call(["git", "commit", "-m",
     "Added %s to README.md" % repo["name"]])
