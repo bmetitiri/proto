@@ -2,6 +2,7 @@
 # vim:fileencoding=utf-8
 import codecs
 import httplib
+import io
 import json
 import os
 import re
@@ -24,8 +25,9 @@ def archive(repo, user, this):
     "%s:%s" % (repo["default_branch"], repo["name"])])
   subprocess.call(["git", "push", "origin", repo["name"]])
   link = "https://github.com/%s/%s/tree/%s" % (user, this, repo["name"])
+  lines = io.open("README.md", "r", encoding="utf-8").readlines()
   try:
-    lines = open("README.md").readlines()
+    lines = open("README.md", "r", encoding="utf-8").readlines()
   except:
     lines = []
   pre = []
