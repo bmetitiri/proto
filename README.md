@@ -1,6 +1,6 @@
-This repo contains a number of disparate code sketches to cut down on the number of abandoned repos in github.
+This repo contains a number of disparate code sketches with history in branches linked below to cut down on the number of abandoned repos in GitHub.
 
-The following are archived with history in various branches off of master:
+<hr>
 
  - [1%](https://github.com/arkie/proto/tree/1%25)
    Node.js twitter stream, predates node.joncaldwell.com
@@ -39,7 +39,6 @@ The following are archived with history in various branches off of master:
    Sampling of the Twitter firehose, from when [no.de](http://no.de) was a thing.
  - [read](https://github.com/arkie/proto/tree/read)
    RSS content aggregator, with selection from script extractor.
-   - [JS script](https://github.com/arkie/proto/blob/read/static/read.js) to look for next/previous links, and find primary content.
  - [selector](https://github.com/arkie/proto/tree/selector)
    Greasemonkey style add-on to download the media content of a target site.
  - [shill](https://github.com/arkie/proto/tree/shill)
@@ -55,4 +54,4 @@ The following are archived with history in various branches off of master:
 
 <hr>
 
-Created by using ```read repo; git fetch ../$repo/ master:$repo; git push origin $repo``` with existing checkouts.
+Previously created by using ```read repo; git fetch ../$repo/ master:$repo; git push origin $repo``` with existing checkouts. Now created with [update.py](/update.py).
