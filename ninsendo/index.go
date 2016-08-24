@@ -71,6 +71,11 @@ func logout(w http.ResponseWriter, r *http.Request) {
 		MaxAge: -1,
 	}
 	http.SetCookie(w, c)
+	sc := &http.Cookie{
+		Name:   "SACSID",
+		MaxAge: -1,
+	}
+	http.SetCookie(w, sc)
 	dc := &http.Cookie{
 		Name:   "dev_appserver_login",
 		MaxAge: -1,
