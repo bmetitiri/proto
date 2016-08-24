@@ -37,17 +37,7 @@ type Session struct {
 
 func init() {
 	http.HandleFunc("/", index)
-	http.HandleFunc("/account", index)
-}
-
-func clear(c context.Context, email string) error {
-	q := datastore.NewQuery(subscriptionType).
-		Filter("Email =", email).KeysOnly()
-	keys, err := q.GetAll(c, nil)
-	if err != nil {
-		return err
-	}
-	return datastore.DeleteMulti(c, keys)
+	http.HandleFunc("/logout", logout)
 }
 
 func subscribe(c context.Context, id string, email string) error {
@@ -67,12 +57,26 @@ func subscribe(c context.Context, id string, email string) error {
 			return err
 		}
 	}
-	key = datastore.NewIncompleteKey(c, subscriptionType, nil)
+	key = datastore.NewKey(c, subscriptionType, id+":"+email, 0, nil)
 	_, err = datastore.Put(c, key, &Subscription{
 		Game:  id,
 		Email: email,
 	})
 	return err
+}
+
+func logout(w http.ResponseWriter, r *http.Request) {
+	c := &http.Cookie{
+		Name:   "ACSID",
+		MaxAge: -1,
+	}
+	http.SetCookie(w, c)
+	dc := &http.Cookie{
+		Name:   "dev_appserver_login",
+		MaxAge: -1,
+	}
+	http.SetCookie(w, dc)
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 func index(w http.ResponseWriter, r *http.Request) {
@@ -86,12 +90,19 @@ func index(w http.ResponseWriter, r *http.Request) {
 	}
 	if r.Method == "POST" {
 		r.ParseForm()
-		if err := clear(c, u.Email); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
+		keys := []*datastore.Key{}
+		for _, id := range r.Form["remove"] {
+			keys = append(keys, datastore.NewKey(
+				c, subscriptionType, id+":"+u.Email, 0, nil))
+		}
+		if len(keys) > 0 {
+			if err := datastore.DeleteMulti(c, keys); err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
 		}
 		// TODO: Run as goroutines if appengine supported.
-		for _, id := range r.Form["game"] {
+		for _, id := range r.Form["add"] {
 			if err := subscribe(c, id, u.Email); err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
@@ -100,8 +111,7 @@ func index(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
-	logout, _ := user.LogoutURL(c, "/")
-	s := Session{Logout: logout, User: u, Query: r.FormValue("query")}
+	s := Session{Logout: "/logout", User: u, Query: r.FormValue("query")}
 	q := datastore.NewQuery(subscriptionType).
 		Filter("Email =", u.Email)
 	subs := []Subscription{}

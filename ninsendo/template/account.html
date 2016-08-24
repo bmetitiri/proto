@@ -7,27 +7,55 @@
       <input name="query" value="{{.Query}}"><input type="submit" value="🔍">
     </form>
     <form method="POST">
+      {{if .Subscriptions}}
+      <h2>Currently Watching</h2>
       <table>
+        <tr>
+          <th>Platform</th>
+          <th>Remove</th>
+          <th>Image</th>
+          <th>Title</th>
+          <th>Release</th>
+          <th>Price</th>
+        </tr>
         {{range .Subscriptions}}
         <tr>
-          <td><input id="{{.Id}}" checked="checked" type="checkbox" name="game" value="{{.Id}}"></td>
-          {{template "game.html" .}}
+          <td>{{.System}}</td>
+          <td><input id="{{.Id}}" type="checkbox" name="remove" value="{{.Id}}"></td>
+          <td><label for="{{.Id}}"><img src="{{.Box.Url}}"></label></td>
+          <td><a href="http://www.nintendo.com/games/detail/{{.Id}}">
+              {{.Title}}</a></td>
+          <td>{{.Release}}</td>
           <td>{{.Price}}</td>
         </tr>
         {{end}}
       </table>
-      <hr>
+      {{end}}
+      {{if .Result}}
+      <h2>"{{.Query}}" Results</h2>
       <table>
-        {{if .Result}}
+        <tr>
+          <th>Platform</th>
+          <th>Add</th>
+          <th>Image</th>
+          <th>Title</th>
+          <th>Release</th>
+        </tr>
         {{range .Result.Games}}
         <tr>
-          <td><input id="{{.Id}}" type="checkbox" name="game" value="{{.Id}}"></td>
-          {{template "game.html" .}}
+          <td>{{.System}}</td>
+          <td><input id="{{.Id}}" type="checkbox" name="add" value="{{.Id}}"></td>
+          <td><label for="{{.Id}}"><img src="{{.Box.Url}}"></label></td>
+          <td><a href="http://www.nintendo.com/games/detail/{{.Id}}">
+              {{.Title}}</a></td>
+          <td>{{.Release}}</td>
         </tr>
         {{end}}
-        {{end}}
       </table>
-      <input type="submit" value="✅">
+      {{end}}
+      <div class="apply">
+        <input type="submit" value="Save">
+      </div>
     </form>
   </body>
 </html>
