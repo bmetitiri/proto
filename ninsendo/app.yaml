@@ -1,5 +1,5 @@
 application: ninsend-o
-version: 0
+version: 0-alpha
 runtime: go
 api_version: go1
 
@@ -9,5 +9,5 @@ handlers:
 - url: /worker
   script: _go_app
   login: admin
-- url: /
+- url: /.*
   script: _go_app
