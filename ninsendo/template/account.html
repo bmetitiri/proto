@@ -3,7 +3,7 @@
   <body>
     {{.User}}
     <a href="{{.Logout}}">🔑</a>
-    <form>
+    <form action="#results">
       <input name="query" value="{{.Query}}"><input type="submit" value="🔍">
     </form>
     <form method="POST">
@@ -32,7 +32,7 @@
       </table>
       {{end}}
       {{if .Result}}
-      <h2>"{{.Query}}" Results</h2>
+      <h2><a name="results">"{{.Query}}" Results</a></h2>
       <table>
         <tr>
           <th>Platform</th>
