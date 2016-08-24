@@ -17,7 +17,7 @@ To use in your own code:
 
 - Search for games by partial match on title to return a `Result` of `[]Game`.
 
-  ```gintendo.Search("mario")```
+  ```gintendo.Search("mario") ```
 
 - Load `Game` details including price by game ID (found in `gintendo.Search`).
 
