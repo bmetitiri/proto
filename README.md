@@ -21,4 +21,4 @@ To use in your own code:
 
 - Load `Game` details including price by game ID (found in `gintendo.Search`).
 
-  ```gintendo.Load("VnTS_u2DBaJ5N-PXEJC-gWWMkSC5Rixm")```
+  ```gintendo.Load("VnTS_u2DBaJ5N-PXEJC-gWWMkSC5Rixm") ```
