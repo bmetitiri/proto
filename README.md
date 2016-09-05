@@ -22,6 +22,8 @@ This repo contains a number of disparate code sketches with history in branches 
    Node playground (destination: microframework?)
  - [hackyslack](https://github.com/arkie/proto/tree/hackyslack)
    Google App Engine powered Slack commands.
+ - [heresy](https://github.com/arkie/proto/tree/heresy)
+   Experimental tool to launch a shell environment on Heroku
  - [jiki](https://github.com/arkie/proto/tree/jiki)
    Example ni (see below) project for a simple wiki-like site.
  - [ni](https://github.com/arkie/proto/tree/ni)
