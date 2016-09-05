@@ -1,0 +1,4 @@
+{
+  "name": "heresy",
+  "description": "Experimental tool to launch a shell environment on Heroku"
+}

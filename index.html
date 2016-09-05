@@ -33,7 +33,8 @@
       var term = document.getElementById('terminal');
       t.decorate(term);
       t.installKeyboard(term);
-      var ws = new WebSocket(`ws://${window.location.host}/pty`);
+      var protocol = window.location.protocol=='https:' ? 'wss' : 'ws';
+      var ws = new WebSocket(`${protocol}://${window.location.host}/pty`);
       ws.onmessage = function(e) {
         t.io.print(e.data);
       };

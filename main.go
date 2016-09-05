@@ -1,29 +1,33 @@
 package main
 
 import (
-	"flag"
-	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"golang.org/x/net/websocket"
 )
 
 var (
-	command string
-	port    int
+	command, port string
 )
 
 func init() {
-	flag.StringVar(&command, "cmd", "bash", "set the command")
-	flag.IntVar(&port, "port", 8080, "set the HTTP port")
+	command = os.Getenv("COMMAND")
+	if command == "" {
+		command = "bash"
+	}
+	port = os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
 }
 
 func main() {
-	flag.Parse()
 	http.Handle("/pty", websocket.Handler(ptyHandler))
 	http.Handle("/", http.FileServer(http.Dir(".")))
-	err := http.ListenAndServe(fmt.Sprint(":", port), nil)
+	log.Print("Serving ", command, " on :", port)
+	err := http.ListenAndServe(":"+port, nil)
 	if err != nil {
 		log.Fatal("Failed to listen: ", err)
 	}

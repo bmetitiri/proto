@@ -1,0 +1,16 @@
+{
+	"ImportPath": "github.com/arkie/heresy",
+	"GoVersion": "go1.7",
+	"GodepVersion": "v74",
+	"Deps": [
+		{
+			"ImportPath": "github.com/kr/pty",
+			"Comment": "release.r56-29-gf7ee69f",
+			"Rev": "f7ee69f31298ecbe5d2b349c711e2547a617d398"
+		},
+		{
+			"ImportPath": "golang.org/x/net/websocket",
+			"Rev": "3f122ce3dbbe488b7e6a8bdb26f41edec852a40b"
+		}
+	]
+}
