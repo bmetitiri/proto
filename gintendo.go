@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"net/http"
+	"net/url"
 	"regexp"
 	"strconv"
 	"time"
@@ -68,7 +69,7 @@ func (n *Client) Load(id string) (*Game, error) {
 }
 
 func (n *Client) Search(q string) (*Result, error) {
-	res, err := n.HTTP.Get(fmt.Sprintf(ListUrl, q))
+	res, err := n.HTTP.Get(fmt.Sprintf(ListUrl, url.QueryEscape(q)))
 	if err != nil {
 		return nil, err
 	}

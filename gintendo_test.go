@@ -7,7 +7,7 @@ import (
 const (
 	marioId     = "VnTS_u2DBaJ5N-PXEJC-gWWMkSC5Rixm"
 	marioTitle  = "Super Mario 3D Land"
-	marioSearch = "mario"
+	marioSearch = "super mario"
 )
 
 func TestDetail(t *testing.T) {
