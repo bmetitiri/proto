@@ -1,0 +1,19 @@
+a {text-decoration:none;}
+body {
+  background: #eee;
+  font:15px monospace;
+  text-align:center;
+  padding-bottom: 40px;
+}
+p {margin: 20px;}
+.note {
+  background: #fff;
+  box-shadow: 0 0 2px 2px #999;
+  margin: 20px auto;
+  max-width: 400px;
+  padding: 10px;
+  text-align: left;
+}
+.placeholder {color: #ccc; text-align:center;}
+#text {max-width: 250px; transition: max-width .2s;}
+#text:focus {max-width: 400px;}

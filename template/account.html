@@ -1,0 +1,11 @@
+<html>
+  {{template "head.html"}}
+  <body>
+    <p>{{.User}} <a href="{{.Logout}}">🔑</a></p>
+    <div id="container">
+      <div id="text" class="note" contenteditable></div>
+    </div>
+    <div id="content"></div>
+    <script src="/static/script.js"></script>
+  </body>
+</html>
