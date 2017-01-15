@@ -10,4 +10,4 @@ deployment:
     branch: master
     owner: arkie
     commands:
-      - $HOME/go_appengine/appcfg.py --application tiny-note --oauth2_refresh_token=$APPENGINE_TOKEN update tinynote
+      - $HOME/go_appengine/appcfg.py --oauth2_refresh_token=$APPENGINE_TOKEN --application tiny-note update .

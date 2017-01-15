@@ -1,5 +1,4 @@
-application: tiny-note
-version: 0-alpha
+version: 0-ci
 runtime: go
 api_version: go1
 
