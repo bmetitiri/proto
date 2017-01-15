@@ -4,7 +4,6 @@ import (
 	"golang.org/x/net/context"
 	"google.golang.org/appengine/datastore"
 	"google.golang.org/appengine/search"
-	"log"
 	"time"
 )
 
@@ -25,7 +24,6 @@ type NoteSearch struct {
 
 func (n *Note) Save(c context.Context) error {
 	var key *datastore.Key
-	log.Print(n)
 	if n.Key != "" {
 		k, err := datastore.DecodeKey(n.Key)
 		if err != nil {
@@ -40,7 +38,6 @@ func (n *Note) Save(c context.Context) error {
 		return err
 	}
 	n.Key = key.Encode()
-	log.Print(n)
 	index, err := search.Open(noteType)
 	if err != nil {
 		return err
