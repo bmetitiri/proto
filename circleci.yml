@@ -1,0 +1,13 @@
+dependencies:
+  pre:
+    - curl 'https://www.googleapis.com/download/storage/v1/b/appengine-sdks/o/featured%2Fgo_appengine_sdk_linux_amd64-1.9.48.zip?generation=1480620662499000&alt=media' > google_appengine.zip
+    - unzip -q -d $HOME google_appengine.zip
+test:
+  override:
+    - $HOME/go_appengine/goapp test
+deployment:
+  appengine:
+    branch: master
+    owner: arkie
+    commands:
+      - $HOME/go_appengine/appcfg.py --application tiny-note --oauth2_refresh_token=$APPENGINE_TOKEN update tinynote

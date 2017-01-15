@@ -26,5 +26,4 @@ func TestNote(t *testing.T) {
 	equals(t, "Failed Key comparision", n.Key, notes[0].Key)
 	equals(t, "Failed Text comparision", n.Text, notes[0].Text)
 	equals(t, "Failed Password comparision", n.Password, notes[0].Password)
-	equals(t, "Failed total comparision", n, notes[0])
 }
