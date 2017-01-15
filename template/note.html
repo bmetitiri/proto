@@ -1,0 +1,11 @@
+<form class="note" method="POST">
+  <textarea name="text" placeholder="Note">{{.Text}}</textarea>
+  <br>
+  <input name="password" placeholder="Password"
+         type="password" value="{{.Password}}">
+  <input name="action" title="Save Note" type="submit" value="💾">
+  {{if .Key}}
+  <input name="action" title="Delete Note" type="submit" value="❌">
+  <input type="hidden" name="key" value="{{.Key}}">
+  {{end}}
+</form>

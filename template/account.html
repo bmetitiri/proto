@@ -1,11 +1,15 @@
 <html>
   {{template "head.html"}}
   <body>
-    <p>{{.User}} <a href="{{.Logout}}">🔑</a></p>
-    <div id="container">
-      <div id="text" class="note" contenteditable></div>
-    </div>
-    <div id="content"></div>
+    <a href="{{.Logout}}">🔑</a>{{.User}}
+    <form>
+      <input name="q" placeholder="Query" type="text" value="{{.Query}}">
+      <input title="Search Notes" type="submit" value="🔍">
+    </form>
+    {{template "note.html"}}
+    {{range .Notes}}
+      {{template "note.html" .}}
+    {{end}}
     <script src="/static/script.js"></script>
   </body>
 </html>

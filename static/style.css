@@ -1,19 +1,31 @@
-a {text-decoration:none;}
+a {
+  color: #000;
+  text-decoration: none;
+}
 body {
   background: #eee;
-  font:15px monospace;
-  text-align:center;
-  padding-bottom: 40px;
+  font: 12px sans-serif;
+  margin: 40px auto;
+  max-width: 330px;
+  text-align: right;
 }
-p {margin: 20px;}
+textarea {
+  min-height: 80px;
+}
+textarea {
+  border: 0;
+  padding: 5px;
+  width: 100%;
+}
+input[type=button], input[type=submit] {
+  position: relative;
+}
+input[type=password] {
+  border: 0;
+  float: left;
+}
 .note {
   background: #fff;
-  box-shadow: 0 0 2px 2px #999;
-  margin: 20px auto;
-  max-width: 400px;
-  padding: 10px;
-  text-align: left;
+  box-shadow: 0 0 5px 0 #999;
+  margin: 10px auto 20px;
 }
-.placeholder {color: #ccc; text-align:center;}
-#text {max-width: 250px; transition: max-width .2s;}
-#text:focus {max-width: 400px;}

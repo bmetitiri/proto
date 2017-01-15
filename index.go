@@ -4,7 +4,9 @@ import (
 	"google.golang.org/appengine"
 	"google.golang.org/appengine/user"
 	"html/template"
+	"log"
 	"net/http"
+	"net/url"
 )
 
 var templates = template.Must(template.ParseGlob("template/*.html"))
@@ -13,23 +15,14 @@ type Session struct {
 	User   *user.User
 	Login  string
 	Logout string
+	Query  string
+	Notes  []Note
+	Error  error
 }
 
 func init() {
 	http.HandleFunc("/", index)
 	http.HandleFunc("/logout", logout)
-}
-
-func index(w http.ResponseWriter, r *http.Request) {
-	c := appengine.NewContext(r)
-	u := user.Current(c)
-	if u == nil {
-		login, _ := user.LoginURL(c, "/")
-		templates.ExecuteTemplate(w, "index.html", Session{Login: login})
-		return
-	}
-	s := Session{Logout: "/logout", User: u}
-	templates.ExecuteTemplate(w, "account.html", s)
 }
 
 func logout(w http.ResponseWriter, r *http.Request) {
@@ -49,4 +42,47 @@ func logout(w http.ResponseWriter, r *http.Request) {
 	}
 	http.SetCookie(w, dc)
 	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
+func index(w http.ResponseWriter, r *http.Request) {
+	c := appengine.NewContext(r)
+	u := user.Current(c)
+	if u == nil {
+		login, _ := user.LoginURL(c, r.URL.String())
+		templates.ExecuteTemplate(w, "index.html", Session{Login: login})
+		return
+	}
+	c, err := appengine.Namespace(c, u.ID)
+	if err != nil {
+		log.Fatalf("Couldn't get namespace: %v", err)
+	}
+	s := Session{Logout: "/logout", User: u}
+	switch r.FormValue("action") {
+	case "💾":
+		note := Note{
+			Key:      r.FormValue("key"),
+			Text:     r.FormValue("text"),
+			Password: r.FormValue("password"),
+		}
+		if err := note.Save(c); err != nil {
+			log.Fatalf("Couldn't save note: %v", err)
+		}
+		v := url.Values{}
+		v.Add("id", note.Key)
+		http.Redirect(w, r, "/?"+v.Encode(), http.StatusSeeOther)
+		return
+	case "❌":
+		n := Note{Key: r.FormValue("key")}
+		n.Delete(c)
+		http.Redirect(w, r, r.URL.String(), http.StatusSeeOther)
+		return
+	}
+	ids := r.Form["id"]
+	s.Query = r.FormValue("q")
+	if len(ids) != 0 {
+		s.Notes, s.Error = Load(c, ids)
+	} else if s.Query != "" {
+		s.Notes, s.Error = Search(c, s.Query)
+	}
+	templates.ExecuteTemplate(w, "account.html", s)
 }
