@@ -83,6 +83,9 @@ func Load(c context.Context, ids []string) ([]Note, error) {
 	}
 	notes := make([]Note, len(keys))
 	err := datastore.GetMulti(c, keys, notes)
+	if err != nil {
+		return nil, err
+	}
 	for i, k := range keys {
 		notes[i].Key = k.Encode()
 	}

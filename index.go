@@ -54,7 +54,7 @@ func index(w http.ResponseWriter, r *http.Request) {
 	}
 	c, err := appengine.Namespace(c, u.ID)
 	if err != nil {
-		log.Fatalf("Couldn't get namespace: %v", err)
+		log.Fatalf("Could not get namespace: %v", err)
 	}
 	s := Session{Logout: "/logout", User: u}
 	switch r.FormValue("action") {
@@ -65,15 +65,17 @@ func index(w http.ResponseWriter, r *http.Request) {
 			Password: r.FormValue("password"),
 		}
 		if err := note.Save(c); err != nil {
-			log.Fatalf("Couldn't save note: %v", err)
+			log.Fatalf("Could not save note: %v", err)
 		}
 		v := url.Values{}
 		v.Add("id", note.Key)
 		http.Redirect(w, r, "/?"+v.Encode(), http.StatusSeeOther)
 		return
 	case "❌":
-		n := Note{Key: r.FormValue("key")}
-		n.Delete(c)
+		note := Note{Key: r.FormValue("key")}
+		if err := note.Delete(c); err != nil {
+			log.Fatalf("Could not delete note: %v", err)
+		}
 		http.Redirect(w, r, r.URL.String(), http.StatusSeeOther)
 		return
 	}
