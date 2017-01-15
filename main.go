@@ -28,7 +28,7 @@ func init() {
 	flag.StringVar(&config, "config", "", "set the config path (default \"~/"+configPath+"\")")
 	flag.StringVar(&host, "host", "0.0.0.0", "set the HTTP(S) host")
 	flag.IntVar(&httpPort, "http", 8080, "set the HTTP port, disable with 0")
-	flag.IntVar(&httpsPort, "https", 8443, "set the HTTPS port, disable with 0")
+	flag.IntVar(&httpsPort, "https", 0, "set the HTTPS port")
 	flag.BoolVar(&open, "open", false, "open the served root in browser")
 	flag.StringVar(&style, "style", "github-v2", "select a style from tiny.cc/csses")
 }

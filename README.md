@@ -5,7 +5,7 @@ indigo
 that generates directory indexes, highlights code, and renders CSV and Markdown.
 
 Run `go get github.com/arkie/indigo` to install indigo, and then run `indigo`
-in any directory to serve locally on HTTP and HTTPS.
+in any directory to serve locally on HTTP and/or HTTPS.
 
 ```
 Usage of indigo:
