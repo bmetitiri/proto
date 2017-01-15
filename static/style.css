@@ -9,6 +9,9 @@ body {
   max-width: 330px;
   text-align: right;
 }
+nav {
+  padding: 2px;
+}
 textarea {
   min-height: 80px;
 }

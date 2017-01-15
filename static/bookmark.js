@@ -10,8 +10,9 @@
   frame.style.boxShadow = '0 0 5px 0 #999';
   frame.style.height = '100vh';
   frame.style.position = 'fixed';
-  frame.style.right = 0;
+  frame.style.right = '25px';
   frame.style.top = 0;
+  frame.style.zIndex = 1 << 24;
   document.body.appendChild(frame);
   document.body.addEventListener('keyup', function handler(e) {
     if (e.keyCode == 27) {

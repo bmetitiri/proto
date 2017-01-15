@@ -35,5 +35,5 @@
     s.src = '${window.location.origin}/static/bookmark.js';
     document.body.appendChild(s);
   })();`.replace(/\s/g, '').replace(/var/g, 'var ');
-  document.body.insertBefore(bookmark, document.body.firstChild);
+  document.getElementsByTagName('nav')[0].appendChild(bookmark);
 })();
