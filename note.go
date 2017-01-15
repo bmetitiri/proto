@@ -33,6 +33,7 @@ func (n *Note) Save(c context.Context) error {
 	} else {
 		key = datastore.NewIncompleteKey(c, noteType, nil)
 	}
+	n.Time = time.Now()
 	key, err := datastore.Put(c, key, n)
 	if err != nil {
 		return err

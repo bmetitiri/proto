@@ -2,21 +2,24 @@ a {
   color: #000;
   text-decoration: none;
 }
+body, textarea, input {
+  font: 13px sans-serif;
+}
+body, footer {
+  font-size: 12px;
+}
 body {
   background: #eee;
-  font: 12px sans-serif;
   margin: 40px auto;
   max-width: 330px;
   text-align: right;
 }
-nav {
+footer, nav {
   padding: 2px;
 }
 textarea {
-  min-height: 80px;
-}
-textarea {
   border: 0;
+  min-height: 80px;
   padding: 5px;
   width: 100%;
 }
@@ -30,5 +33,5 @@ input[type=password] {
 .note {
   background: #fff;
   box-shadow: 0 0 5px 0 #999;
-  margin: 10px auto 20px;
+  margin: 20px auto 0;
 }
