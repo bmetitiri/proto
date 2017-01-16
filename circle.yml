@@ -7,4 +7,4 @@ deployment:
     branch: master
     owner: arkie
     commands:
-      - $HOME/go_appengine/appcfg.py --oauth2_refresh_token=$APPENGINE_TOKEN --application ninsend-o update
+      - $HOME/go_appengine/appcfg.py --oauth2_refresh_token=$APPENGINE_TOKEN --application ninsend-o update ninsendo
