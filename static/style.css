@@ -26,12 +26,12 @@ textarea {
 input[type=button], input[type=submit] {
   position: relative;
 }
-input[type=password] {
-  border: 0;
-  float: left;
-}
 .note {
   background: #fff;
   box-shadow: 0 0 5px 0 #999;
   margin: 20px auto 0;
+}
+.note input[type=password], .note input[type=text] {
+  border: 0;
+  float: left;
 }

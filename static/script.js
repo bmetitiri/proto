@@ -12,10 +12,12 @@
     copy.value = '📋';
     copy.addEventListener('click', function(){
       password.type = 'text';
-      password.select();
-      document.execCommand('copy');
-      password.type = 'password';
-      password.blur();
+      password.focus();
+      password.setSelectionRange(0, password.value.length);
+      if (document.execCommand('copy')) {
+        password.type = 'password';
+        password.blur();
+      }
     });
     function toggle(){
       copy.style.display = password.value.length > 0 ? 'inline': 'none';
