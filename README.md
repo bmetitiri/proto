@@ -1,4 +1,4 @@
-gintendo [![Build Status](https://travis-ci.org/arkie/gintendo.svg?branch=master)](https://travis-ci.org/arkie/gintendo)
+gintendo [![CircleCI](https://circleci.com/gh/arkie/gintendo.svg?style=shield)](https://circleci.com/gh/arkie/gintendo)
 --------
 
 A small library for pulling information from [nintendo.com](http://www.nintendo.com).
