@@ -1,0 +1,19 @@
+<table data-sortable>
+	<thead>
+		<tr>
+		{{range .Read}}
+			<th>{{.}}</th>
+		{{end}}
+		</tr>
+	</thead>
+	<tbody>
+		{{range .ReadAll}}
+		<tr>
+			{{range .}}
+				<td>{{.}}</td>
+			{{end}}
+		</tr>
+		{{end}}
+	</tbody>
+</table>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sortable/0.8.0/js/sortable.min.js"></script>

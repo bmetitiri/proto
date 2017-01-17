@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/user"
 	"path"
+	"strconv"
 	"sync"
 
 	"github.com/kabukky/httpscerts"
@@ -25,9 +26,13 @@ var (
 )
 
 func init() {
+	port, _ := strconv.Atoi(os.Getenv("PORT"))
+	if port == 0 {
+		port = 8080
+	}
 	flag.StringVar(&config, "config", "", "set the config path (default \"~/"+configPath+"\")")
 	flag.StringVar(&host, "host", "0.0.0.0", "set the HTTP(S) host")
-	flag.IntVar(&httpPort, "http", 8080, "set the HTTP port, disable with 0")
+	flag.IntVar(&httpPort, "http", port, "set the HTTP port, disable with 0")
 	flag.IntVar(&httpsPort, "https", 0, "set the HTTPS port")
 	flag.BoolVar(&open, "open", false, "open the served root in browser")
 	flag.StringVar(&style, "style", "github-v2", "select a style from tiny.cc/csses")
