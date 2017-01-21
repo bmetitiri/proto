@@ -49,6 +49,9 @@ func (n *Client) Load(id string) (*Game, error) {
 	if err != nil {
 		return nil, err
 	}
+	if res.StatusCode != 200 {
+		return nil, fmt.Errorf("Got status %v", res.StatusCode)
+	}
 	doc, err := goquery.NewDocumentFromResponse(res)
 	if err != nil {
 		return nil, err
