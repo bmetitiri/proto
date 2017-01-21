@@ -34,17 +34,17 @@ func worker(w http.ResponseWriter, r *http.Request) {
 	}
 	client := gintendo.Client{HTTP: urlfetch.Client(c)}
 	for _, game := range games {
-		new, err := client.Load(game.Id)
+		new, err := client.Load(game.ID)
 		if err != nil {
 			log.Errorf(c, err.Error())
 			continue
 		}
 		if new.Price == 0 {
-			log.Errorf(c, "Got price 0 for %v (%v)", game.Id, new.Title)
+			log.Errorf(c, "Got price 0 for %v (%v)", game.ID, new.Title)
 			continue
 		}
 		if new.Price < game.Price || game.Price == 0 {
-			alerts := datastore.NewQuery(subscriptionType).Filter("Game =", game.Id)
+			alerts := datastore.NewQuery(subscriptionType).Filter("Game =", game.ID)
 			subs := []Subscription{}
 			_, err := alerts.GetAll(c, &subs)
 			if err != nil {
@@ -56,14 +56,14 @@ func worker(w http.ResponseWriter, r *http.Request) {
 					Sender:  "Ninsendo <o@ninsend-o.appspotmail.com>",
 					To:      []string{sub.Email},
 					Subject: fmt.Sprintf("%v is now priced at $%v", new.Title, new.Price),
-					Body:    fmt.Sprintf(gintendo.DetailUrl, new.Id),
+					Body:    fmt.Sprintf(gintendo.DetailUrl, new.ID),
 				}
 				if err := mail.Send(c, msg); err != nil {
 					log.Errorf(c, "Couldn't send email: %v", err)
 				}
 			}
 		}
-		key := datastore.NewKey(c, gameType, new.Id, 0, nil)
+		key := datastore.NewKey(c, gameType, new.ID, 0, nil)
 		_, err = datastore.Put(c, key, new)
 		if err != nil {
 			log.Errorf(c, err.Error())
