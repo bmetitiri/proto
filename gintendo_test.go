@@ -5,13 +5,13 @@ import (
 )
 
 const (
-	marioId     = "VnTS_u2DBaJ5N-PXEJC-gWWMkSC5Rixm"
+	marioID     = "VnTS_u2DBaJ5N-PXEJC-gWWMkSC5Rixm"
 	marioTitle  = "Super Mario 3D Land"
 	marioSearch = "super mario"
 )
 
 func TestDetail(t *testing.T) {
-	game, err := Load(marioId)
+	game, err := Load(marioID)
 	if err != nil {
 		t.Error(err)
 	}

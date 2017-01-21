@@ -21,9 +21,9 @@
         {{range .Subscriptions}}
         <tr>
           <td>{{.System}}</td>
-          <td><input id="{{.Id}}" type="checkbox" name="remove" value="{{.Id}}"></td>
-          <td><label for="{{.Id}}"><img src="{{.Box.Url}}"></label></td>
-          <td><a href="http://www.nintendo.com/games/detail/{{.Id}}">
+          <td><input id="{{.ID}}" type="checkbox" name="remove" value="{{.ID}}"></td>
+          <td><label for="{{.ID}}"><img src="{{.Box.Url}}"></label></td>
+          <td><a href="http://www.nintendo.com/games/detail/{{.ID}}">
               {{.Title}}</a></td>
           <td>{{.Release}}</td>
           <td>{{.Price}}</td>
@@ -44,9 +44,9 @@
         {{range .Result.Games}}
         <tr>
           <td>{{.System}}</td>
-          <td><input id="{{.Id}}" type="checkbox" name="add" value="{{.Id}}"></td>
-          <td><label for="{{.Id}}"><img src="{{.Box.Url}}"></label></td>
-          <td><a href="http://www.nintendo.com/games/detail/{{.Id}}">
+          <td><input id="{{.ID}}" type="checkbox" name="add" value="{{.ID}}"></td>
+          <td><label for="{{.ID}}"><img src="{{.Box.Url}}"></label></td>
+          <td><a href="http://www.nintendo.com/games/detail/{{.ID}}">
               {{.Title}}</a></td>
           <td>{{.Release}}</td>
         </tr>

@@ -21,7 +21,7 @@ type Image struct {
 }
 
 type Game struct {
-	Id      string
+	ID      string
 	Title   string `json:"short_title"`
 	Release string `json:"release_date"`
 	Box     Image  `json:"front_box_art"`
@@ -49,6 +49,9 @@ func (n *Client) Load(id string) (*Game, error) {
 	if err != nil {
 		return nil, err
 	}
+	if res.StatusCode != 200 {
+		return nil, fmt.Errorf("Got status %v", res.StatusCode)
+	}
 	doc, err := goquery.NewDocumentFromResponse(res)
 	if err != nil {
 		return nil, err
@@ -57,7 +60,7 @@ func (n *Client) Load(id string) (*Game, error) {
 	price, _ := strconv.ParseFloat(priceRegex.FindString(
 		doc.Find(".price_display").First().Text()), 64)
 	game := Game{
-		Id:      id,
+		ID:      id,
 		Title:   doc.Find("h1").First().Text(),
 		Release: doc.Find("#release_date").First().Text(),
 		Box:     Image{Url: image},
