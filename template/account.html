@@ -1,7 +1,7 @@
 <html>
   {{template "head.html"}}
   <body>
-    <nav><a href="{{.Logout}}">🔑</a>{{.User}}</nav>
+    <nav><a href="{{.Logout}}" title="Logout">🔑{{.User}}</a></nav>
     <form>
       <input name="q" placeholder="Query" type="text" value="{{.Query}}">
       <input title="Search Notes" type="submit" value="🔍">

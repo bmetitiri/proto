@@ -1,5 +1,10 @@
 a {
+  background: #fff;
+  border-radius: 3px;
+  box-shadow: 0 0 5px 0 #999;
   color: #000;
+  margin-left: 10px;
+  padding: 2px;
   text-decoration: none;
 }
 body, textarea, input {
@@ -9,10 +14,13 @@ body, footer {
   font-size: 12px;
 }
 body {
-  background: #eee;
+  background: #333 url("https://source.unsplash.com/category/objects?notebook") center/cover;
   margin: 40px auto;
   max-width: 330px;
   text-align: right;
+}
+form {
+  margin: 10px auto 0;
 }
 footer, nav {
   padding: 2px;
@@ -29,7 +37,6 @@ input[type=button], input[type=submit] {
 .note {
   background: #fff;
   box-shadow: 0 0 5px 0 #999;
-  margin: 20px auto 0;
 }
 .note input[type=password], .note input[type=text] {
   border: 0;
