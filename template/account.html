@@ -9,7 +9,7 @@
     {{if .Error}}
       {{.Error}}
     {{end}}
-    {{template "note.html"}}
+    {{template "note.html" .Form}}
     {{range .Notes}}
       {{template "note.html" .}}
     {{end}}

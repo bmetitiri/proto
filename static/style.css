@@ -10,20 +10,15 @@ a {
 body, textarea, input {
   font: 13px sans-serif;
 }
-body, footer {
-  font-size: 12px;
-}
 body {
   background: #333 url("https://source.unsplash.com/category/objects?notebook") center/cover;
+  font-size: 12px;
   margin: 40px auto;
-  max-width: 330px;
+  max-width: 300px;
   text-align: right;
 }
 form {
-  margin: 10px auto 0;
-}
-footer, nav {
-  padding: 2px;
+  margin: 10px auto 20px;
 }
 textarea {
   border: 0;

@@ -1,5 +1,6 @@
 <form class="note" method="POST">
-  <textarea name="text" placeholder="Note">{{.Text}}</textarea>
+  <textarea {{if .Key}}title="{{.Time.Format "2006-01-02 15:04:05 MST"}}"{{end}}
+         name="text" placeholder="Note">{{.Text}}</textarea>
   <br>
   <input name="password" placeholder="Password"
          type="password" value="{{.Password}}">
@@ -9,4 +10,3 @@
   <input type="hidden" name="key" value="{{.Key}}">
   {{end}}
 </form>
-<footer>{{.Time.Format "2006-01-02 15:04:05 MST"}}</footer>

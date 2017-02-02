@@ -16,6 +16,7 @@ type Session struct {
 	Login  string
 	Logout string
 	Query  string
+	Form   Note
 	Notes  []Note
 	Error  error
 }
@@ -79,8 +80,19 @@ func index(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, r.URL.String(), http.StatusSeeOther)
 		return
 	}
+	host := r.FormValue("url")
+	if host != "" {
+		s.Form = Note{Text: host}
+		u, err := url.Parse(host)
+		if err == nil {
+			s.Query = "\"" + u.Host + "\""
+		}
+	}
+	q := r.FormValue("q")
+	if q != "" {
+		s.Query = q
+	}
 	ids := r.Form["id"]
-	s.Query = r.FormValue("q")
 	if len(ids) != 0 {
 		s.Notes, s.Error = Load(c, ids)
 	} else if s.Query != "" {

@@ -26,7 +26,6 @@
     note.insertBefore(copy, password.nextSibling);
   }
   if (window != parent) {
-    document.getElementsByTagName('textarea')[0].value = document.referrer;
     return;
   }
   let bookmark = document.createElement('a');

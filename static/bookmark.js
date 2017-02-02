@@ -1,17 +1,17 @@
 'use strict';
 (function(){
-  var s = document.body.lastElementChild;
+  let s = document.body.lastElementChild;
   document.body.removeChild(s);
-  let query = window.location.hostname.split('.').slice(-2)[0];
+  let url = encodeURIComponent(location.href);
   let container = document.createElement('div');
   container.style.position = 'fixed';
   container.style.bottom = 0;
   container.style.right = '25px';
   container.style.top = 0;
-  container.style.width = '270px';
+  container.style.width = '330px';
   container.style.zIndex = 1 << 24;
   let frame = document.createElement('iframe');
-  frame.src = `${new URL(s.src).origin}/?q=${query}`;
+  frame.src = `${new URL(s.src).origin}/?url=${url}`;
   frame.style.border = 0;
   frame.style.boxShadow = '0 0 5px 0 #999';
   frame.style.height = '100%';
@@ -21,8 +21,8 @@
   close.type = 'button';
   close.value = '❌';
   close.style.position = 'absolute';
-  close.style.top = '15px';
-  close.style.right = 0;
+  close.style.top = '10px';
+  close.style.right = '5px';
   close.addEventListener('click', exit);
   container.appendChild(close);
   document.body.appendChild(container);
