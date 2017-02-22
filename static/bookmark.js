@@ -8,12 +8,12 @@
   container.style.bottom = 0;
   container.style.right = '25px';
   container.style.top = 0;
-  container.style.width = '330px';
+  container.style.width = '320px';
   container.style.zIndex = 1 << 24;
   let frame = document.createElement('iframe');
   frame.src = `${new URL(s.src).origin}/?url=${url}`;
   frame.style.border = 0;
-  frame.style.boxShadow = '0 0 5px 0 #999';
+  frame.style.boxShadow = '0 0 4px 0 #ccc';
   frame.style.height = '100%';
   frame.style.width = '100%';
   container.appendChild(frame);
@@ -22,7 +22,7 @@
   close.value = '❌';
   close.style.position = 'absolute';
   close.style.top = '10px';
-  close.style.right = '5px';
+  close.style.right = 0;
   close.addEventListener('click', exit);
   container.appendChild(close);
   document.body.appendChild(container);
