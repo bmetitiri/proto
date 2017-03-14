@@ -47,7 +47,7 @@ func subscribe(c context.Context, id string, email string) error {
 	err := datastore.Get(c, key, &game)
 	if err != nil {
 		log.Infof(c, "Couldn't load id: %v", id)
-		client := gintendo.Client{HTTP: urlfetch.Client(c)}
+		client := gintendo.Client{Hardware: gintendo.All, HTTP: urlfetch.Client(c)}
 		game, err := client.Load(id)
 		if err != nil {
 			return err
@@ -136,7 +136,7 @@ func index(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if s.Query != "" {
-		client := gintendo.Client{HTTP: urlfetch.Client(c)}
+		client := gintendo.Client{Hardware: gintendo.All, HTTP: urlfetch.Client(c)}
 		res, err := client.Search(s.Query)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
