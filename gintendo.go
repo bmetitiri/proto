@@ -101,6 +101,9 @@ func (n *Client) Search(q string) (*Result, error) {
 	decoder := json.NewDecoder(res.Body)
 	result := &Result{}
 	err = decoder.Decode(result)
+	if err != nil {
+		return nil, err
+	}
 	return result, nil
 }
 
