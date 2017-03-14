@@ -13,7 +13,7 @@ import (
 
 const (
 	DetailUrl = `http://www.nintendo.com/games/detail/%s`
-	ListUrl   = `http://www.nintendo.com/json/content/get/game/list/filter/subset?qtitlelike=%s&qsortBy=releaseDate&qdirection=descend`
+	ListUrl   = `http://www.nintendo.com/json/content/get/game/list/filter/subset?qsortBy=releaseDate&qdirection=descend&%s`
 )
 
 type Image struct {
@@ -36,11 +36,27 @@ type Result struct {
 }
 
 type Client struct {
-	HTTP *http.Client
+	Hardware []Hardware
+	HTTP     *http.Client
 }
 
+type Hardware string
+
+const (
+	Switch  Hardware = "Nintendo Switch"
+	IOS              = "iOS"
+	Mobile           = "iOS/Android"
+	Wii              = "Wii"
+	WiiU             = "Wii U"
+	ThreeDS          = "3DS"
+	DS               = "DS"
+)
+
+// Go doesn't support const arrays.
+var All = []Hardware{Switch, IOS, Mobile, Wii, WiiU, ThreeDS, DS}
+
 var (
-	defaults   = &Client{HTTP: &http.Client{}}
+	defaults   = &Client{HTTP: &http.Client{}, Hardware: All}
 	priceRegex = regexp.MustCompile(`[0-9]+(\.[0-9]+)?`)
 )
 
@@ -72,7 +88,12 @@ func (n *Client) Load(id string) (*Game, error) {
 }
 
 func (n *Client) Search(q string) (*Result, error) {
-	res, err := n.HTTP.Get(fmt.Sprintf(ListUrl, url.QueryEscape(q)))
+	v := url.Values{}
+	v.Set("qtitlelike", q)
+	for _, k := range n.Hardware {
+		v.Add("qhardware", string(k))
+	}
+	res, err := n.HTTP.Get(fmt.Sprintf(ListUrl, v.Encode()))
 	if err != nil {
 		return nil, err
 	}
