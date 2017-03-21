@@ -39,7 +39,7 @@ func worker(w http.ResponseWriter, r *http.Request) {
 			log.Errorf(c, err.Error())
 			continue
 		}
-		if new.Price < game.Price || game.Price == 0 {
+		if new.Price < game.Price || (game.Price == 0 && new.Price != 0) {
 			alerts := datastore.NewQuery(subscriptionType).Filter("Game =", game.ID)
 			subs := []Subscription{}
 			_, err := alerts.GetAll(c, &subs)
