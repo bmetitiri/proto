@@ -44,6 +44,8 @@ This repo contains a number of disparate code sketches with history in branches 
    Simple node-based (read wiki) site for Google App Engine
  - [space](https://github.com/arkie/proto/tree/space)
    Spinning ships with a node.js socket.io (echo) server behind.
+ - [tinynote](https://github.com/arkie/proto/tree/tinynote)
+   A small AppEngine hosted note service
  - [tubular](https://github.com/arkie/proto/tree/tubular)
    Lumines-style game with chain-based clearing overlaid over Youtube.
  - html-jive
