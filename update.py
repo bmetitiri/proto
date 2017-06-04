@@ -76,7 +76,7 @@ def menu(repos, this):
   print("Archive which repo?")
   repos_dict = dict((r["name"], r) for r in repos if r["name"] != this)
   choices = sorted(repos_dict.keys())
-  length = len(max(choices, key=lambda r: len(r)))
+  length = len(max(choices, key=len))
   for i, r in enumerate(choices):
     repo = repos_dict[r]
     print((" %s) %" + str(-length) + u"s ★%s ⑂%s  %s") %
