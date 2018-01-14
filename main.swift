@@ -2,7 +2,6 @@
 // Formatted with `swiftformat --indent 2 .`
 
 import Darwin.ncurses
-import Foundation
 
 // TODO: Fix this.
 enum Item: Hashable {
@@ -146,7 +145,7 @@ class Mine: Building {
 }
 
 class Pipe: Receiver {
-  var output: Receiver?
+  weak var output: Receiver?
   var send = false
   var content = Item.none
   var last = 0
@@ -178,34 +177,33 @@ class Pipe: Receiver {
   }
 }
 
-enum NodeType {
-  case none, wall
-  case build(Building)
-  case pipe(Pipe)
-}
+class Wall: Receiver {}
 
 struct Node {
-  let at: Point
-  var type = NodeType.none
+  weak var value: Receiver?
 }
 
 class Map {
+  let width: Int
+  let height: Int
   var map: [[Node]]
+  var nodes = Set<Receiver>()
+  // TODO: Change to weak referenced.
   var buildings = Set<Receiver>()
   var turn = 0
 
   init(width: Int, height: Int) {
-    var map = [[Node]]()
+    self.width = width
+    self.height = height
+    map = Array(repeating: Array(repeating: Node(), count: height + 1),
+                count: width + 1)
     for col in 0 ... width {
-      var nodes = [Node]()
       for row in 0 ... height {
-        nodes.append(Node(at: Point(x: col, y: row), type:
-            (col == 0 || col == width || row == 0 || row == height) ?
-            NodeType.wall : NodeType.none))
+        if col == 0 || col == width || row == 0 || row == height {
+          set(x: col, y: row, value: Wall())
+        }
       }
-      map.append(nodes)
     }
-    self.map = map
   }
 
   func get(at: Point) -> Node {
@@ -220,7 +218,10 @@ class Map {
     let (w, h) = type.size()
     for row in 0 ..< h {
       for col in 0 ..< w {
-        switch get(x: at.x + col, y: at.y + row).type {
+        if at.x + col >= width || at.y + row >= height {
+          return false
+        }
+        switch get(x: at.x + col, y: at.y + row).value {
         case .none: continue
         default: return false
         }
@@ -241,46 +242,48 @@ class Map {
     let (w, h) = type.size()
     for row in 0 ..< h {
       for col in 0 ..< w {
-        set(x: at.x + col, y: at.y + row, type: NodeType.build(b))
+        set(x: at.x + col, y: at.y + row, value: b)
       }
     }
     buildings.insert(b)
   }
 
   func pipe(from: Point, to: Point) {
-    var r: Receiver?
-
-    switch get(at: to).type {
-    case .none:
-      let p = Pipe()
-      r = p
-      set(at: to, type: NodeType.pipe(p))
-    case let .build(b):
-      r = b
-    case let .pipe(p):
-      r = p
-    default:
-      break
+    var r = get(at: to).value
+    if r == nil {
+      r = Pipe()
+      set(at: to, value: r!)
     }
 
-    switch get(at: from).type {
+    switch get(at: from).value {
     case .none:
       let p = Pipe()
-      set(at: from, type: NodeType.pipe(p))
+      set(at: from, value: p)
       if let r = r {
         p.pipe(to: r)
       }
-    case let .pipe(p):
+    case let p as Pipe:
       if let r = r {
         p.pipe(to: r)
       }
-    case let .build(b):
+    case let b as Building:
       if let r = r, r != b {
         b.pipe(to: r)
       }
     default:
       break
     }
+  }
+
+  func delete(at: Point) {
+    let value = get(at: at).value
+    if let value = value {
+      if value is Building {
+        buildings.remove(value)
+      }
+      nodes.remove(value)
+    }
+    set(at: at, value: nil)
   }
 
   func update() {
@@ -290,12 +293,15 @@ class Map {
     turn += 1
   }
 
-  private func set(at: Point, type: NodeType) {
-    set(x: at.x, y: at.y, type: type)
+  private func set(at: Point, value: Receiver?) {
+    set(x: at.x, y: at.y, value: value)
   }
 
-  private func set(x: Int, y: Int, type: NodeType) {
-    map[x][y].type = type
+  private func set(x: Int, y: Int, value: Receiver?) {
+    if let value = value {
+      nodes.insert(value)
+    }
+    map[x][y].value = value
   }
 }
 
@@ -320,28 +326,24 @@ extension Pipe {
   }
 }
 
-extension NodeType {
-  func glyph() -> String {
-    switch self {
-    case .none: return " "
-    case .wall: return "░"
-    case let .pipe(pipe): return pipe.glyph()
-    case let .build(building): return building.type.glyph()
-    }
-  }
-}
-
 extension Node {
-  func draw() {
-    mvaddstr(Int32(at.y), Int32(at.x), type.glyph())
+  func draw(at: Point) {
+    let glyph: String
+    switch value {
+    case let pipe as Pipe: glyph = pipe.glyph()
+    case let building as Building: glyph = building.type.glyph()
+    case is Wall: glyph = "░"
+    default: glyph = " "
+    }
+    mvaddstr(Int32(at.y), Int32(at.x), glyph)
   }
 }
 
 extension Map {
   func draw() {
-    for row in map {
-      for node in row {
-        node.draw()
+    for (x, row) in map.enumerated() {
+      for (y, node) in row.enumerated() {
+        node.draw(at: Point(x: x, y: y))
       }
     }
   }
@@ -351,17 +353,24 @@ class Terminal {
   static let A_REVERSE = Int32(1 << 18)
 
   enum Mode {
-    case cursor, build, pipe
+    case cursor, build
+    case pipe(active: Bool)
+    case delete(active: Bool)
 
     func key() -> String {
       switch self {
       case .cursor: return "(c)ursor"
       case .build: return "(b)uild"
       case .pipe: return "(p)ipe"
+      case .delete: return "(d)elete"
       }
     }
 
-    static let list = [cursor, build, pipe]
+    static let list = [
+      cursor, build,
+      pipe(active: false),
+      delete(active: false),
+    ]
   }
 
   let map: Map
@@ -369,7 +378,6 @@ class Terminal {
   let width = 40
   var mode = Mode.cursor
   var build = BuildingType.mine
-  var piping = false
   var x = 1
   var y = 1
 
@@ -391,7 +399,7 @@ class Terminal {
   func draw() {
     move(Int32(height) + 1, 0)
     for mode in Mode.list {
-      if self.mode == mode {
+      if self.mode.key() == mode.key() {
         attron(Terminal.A_REVERSE)
         addstr(mode.key())
         attroff(Terminal.A_REVERSE)
@@ -405,7 +413,7 @@ class Terminal {
     clrtoeol()
     switch mode {
     case .cursor:
-      addstr("Selected: \(String(describing: map.get(x: x, y: y).type))")
+      addstr("Selected: \(String(describing: map.get(x: x, y: y)))")
     case .build:
       addstr("(↹)Selected: ")
       for type in BuildingType.list {
@@ -429,8 +437,8 @@ class Terminal {
           if dy > height {
             continue
           }
-          switch map.get(x: dx, y: dy).type {
-          case NodeType.none:
+          switch map.get(x: dx, y: dy).value {
+          case .none:
             mvaddstr(Int32(dy), Int32(dx), build.glyph())
           default:
             attron(Terminal.A_REVERSE)
@@ -439,8 +447,10 @@ class Terminal {
           }
         }
       }
-    case .pipe:
-      addstr("(↵)Laying Pipe: \(piping)")
+    case let .pipe(active):
+      addstr("(↵)Laying Pipe: \(active)")
+    case let .delete(active):
+      addstr("(↵)Deleting: \(active)")
     }
   }
 
@@ -456,23 +466,26 @@ class Terminal {
       switch ch {
       case Int32(chtype("c")):
         mode = .cursor
-        piping = false
       case Int32(chtype("b")):
         mode = .build
-        piping = false
       case Int32(chtype("p")):
-        mode = .pipe
+        mode = .pipe(active: false)
+      case Int32(chtype("d")):
+        mode = .delete(active: false)
       case Int32(chtype("q")):
         return
       case Int32(chtype("\r")):
-        if mode == Mode.build {
+        switch mode {
+        case Mode.build:
           map.build(type: build, at: Point(x: x, y: y))
-        }
-        if mode == Mode.pipe {
-          piping = !piping
+        case let Mode.pipe(active):
+          mode = Mode.pipe(active: !active)
+        case let Mode.delete(active):
+          mode = Mode.delete(active: !active)
+        default: break
         }
       case Int32(chtype("\t")):
-        if mode == Mode.build {
+        if case Mode.build = mode {
           build = BuildingType.list[
             (BuildingType.list.index(of: build)! + 1) %
               BuildingType.list.count
@@ -497,11 +510,14 @@ class Terminal {
       default:
         break
       }
-      if piping && (dx != 0 || dy != 0) {
+      if case let Mode.pipe(active) = mode, active, dx != 0 || dy != 0 {
         map.pipe(from: Point(x: x, y: y), to: Point(x: x + dx, y: y + dy))
       }
       x += dx
       y += dy
+      if case let Mode.delete(active) = mode, active {
+        map.delete(at: Point(x: x, y: y))
+      }
     }
   }
 }
