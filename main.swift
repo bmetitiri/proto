@@ -89,8 +89,9 @@ class Furnace: Building {
       let count = ores[item, default: 0]
       if count < 10 {
         ores[item] = count + 1
+        return true
       }
-      return true
+      fallthrough
     default: return super.receive(item: item)
     }
   }
