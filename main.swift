@@ -58,6 +58,7 @@ enum BuildingType {
 
 class Building: Receiver {
   var type: BuildingType
+  // TODO: Change to weak references.
   var outputs = Set<Receiver>()
 
   init(type: BuildingType) {
@@ -278,8 +279,11 @@ class Map {
   func delete(at: Point) {
     let value = get(at: at).value
     if let value = value {
-      if value is Building {
+      switch value {
+      case is Wall: return
+      case is Building:
         buildings.remove(value)
+      default: break
       }
       nodes.remove(value)
     }
