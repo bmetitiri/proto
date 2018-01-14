@@ -4,8 +4,21 @@
 import Darwin.ncurses
 import Foundation
 
-enum Item {
-  case none, ore, iron
+// TODO: Fix this.
+enum Item: Hashable {
+  case none, iron
+  indirect case ore(Item)
+
+  public var hashValue: Int { return 0 }
+}
+
+func == (lhs: Item, rhs: Item) -> Bool {
+  switch (lhs, rhs) {
+  case (.none, .none): return true
+  case (.iron, .iron): return true
+  case let (.ore(l), .ore(r)): return l == r
+  default: return false
+  }
 }
 
 class Receiver: Hashable {
@@ -17,8 +30,7 @@ class Receiver: Hashable {
     return false
   }
 
-  func update(turn _: Int) {
-  }
+  func update(turn _: Int) {}
 
   static func == (lhs: Receiver, rhs: Receiver) -> Bool {
     return lhs === rhs
@@ -63,9 +75,8 @@ class Building: Receiver {
 }
 
 class Furnace: Building {
-  let item = Item.iron
-  var input = 0
-  var produced = 0
+  var ores = [Item: Int]()
+  var produced = [Item: Int]()
   var time = 0
 
   init() {
@@ -74,25 +85,34 @@ class Furnace: Building {
 
   override func receive(item: Item) -> Bool {
     switch item {
-    case .ore:
-      input += 1
+    case let .ore(item):
+      let count = ores[item, default: 0]
+      if count < 10 {
+        ores[item] = count + 1
+      }
       return true
     default: return super.receive(item: item)
     }
   }
 
   override func update(turn: Int) {
-    if input > 2 {
-      time += 1
-      if time > 10 {
-        time = 0
-        produced += 1
+    time += 1
+    for (ore, count) in ores {
+      if count > 2, time > 10 {
+        let made = produced[ore, default: 0]
+        if made < 10 {
+          time = 0
+          ores[ore] = count - 2
+          produced[ore] = made + 1
+        }
       }
     }
     for output in outputs {
       output.update(turn: turn)
-      if produced > 0, output.receive(item: item) {
-        produced -= 1
+      for (item, count) in produced {
+        if count > 0, output.receive(item: item) {
+          produced[item]? -= 1
+        }
       }
     }
   }
@@ -100,7 +120,7 @@ class Furnace: Building {
 
 class Mine: Building {
   let timeToMine = 10
-  let item = Item.ore
+  let item = Item.ore(.iron)
   var time = 0
   var count = 0
 
@@ -136,11 +156,13 @@ class Pipe: Receiver {
   }
 
   override func receive(item: Item) -> Bool {
-    if content == Item.none {
+    switch content {
+    case .none:
       content = item
       return true
+    default:
+      return false
     }
-    return false
   }
 
   override func update(turn: Int) {
@@ -290,9 +312,10 @@ extension BuildingType {
 extension Pipe {
   func glyph() -> String {
     switch content {
-    case .ore: return "o"
+    case .ore(.iron): return "o"
     case .iron: return "i"
     case .none: return "┼"
+    default: return "?"
     }
   }
 }
