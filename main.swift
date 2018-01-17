@@ -4,7 +4,7 @@
 import Darwin.ncurses
 
 enum Resource {
-  case iron
+  case copper, iron
 }
 
 enum Item {
@@ -114,11 +114,12 @@ class Furnace: Building {
 
 class Mine: Building {
   let timeToMine = 10
-  let item = Item.ore(.iron)
+  var ores: Set<Resource>
   var time = 0
   var count = 0
 
-  init() {
+  init(ores: Set<Resource>) {
+    self.ores = ores
     super.init(type: .mine)
   }
 
@@ -131,7 +132,7 @@ class Mine: Building {
     for output in outputs {
       output.update(turn: turn)
       if count > 0 {
-        if output.receive(item: item) {
+        if output.receive(item: .ore(ores.first!)) {
           count -= 1
         }
       }
@@ -176,6 +177,7 @@ class Wall: Receiver {}
 
 struct Node {
   weak var value: Receiver?
+  var ore: Resource?
 }
 
 class Map {
@@ -188,6 +190,7 @@ class Map {
   var turn = 0
 
   init(width: Int, height: Int) {
+    let seed = Int(arc4random())
     self.width = width
     self.height = height
     map = Array(repeating: Array(repeating: Node(), count: height + 1),
@@ -196,6 +199,13 @@ class Map {
       for row in 0 ... height {
         if col == 0 || col == width || row == 0 || row == height {
           set(x: col, y: row, value: Wall())
+        } else {
+          if cos(Double(col + seed) / 8) + sin(Double(row + seed) / 4) > 1.8 {
+            map[col][row].ore = .iron
+          }
+          if sin(Double(col + seed) / 8) + cos(Double(row + seed) / 4) > 1.8 {
+            map[col][row].ore = .copper
+          }
         }
       }
     }
@@ -209,6 +219,19 @@ class Map {
     return map[x][y]
   }
 
+  func ores(type: BuildingType, at: Point) -> Set<Resource> {
+    var ores = Set<Resource>()
+    let (w, h) = type.size()
+    for row in 0 ..< h {
+      for col in 0 ..< w {
+        if let ore = get(x: at.x + col, y: at.y + row).ore {
+          ores.insert(ore)
+        }
+      }
+    }
+    return ores
+  }
+
   func check(type: BuildingType, at: Point) -> Bool {
     let (w, h) = type.size()
     for row in 0 ..< h {
@@ -216,13 +239,14 @@ class Map {
         if at.x + col >= width || at.y + row >= height {
           return false
         }
-        switch get(x: at.x + col, y: at.y + row).value {
+        let node = get(x: at.x + col, y: at.y + row)
+        switch node.value {
         case .none: continue
         default: return false
         }
       }
     }
-    return true
+    return type == .mine ? ores(type: type, at: at).count > 0 : true
   }
 
   func build(type: BuildingType, at: Point) {
@@ -231,7 +255,7 @@ class Map {
     }
     let b: Building
     switch type {
-    case .mine: b = Mine()
+    case .mine: b = Mine(ores: ores(type: type, at: at))
     case .furnace: b = Furnace()
     }
     let (w, h) = type.size()
@@ -307,6 +331,7 @@ class Map {
 extension Resource {
   func glyph() -> String {
     switch self {
+    case .copper: return "c"
     case .iron: return "i"
     }
   }
@@ -338,7 +363,12 @@ extension Node {
     case let pipe as Pipe: glyph = pipe.glyph()
     case let building as Building: glyph = building.type.glyph()
     case is Wall: glyph = "░"
-    default: glyph = " "
+    default:
+      if let o = ore {
+        glyph = o.glyph()
+      } else {
+        glyph = " "
+      }
     }
     mvaddstr(Int32(at.y), Int32(at.x), glyph)
   }
@@ -432,6 +462,10 @@ class Terminal {
         addstr(" ")
       }
       let (w, h) = build.size()
+      let checked = map.check(type: build, at: Point(x: x, y: y))
+      if !checked {
+        attron(Terminal.A_REVERSE)
+      }
       for row in 0 ..< h {
         for col in 0 ..< w {
           let dx = x + col
@@ -442,16 +476,10 @@ class Terminal {
           if dy > height {
             continue
           }
-          switch map.get(x: dx, y: dy).value {
-          case .none:
-            mvaddstr(Int32(dy), Int32(dx), build.glyph())
-          default:
-            attron(Terminal.A_REVERSE)
-            mvaddstr(Int32(dy), Int32(dx), build.glyph())
-            attroff(Terminal.A_REVERSE)
-          }
+          mvaddstr(Int32(dy), Int32(dx), build.glyph())
         }
       }
+      attroff(Terminal.A_REVERSE)
     case let .pipe(active):
       addstr("(↵)Laying Pipe: \(active)")
     case let .delete(active):
