@@ -3,21 +3,14 @@
 
 import Darwin.ncurses
 
-// TODO: Fix this.
-enum Item: Hashable {
-  case none, iron
-  indirect case ore(Item)
-
-  public var hashValue: Int { return 0 }
+enum Resource {
+  case iron
 }
 
-func == (lhs: Item, rhs: Item) -> Bool {
-  switch (lhs, rhs) {
-  case (.none, .none): return true
-  case (.iron, .iron): return true
-  case let (.ore(l), .ore(r)): return l == r
-  default: return false
-  }
+enum Item {
+  case none
+  case ore(Resource)
+  case bar(Resource)
 }
 
 class Receiver: Hashable {
@@ -75,8 +68,8 @@ class Building: Receiver {
 }
 
 class Furnace: Building {
-  var ores = [Item: Int]()
-  var produced = [Item: Int]()
+  var ores = [Resource: Int]()
+  var produced = [Resource: Int]()
   var time = 0
 
   init() {
@@ -111,7 +104,7 @@ class Furnace: Building {
     for output in outputs {
       output.update(turn: turn)
       for (item, count) in produced {
-        if count > 0, output.receive(item: item) {
+        if count > 0, output.receive(item: .bar(item)) {
           produced[item]? -= 1
         }
       }
@@ -169,7 +162,7 @@ class Pipe: Receiver {
   override func update(turn: Int) {
     if let output = output, turn > last {
       last = turn
-      if output is Pipe {
+      if let output = output as? Pipe, output.last < turn {
         output.update(turn: turn)
       }
       if output.receive(item: content) {
@@ -311,6 +304,14 @@ class Map {
 }
 
 // Terminal specific code.
+extension Resource {
+  func glyph() -> String {
+    switch self {
+    case .iron: return "i"
+    }
+  }
+}
+
 extension BuildingType {
   func glyph() -> String {
     switch self {
@@ -323,10 +324,9 @@ extension BuildingType {
 extension Pipe {
   func glyph() -> String {
     switch content {
-    case .ore(.iron): return "o"
-    case .iron: return "i"
+    case let .ore(r): return r.glyph()
+    case let .bar(r): return r.glyph().uppercased()
     case .none: return "┼"
-    default: return "?"
     }
   }
 }
