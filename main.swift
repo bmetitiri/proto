@@ -8,28 +8,93 @@ struct Point {
   let y: Int
 }
 
+// TODO: Remove in favor of Item?
 enum BuildingType {
-  case mine, factory, furnace
+  case none
+  case mine, factory, furnace, yard
 
-  func size() -> (width: Int, height: Int) {
+  static let list = [mine, furnace, factory, yard]
+
+  func item() -> Item {
     switch self {
     case .mine:
-      return (3, 2)
-    case .furnace:
-      return (2, 3)
+      return .mine
     case .factory:
-      return (3, 3)
+      return .factory
+    case .furnace:
+      return .furnace
+    case .yard:
+      return .yard
+    default:
+      return .none
     }
   }
 
-  static let list = [mine, factory, furnace]
+  func size() -> (width: Int, height: Int) {
+    switch self {
+    case .factory:
+      return (3, 3)
+    case .furnace:
+      return (2, 3)
+    case .mine:
+      return (3, 2)
+    case .yard:
+      return (4, 3)
+    case .none:
+      return (0, 0)
+    }
+  }
 }
 
 enum Item {
   case none
-  case iron_ore, copper_ore
-  case iron, copper
-  case gear, pipe
+  case copper_ore, iron_ore, stone
+  case copper, iron
+  case circuit, gear, pipe
+  case factory, furnace, mine, yard
+
+  static let list = [
+    copper_ore, iron_ore, stone,
+    copper, iron,
+    circuit, gear, pipe,
+    factory, furnace, mine, yard,
+  ]
+
+  func build() -> BuildingType {
+    switch self {
+    case .mine:
+      return .mine
+    case .factory:
+      return .factory
+    case .furnace:
+      return .furnace
+    case .yard:
+      return .yard
+    default:
+      return .none
+    }
+  }
+
+  func recipe() -> Dictionary<Item, Int>? {
+    switch self {
+    case .circuit:
+      return [.copper: 3]
+    case .gear:
+      return [.iron: 2]
+    case .pipe:
+      return [.iron: 4]
+    case .factory:
+      return [.circuit: 2, .gear: 2, .pipe: 2]
+    case .furnace:
+      return [.gear: 2, .stone: 2]
+    case .mine:
+      return [.gear: 2, .pipe: 2]
+    case .yard:
+      return [.factory: 4, .gear: 4]
+    default:
+      return nil
+    }
+  }
 
   func smelt() -> Item {
     switch self {
@@ -42,21 +107,20 @@ enum Item {
     }
   }
 
-  func recipe() -> Dictionary<Item, Int>? {
+  func stack() -> Int {
     switch self {
-    case .gear:
-      return [.iron: 2]
-    case .pipe:
-      return [.iron: 4]
+    case .none:
+      return 0
+    case .copper_ore, .iron_ore, .stone:
+      return 20
+    case .copper, .iron:
+      return 10
+    case .circuit, .gear, .pipe:
+      return 5
     default:
-      return nil
+      return 1
     }
   }
-
-  static let list = [iron_ore, copper_ore, iron, copper, gear, pipe]
-  // TODO: Pick Set or Array.
-  static let ores = Set(Item.list.filter { $0.smelt() != none })
-  static let made = Item.list.filter { $0.recipe() != nil }
 }
 
 class Receiver: Hashable {
@@ -108,7 +172,7 @@ class Factory: Building {
     guard let recipe = target.recipe() else { return false }
     if recipe.keys.contains(item) {
       let count = raw[item, default: 0]
-      if count < 10 {
+      if count < item.stack() {
         raw[item] = count + 1
         return true
       }
@@ -122,7 +186,7 @@ class Factory: Building {
       time += 1
       if time > 10 {
         let made = produced[target, default: 0]
-        if made < 10 {
+        if made < target.stack() {
           time = 0
           for (part, count) in recipe {
             raw[part]? -= count
@@ -163,9 +227,9 @@ class Furnace: Building {
   }
 
   override func receive(item: Item) -> Bool {
-    if Item.ores.contains(item) {
+    if item.smelt() != .none {
       let count = raw[item, default: 0]
-      if count < 10 {
+      if count < item.stack() {
         raw[item] = count + 1
         return true
       }
@@ -178,7 +242,7 @@ class Furnace: Building {
     for (ore, count) in raw {
       if count > 2, time > 10 {
         let made = produced[ore, default: 0]
-        if made < 10 {
+        if made < ore.smelt().stack() {
           time = 0
           raw[ore] = count - 2
           produced[ore.smelt()] = made + 1
@@ -209,7 +273,7 @@ class Mine: Building {
 
   override func update(turn: Int) {
     time += 1
-    if count < 10, time > timeToMine {
+    if count < raw.first!.stack(), time > timeToMine {
       count += 1
       time = 0
     }
@@ -221,6 +285,25 @@ class Mine: Building {
         }
       }
     }
+  }
+}
+
+// TODO: Switch to internal inventory?
+class Yard: Building {
+  var map: Map
+
+  init(map: Map) {
+    self.map = map
+    super.init(type: .yard)
+  }
+
+  override func receive(item: Item) -> Bool {
+    let build = item.build()
+    if build != .none {
+      map.inventory[build, default: 0] += 1
+      return true
+    }
+    return super.receive(item: item)
   }
 }
 
@@ -271,6 +354,7 @@ class Map {
   var nodes = Set<Receiver>()
   // TODO: Change to weak referenced.
   var buildings = Set<Receiver>()
+  var inventory = Dictionary<BuildingType, Int>()
   var turn = 0
 
   init(width: Int, height: Int) {
@@ -286,6 +370,9 @@ class Map {
         } else {
           if cos(Double(col + seed) / 8) + sin(Double(row + seed) / 4) > 1.8 {
             map[col][row].ore = .iron_ore
+          }
+          if sin(Double(col - seed) / 8) + cos(Double(row - seed) / 4) > 1.8 {
+            map[col][row].ore = .stone
           }
           if sin(Double(col + seed) / 8) + cos(Double(row + seed) / 4) > 1.8 {
             map[col][row].ore = .copper_ore
@@ -317,6 +404,9 @@ class Map {
   }
 
   func check(type: BuildingType, at: Point) -> Bool {
+    if inventory[type, default: 0] <= 0 {
+      return false
+    }
     let (w, h) = type.size()
     for row in 0 ..< h {
       for col in 0 ..< w {
@@ -337,11 +427,14 @@ class Map {
     if !check(type: type, at: at) {
       return
     }
+    inventory[type, default: 0] -= 1
     let b: Building
     switch type {
     case .mine: b = Mine(raw: ores(type: type, at: at))
     case .furnace: b = Furnace()
     case .factory: b = Factory()
+    case .yard: b = Yard(map: self)
+    case .none: return
     }
     let (w, h) = type.size()
     for row in 0 ..< h {
@@ -418,10 +511,16 @@ extension Item {
     switch self {
     case .copper_ore: return "c"
     case .iron_ore: return "i"
+    case .stone: return "s"
     case .copper: return "C"
     case .iron: return "I"
     case .gear: return "*"
     case .pipe: return "/"
+    case .circuit: return "Ω"
+    case .mine: return "☭"
+    case .furnace: return "♨"
+    case .factory: return "♳"
+    case .yard: return "☑︎"
     default: return "?"
     }
   }
@@ -433,6 +532,8 @@ extension BuildingType {
     case .mine: return "☭"
     case .furnace: return "♨"
     case .factory: return "♳"
+    case .yard: return "☑︎"
+    case .none: return ""
     }
   }
 }
@@ -515,10 +616,20 @@ class Terminal {
     nonl()
 
     map = Map(width: width, height: height)
+    map.inventory[.mine] = 3
+    map.inventory[.furnace] = 2
+    map.inventory[.factory] = 1
+    map.inventory[.yard] = 1
   }
 
   deinit {
     endwin()
+  }
+
+  func buildable() -> [BuildingType] {
+    return map.inventory.flatMap { k, v in
+      v > 0 && k != .none ? k : nil
+    }
   }
 
   func draw() {
@@ -541,7 +652,8 @@ class Terminal {
       switch map.get(x: x, y: y).value {
       case let factory as Factory:
         addstr("(↹)Selected: ")
-        for type in Item.made {
+        let craftable = Item.list.filter { $0.recipe() != nil }
+        for type in craftable {
           if factory.target == type {
             attron(Terminal.A_REVERSE)
             addstr(String(describing: type))
@@ -556,7 +668,7 @@ class Terminal {
       }
     case .build:
       addstr("(↹)Selected: ")
-      for type in BuildingType.list {
+      for type in buildable() {
         if build == type {
           attron(Terminal.A_REVERSE)
           addstr(String(describing: type))
@@ -625,15 +737,17 @@ class Terminal {
       case Int32(chtype("\t")):
         switch mode {
         case Mode.build:
-          build = BuildingType.list[
-            (BuildingType.list.index(of: build)! + 1) %
-              BuildingType.list.count
-          ]
+          let buildable = self.buildable()
+          build = buildable.count > 0 ? buildable[
+            ((buildable.index(of: build) ?? -1) + 1) %
+              buildable.count
+          ] : .none
         case Mode.cursor:
           if let factory = map.get(x: x, y: y).value as? Factory {
-            factory.target = Item.made[
-              ((Item.made.index(of: factory.target) ?? -1) + 1) %
-                Item.made.count
+            let craftable = Item.list.filter { $0.recipe() != nil }
+            factory.target = craftable[
+              ((craftable.index(of: factory.target) ?? -1) + 1) %
+                craftable.count
             ]
           }
         default:
