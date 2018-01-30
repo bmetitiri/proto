@@ -477,8 +477,9 @@ class Map {
     if let value = value {
       switch value {
       case is Wall: return
-      case is Building:
-        buildings.remove(value)
+      case let building as Building:
+        buildings.remove(building)
+        inventory[building.type, default: 0] += 1
       default: break
       }
       nodes.remove(value)
@@ -616,8 +617,8 @@ class Terminal {
     nonl()
 
     map = Map(width: width, height: height)
-    map.inventory[.mine] = 3
-    map.inventory[.furnace] = 2
+    map.inventory[.mine] = 1
+    map.inventory[.furnace] = 1
     map.inventory[.factory] = 1
     map.inventory[.yard] = 1
   }
