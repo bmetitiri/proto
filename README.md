@@ -24,6 +24,8 @@ This repo contains a number of disparate code sketches with history in branches 
    Google App Engine powered Slack commands.
  - [heresy](https://github.com/arkie/proto/tree/heresy)
    Experimental tool to launch a shell environment on Heroku
+ - [indigo](https://github.com/arkie/proto/tree/indigo)
+   🍇 indigo is an HTTP(S) instant directory server in go
  - [jiki](https://github.com/arkie/proto/tree/jiki)
    Example ni (see below) project for a simple wiki-like site.
  - [ni](https://github.com/arkie/proto/tree/ni)
