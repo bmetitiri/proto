@@ -1,7 +1,11 @@
-```bash
-# Format
-swiftformat --indent 2 .
+## ⚙️ Pipes
 
-# Run
+### Format
+```bash
+swiftformat --indent 2 .
+```
+
+### Run
+```bash
 swift run -Xlinker -lcurses
 ```
