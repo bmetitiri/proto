@@ -1,4 +1,6 @@
 class Receiver: Hashable {
+  weak var output: Receiver?
+
   class func size() -> (width: Int, height: Int) {
     return (0, 0)
   }
@@ -11,7 +13,9 @@ class Receiver: Hashable {
 
   lazy var hashValue: Int = ObjectIdentifier(self).hashValue
 
-  func pipe(to _: Receiver) {}
+  func pipe(to: Receiver) {
+    output = to
+  }
 
   func receive(item _: Item) -> Bool {
     return false

@@ -3,16 +3,8 @@ public struct Node {
   var ore: Item
 
   public func type() -> Item {
-    switch value {
-    case is Pipe:
-      return .pipe
-    case let building as Building:
-      return building.type
-    case is Wall:
-      return .wall
-    default:
-      return ore
-    }
+    guard let value = value else { return ore }
+    return value.type
   }
 
   public func subtype() -> Item {

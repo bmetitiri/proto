@@ -1,5 +1,5 @@
 // TODO: Merge commonalities with Factory.
-class Furnace: Building {
+class Furnace: Receiver {
   override class func size() -> (width: Int, height: Int) {
     return (2, 3)
   }
@@ -35,12 +35,11 @@ class Furnace: Building {
         }
       }
     }
-    for output in outputs {
-      output.update(turn: turn)
-      for (item, count) in produced {
-        if count > 0, output.receive(item: item) {
-          produced[item]? -= 1
-        }
+    guard let output = output else { return }
+    output.update(turn: turn)
+    for (item, count) in produced {
+      if count > 0, output.receive(item: item) {
+        produced[item]? -= 1
       }
     }
   }

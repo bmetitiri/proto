@@ -1,4 +1,4 @@
-class Mine: Building {
+class Mine: Receiver {
   override class func size() -> (width: Int, height: Int) {
     return (3, 2)
   }
@@ -19,12 +19,11 @@ class Mine: Building {
       count += 1
       time = 0
     }
-    for output in outputs {
-      output.update(turn: turn)
-      if count > 0 {
-        if output.receive(item: raw.first!) {
-          count -= 1
-        }
+    guard let output = output else { return }
+    output.update(turn: turn)
+    if count > 0 {
+      if output.receive(item: raw.first!) {
+        count -= 1
       }
     }
   }

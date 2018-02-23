@@ -1,15 +1,10 @@
 class Pipe: Receiver {
-  weak var output: Receiver?
   var send = false
   var content = Item.none
   var last = 0
 
   init() {
     super.init(type: .pipe)
-  }
-
-  override func pipe(to: Receiver) {
-    output = to
   }
 
   override func receive(item: Item) -> Bool {

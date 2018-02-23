@@ -8,7 +8,7 @@ public class Map {
   var map: [[Node]]
   var nodes = Set<Receiver>()
   // TODO: Change to weak referenced.
-  var buildings = Set<Receiver>()
+  var active = Set<Receiver>()
   var turn = 0
 
   public init(width: Int, height: Int) {
@@ -67,52 +67,45 @@ public class Map {
       return
     }
     inventory[type, default: 0] -= 1
-    let b: Building
+    let receiver: Receiver
     switch build {
     case is Mine.Type:
-      b = Mine(raw: ores(type: type, at: at))
+      receiver = Mine(raw: ores(type: type, at: at))
     case is Yard.Type:
-      b = Yard(map: self)
+      receiver = Yard(map: self)
     case is Factory.Type:
-      b = Factory()
+      receiver = Factory()
     case is Furnace.Type:
-      b = Furnace()
+      receiver = Furnace()
     default:
       return
     }
     let (w, h) = type.size()
     for row in 0 ..< h {
       for col in 0 ..< w {
-        set(x: at.x + col, y: at.y + row, value: b)
+        set(x: at.x + col, y: at.y + row, value: receiver)
       }
     }
-    buildings.insert(b)
+    active.insert(receiver)
   }
 
   public func pipe(from: Point, to: Point) {
-    var r = get(at: to).value
-    if r == nil {
-      r = Pipe()
-      set(at: to, value: r!)
+    var dest = get(at: to).value
+    if dest == nil {
+      dest = Pipe()
+      set(at: to, value: dest!)
     }
+    guard let destination = dest else { return }
 
-    switch get(at: from).value {
-    case .none:
+    let source = get(at: from).value
+    if let source = source {
+      if source != destination {
+        source.pipe(to: destination)
+      }
+    } else {
       let p = Pipe()
       set(at: from, value: p)
-      if let r = r {
-        p.pipe(to: r)
-      }
-    case let p as Pipe:
-      if let r = r {
-        p.pipe(to: r)
-      }
-    case let b as Building:
-      if let r = r, r != b {
-        b.pipe(to: r)
-      }
-    default:
-      break
+      p.pipe(to: destination)
     }
   }
 
@@ -121,10 +114,10 @@ public class Map {
     if let value = value {
       switch value {
       case is Wall: return
-      case let building as Building:
-        buildings.remove(building)
-        inventory[building.type, default: 0] += 1
-      default: break
+      case is Pipe: break
+      case let receiver:
+        active.remove(receiver)
+        inventory[receiver.type, default: 0] += 1
       }
       nodes.remove(value)
     }
@@ -132,8 +125,8 @@ public class Map {
   }
 
   public func update() {
-    for building in buildings {
-      building.update(turn: turn)
+    for receiver in active {
+      receiver.update(turn: turn)
     }
     turn += 1
   }

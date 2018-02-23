@@ -1,4 +1,4 @@
-class Factory: Building {
+class Factory: Receiver {
   override class func size() -> (width: Int, height: Int) {
     return (3, 3)
   }
@@ -39,12 +39,11 @@ class Factory: Building {
         }
       }
     }
-    for output in outputs {
-      output.update(turn: turn)
-      for (item, count) in produced {
-        if count > 0, output.receive(item: item) {
-          produced[item]? -= 1
-        }
+    guard let output = output else { return }
+    output.update(turn: turn)
+    for (item, count) in produced {
+      if count > 0, output.receive(item: item) {
+        produced[item]? -= 1
       }
     }
   }
