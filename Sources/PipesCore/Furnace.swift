@@ -1,4 +1,3 @@
-// TODO: Merge commonalities with Factory.
 class Furnace: Receiver {
   override class func size() -> (width: Int, height: Int) {
     return (2, 3)
