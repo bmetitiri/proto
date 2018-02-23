@@ -1,4 +1,8 @@
 class Mine: Building {
+  override class func size() -> (width: Int, height: Int) {
+    return (3, 2)
+  }
+
   let timeToMine = 10
   var raw: Set<Item>
   var time = 0

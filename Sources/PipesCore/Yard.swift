@@ -1,5 +1,9 @@
 // TODO: Switch to internal inventory?
 class Yard: Building {
+  override class func size() -> (width: Int, height: Int) {
+    return (4, 3)
+  }
+
   var map: Map
 
   init(map: Map) {
@@ -8,9 +12,8 @@ class Yard: Building {
   }
 
   override func receive(item: Item) -> Bool {
-    let build = item.build()
-    if build != .none {
-      map.inventory[build, default: 0] += 1
+    if item != .none {
+      map.inventory[item, default: 0] += 1
       return true
     }
     return super.receive(item: item)

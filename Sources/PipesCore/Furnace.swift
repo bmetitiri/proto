@@ -1,5 +1,9 @@
 // TODO: Merge commonalities with Factory.
 class Furnace: Building {
+  override class func size() -> (width: Int, height: Int) {
+    return (2, 3)
+  }
+
   var raw = [Item: Int]()
   var produced = [Item: Int]()
   var time = 0

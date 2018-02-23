@@ -7,7 +7,7 @@ public struct Node {
     case is Pipe:
       return .pipe
     case let building as Building:
-      return building.type.item()
+      return building.type
     case is Wall:
       return .wall
     default:

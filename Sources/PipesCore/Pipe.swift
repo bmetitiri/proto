@@ -4,6 +4,10 @@ class Pipe: Receiver {
   var content = Item.none
   var last = 0
 
+  init() {
+    super.init(type: .pipe)
+  }
+
   override func pipe(to: Receiver) {
     output = to
   }

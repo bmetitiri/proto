@@ -1,13 +1,16 @@
 class Factory: Building {
+  override class func size() -> (width: Int, height: Int) {
+    return (3, 3)
+  }
+
+  init() {
+    super.init(type: .factory)
+  }
+
   var raw = [Item: Int]()
   var produced = [Item: Int]()
   var time = 0
-  var target: Item
-
-  init() {
-    target = Item.none
-    super.init(type: .factory)
-  }
+  var target = Item.none
 
   override func receive(item: Item) -> Bool {
     guard let recipe = target.recipe() else { return false }

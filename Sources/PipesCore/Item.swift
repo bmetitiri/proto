@@ -13,18 +13,23 @@ public enum Item {
     factory, furnace, mine, yard,
   ]
 
-  func build() -> BuildingType {
+  public func size() -> (width: Int, height: Int) {
+    guard let b = build() else { return (0, 0) }
+    return b.size()
+  }
+
+  func build() -> Building.Type? {
     switch self {
     case .mine:
-      return .mine
+      return Mine.self
     case .factory:
-      return .factory
+      return Factory.self
     case .furnace:
-      return .furnace
+      return Furnace.self
     case .yard:
-      return .yard
+      return Yard.self
     default:
-      return .none
+      return nil
     }
   }
 

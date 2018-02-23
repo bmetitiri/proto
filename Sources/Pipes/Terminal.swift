@@ -8,7 +8,7 @@ class Terminal {
   let height = 20
   let width = 40
   var mode = Mode.cursor
-  var build = BuildingType.mine
+  var build = Item.mine
   var x = 1
   var y = 1
 
@@ -31,7 +31,7 @@ class Terminal {
     endwin()
   }
 
-  func buildable() -> [BuildingType] {
+  func buildable() -> [Item] {
     return map.inventory.flatMap { k, v in
       v > 0 && k != .none ? k : nil
     }

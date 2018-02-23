@@ -4,7 +4,7 @@ public class Map {
   public let width: Int
   public let height: Int
   // TODO: Probably should not be public.
-  public var inventory = Dictionary<BuildingType, Int>()
+  public var inventory = Dictionary<Item, Int>()
   var map: [[Node]]
   var nodes = Set<Receiver>()
   // TODO: Change to weak referenced.
@@ -41,7 +41,7 @@ public class Map {
     return get(x: at.x, y: at.y)
   }
 
-  public func check(type: BuildingType, at: Point) -> Bool {
+  public func check(type: Item, at: Point) -> Bool {
     if inventory[type, default: 0] <= 0 {
       return false
     }
@@ -61,18 +61,24 @@ public class Map {
     return type == .mine ? ores(type: type, at: at).count > 0 : true
   }
 
-  public func build(type: BuildingType, at: Point) {
+  public func build(type: Item, at: Point) {
+    guard let build = type.build() else { return }
     if !check(type: type, at: at) {
       return
     }
     inventory[type, default: 0] -= 1
     let b: Building
-    switch type {
-    case .mine: b = Mine(raw: ores(type: type, at: at))
-    case .furnace: b = Furnace()
-    case .factory: b = Factory()
-    case .yard: b = Yard(map: self)
-    case .none: return
+    switch build {
+    case is Mine.Type:
+      b = Mine(raw: ores(type: type, at: at))
+    case is Yard.Type:
+      b = Yard(map: self)
+    case is Factory.Type:
+      b = Factory()
+    case is Furnace.Type:
+      b = Furnace()
+    default:
+      return
     }
     let (w, h) = type.size()
     for row in 0 ..< h {
@@ -132,7 +138,7 @@ public class Map {
     turn += 1
   }
 
-  private func ores(type: BuildingType, at: Point) -> Set<Item> {
+  private func ores(type: Item, at: Point) -> Set<Item> {
     var ores = Set<Item>()
     let (w, h) = type.size()
     for row in 0 ..< h {
