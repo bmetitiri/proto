@@ -1,4 +1,5 @@
 import Darwin.ncurses
+import Foundation
 import PipesCore
 
 class Terminal {
@@ -25,10 +26,6 @@ class Terminal {
     map.inventory[.furnace] = 2
     map.inventory[.factory] = 1
     map.inventory[.yard] = 1
-  }
-
-  deinit {
-    endwin()
   }
 
   func buildable() -> [Item] {
@@ -109,14 +106,23 @@ class Terminal {
     }
   }
 
+  @objc func tick() {
+    map.update()
+  }
+
   func main() {
-    while true {
-      map.update()
+    // Source: https://github.com/lyft/Kronos/blob/master/Example/main.swift
+    let timer = Timer.scheduledTimer(timeInterval: 0.2, target: self,
+                                     selector: #selector(tick),
+                                     userInfo: nil, repeats: true)
+    loop: while RunLoop.current.run(mode: .defaultRunLoopMode,
+                                    before: Date(timeIntervalSinceNow: 0.01)) {
       map.draw()
       draw()
       move(Int32(y), Int32(x))
       var dx = 0
       var dy = 0
+      nodelay(stdscr, true)
       let ch = getch()
       switch ch {
       case Int32(chtype("c")):
@@ -128,7 +134,7 @@ class Terminal {
       case Int32(chtype("d")):
         mode = .delete(active: false)
       case Int32(chtype("q")):
-        return
+        break loop
       case Int32(chtype("\r")):
         switch mode {
         case Mode.build:
@@ -187,5 +193,7 @@ class Terminal {
         map.delete(at: Point(x: x, y: y))
       }
     }
+    timer.invalidate()
+    endwin()
   }
 }
