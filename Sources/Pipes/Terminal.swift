@@ -58,9 +58,8 @@ class Terminal {
       switch node.type() {
       case .factory:
         addstr("(↹)Selected: ")
-        let craftable = Item.list.filter { $0.recipe() != nil }
-        for type in craftable {
-          if node.craft == type {
+        for type in node.options() {
+          if node.subtype() == type {
             attron(Terminal.A_REVERSE)
             addstr(String(describing: type))
             attroff(Terminal.A_REVERSE)
@@ -149,13 +148,13 @@ class Terminal {
               buildable.count
           ] : .none
         case Mode.cursor:
-          var node = map.get(at: Point(x: x, y: y))
+          let node = map.get(at: Point(x: x, y: y))
           if node.type() == .factory {
-            let craftable = Item.list.filter { $0.recipe() != nil }
-            node.craft = craftable[
-              ((craftable.index(of: node.craft) ?? -1) + 1) %
-                craftable.count
-            ]
+            let options = node.options()
+            node.select(item: options[
+              ((options.index(of: node.subtype()) ?? -1) + 1) %
+                options.count
+            ])
           }
         default:
           break

@@ -5,8 +5,6 @@ public enum Item {
   case circuit, gear, pipe
   case factory, furnace, mine, yard
   case wall
-  // TODO: Temporary render value.
-  case empty_pipe
 
   public static let list = [
     copper_ore, iron_ore, stone,
@@ -30,7 +28,7 @@ public enum Item {
     }
   }
 
-  public func recipe() -> Dictionary<Item, Int>? {
+  func recipe() -> Dictionary<Item, Int>? {
     switch self {
     case .circuit:
       return [.copper: 3]

@@ -17,7 +17,6 @@ extension Item {
     case .yard: return "☑︎"
     case .wall: return "░"
     case .none: return " "
-    case .empty_pipe: return "┼"
     }
   }
 }
