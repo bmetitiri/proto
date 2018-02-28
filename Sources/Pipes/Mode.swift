@@ -1,5 +1,5 @@
 enum Mode {
-  case cursor, build
+  case cursor, build, quit
   case pipe(active: Bool)
   case delete(active: Bool)
 
@@ -9,6 +9,7 @@ enum Mode {
     case .build: return "(b)uild"
     case .pipe: return "(p)ipe"
     case .delete: return "(d)elete"
+    case .quit: return "(q)uit"
     }
   }
 
@@ -16,5 +17,6 @@ enum Mode {
     cursor, build,
     pipe(active: false),
     delete(active: false),
+    quit,
   ]
 }

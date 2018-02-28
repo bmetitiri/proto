@@ -1,1 +1,1 @@
-Terminal().main()
+Game().main()
