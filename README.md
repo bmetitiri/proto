@@ -8,6 +8,8 @@ This repo contains a number of disparate code sketches with history in branches 
    Simple tile-matching game written in [Swift](https://developer.apple.com/swift/) using [SpriteKit](https://developer.apple.com/library/ios/documentation/GraphicsAnimation/Conceptual/SpriteKit_PG/Introduction/Introduction.html).
  - [app.joncaldwell.com](https://github.com/arkie/proto/tree/app.joncaldwell.com)
    Python/App Engine image aggregator previously at app.joncaldwell.com
+ - [arkie.github.com](https://github.com/arkie/proto/tree/arkie.github.com)
+   🏚 Static file source for arkie.github.io
  - [baad](https://github.com/arkie/proto/tree/baad)
    Webkit with transparency
  - [bacon](https://github.com/arkie/proto/tree/bacon)
