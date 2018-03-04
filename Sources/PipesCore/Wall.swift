@@ -1,4 +1,4 @@
-class Wall: Receiver {
+class Wall: Building {
   init() {
     super.init(type: .wall)
   }

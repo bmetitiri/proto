@@ -48,7 +48,6 @@ class Controls {
     move(Int32(map.height) + 1, 0)
     menu(options: Mode.list.map { $0.key() }, selected: mode.key())
     move(Int32(map.height) + 2, 0)
-    clrtoeol()
     switch mode {
     case .cursor:
       let node = map.get(at: Point(x: x, y: y))
@@ -58,6 +57,16 @@ class Controls {
         menu(options: node.options(), selected: node.subtype())
       default:
         addstr("Selected: \(String(describing: map.get(at: Point(x: x, y: y))))")
+      }
+      let inventory = node.inventory()
+      if inventory.count > 0 {
+        move(Int32(map.height) + 3, 0)
+        addstr("Contents: \(inventory)")
+      }
+      let raw = node.raw()
+      if raw.count > 0 {
+        move(Int32(map.height) + 4, 0)
+        addstr("Internal: \(raw)")
       }
     case .build:
       addstr("(↹)Selected: ")

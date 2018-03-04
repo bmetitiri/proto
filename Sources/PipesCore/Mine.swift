@@ -1,4 +1,4 @@
-class Mine: Receiver {
+class Mine: Building {
   override class func size() -> (width: Int, height: Int) {
     return (3, 2)
   }
@@ -14,17 +14,13 @@ class Mine: Receiver {
   }
 
   override func update(turn: Int) {
+    guard let ore = raw.first else { return }
+    super.update(turn: turn)
     time += 1
-    if count < raw.first!.stack(), time > timeToMine {
-      count += 1
+    let count = inventory[ore, default: 0]
+    if time > timeToMine, count < ore.stack() {
+      inventory[ore] = count + 1
       time = 0
-    }
-    guard let output = output else { return }
-    output.update(turn: turn)
-    if count > 0 {
-      if output.receive(item: raw.first!) {
-        count -= 1
-      }
     }
   }
 }

@@ -18,7 +18,7 @@ public enum Item {
     return b.size()
   }
 
-  func build() -> Receiver.Type? {
+  func build() -> Building.Type? {
     switch self {
     case .mine:
       return Mine.self

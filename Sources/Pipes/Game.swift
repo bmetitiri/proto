@@ -23,7 +23,7 @@ class Game {
 
   func main() {
     // Source: https://github.com/lyft/Kronos/blob/master/Example/main.swift
-    let timer = Timer.scheduledTimer(timeInterval: 0.2, target: self,
+    let timer = Timer.scheduledTimer(timeInterval: 0.5, target: self,
                                      selector: #selector(tick),
                                      userInfo: nil, repeats: true)
     while RunLoop.current.run(mode: .defaultRunLoopMode,
@@ -32,6 +32,7 @@ class Game {
       if case Mode.quit = controls.mode {
         break
       }
+      clear()
       map.draw()
       controls.draw()
     }

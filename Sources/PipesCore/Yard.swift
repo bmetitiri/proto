@@ -1,5 +1,5 @@
 // TODO: Switch to internal inventory?
-class Yard: Receiver {
+class Yard: Building {
   override class func size() -> (width: Int, height: Int) {
     return (4, 3)
   }

@@ -1,31 +1,18 @@
-class Pipe: Receiver {
-  var send = false
-  var content = Item.none
-  var last = 0
-
+class Pipe: Building {
   init() {
     super.init(type: .pipe)
   }
 
-  override func receive(item: Item) -> Bool {
-    switch content {
-    case .none:
-      content = item
-      return true
-    default:
-      return false
+  func content() -> Item {
+    if let item = inventory.first(where: { $1 > 0 }) {
+      return item.key
     }
+    return .none
   }
 
-  override func update(turn: Int) {
-    if let output = output, turn > last {
-      last = turn
-      if let output = output as? Pipe, output.last < turn {
-        output.update(turn: turn)
-      }
-      if output.receive(item: content) {
-        content = Item.none
-      }
-    }
+  override func receive(item: Item) -> Bool {
+    guard content() == .none else { return false }
+    inventory[item] = inventory[item, default: 0] + 1
+    return true
   }
 }

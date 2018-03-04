@@ -1,10 +1,9 @@
-class Furnace: Receiver {
+class Furnace: Building {
   override class func size() -> (width: Int, height: Int) {
     return (2, 3)
   }
 
   var raw = [Item: Int]()
-  var produced = [Item: Int]()
   var time = 0
 
   init() {
@@ -23,22 +22,16 @@ class Furnace: Receiver {
   }
 
   override func update(turn: Int) {
+    super.update(turn: turn)
     time += 1
     for (ore, count) in raw {
       if count > 2, time > 10 {
-        let made = produced[ore, default: 0]
+        let made = inventory[ore, default: 0]
         if made < ore.smelt().stack() {
           time = 0
           raw[ore] = count - 2
-          produced[ore.smelt()] = made + 1
+          inventory[ore.smelt()] = made + 1
         }
-      }
-    }
-    guard let output = output else { return }
-    output.update(turn: turn)
-    for (item, count) in produced {
-      if count > 0, output.receive(item: item) {
-        produced[item]? -= 1
       }
     }
   }

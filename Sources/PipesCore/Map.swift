@@ -6,9 +6,9 @@ public class Map {
   // TODO: Probably should not be public.
   public var inventory = Dictionary<Item, Int>()
   var map: [[Node]]
-  var nodes = Set<Receiver>()
+  var nodes = Set<Building>()
   // TODO: Change to weak referenced.
-  var active = Set<Receiver>()
+  var active = Set<Building>()
   var turn = 0
 
   public init(width: Int, height: Int) {
@@ -67,7 +67,7 @@ public class Map {
       return
     }
     inventory[type, default: 0] -= 1
-    let receiver: Receiver
+    let receiver: Building
     switch build {
     case is Mine.Type:
       receiver = Mine(raw: ores(type: type, at: at))
@@ -149,11 +149,11 @@ public class Map {
     return map[x][y]
   }
 
-  private func set(at: Point, value: Receiver?) {
+  private func set(at: Point, value: Building?) {
     set(x: at.x, y: at.y, value: value)
   }
 
-  private func set(x: Int, y: Int, value: Receiver?) {
+  private func set(x: Int, y: Int, value: Building?) {
     if let value = value {
       nodes.insert(value)
     }

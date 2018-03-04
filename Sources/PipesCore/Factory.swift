@@ -1,4 +1,4 @@
-class Factory: Receiver {
+class Factory: Building {
   override class func size() -> (width: Int, height: Int) {
     return (3, 3)
   }
@@ -8,7 +8,6 @@ class Factory: Receiver {
   }
 
   var raw = [Item: Int]()
-  var produced = [Item: Int]()
   var time = 0
   var target = Item.none
 
@@ -25,25 +24,19 @@ class Factory: Receiver {
   }
 
   override func update(turn: Int) {
+    super.update(turn: turn)
     guard let recipe = target.recipe() else { return }
     if stocked() {
       time += 1
       if time > 10 {
-        let made = produced[target, default: 0]
+        let made = inventory[target, default: 0]
         if made < target.stack() {
           time = 0
           for (part, count) in recipe {
             raw[part]? -= count
           }
-          produced[target] = made + 1
+          inventory[target] = made + 1
         }
-      }
-    }
-    guard let output = output else { return }
-    output.update(turn: turn)
-    for (item, count) in produced {
-      if count > 0, output.receive(item: item) {
-        produced[item]? -= 1
       }
     }
   }
