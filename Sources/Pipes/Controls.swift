@@ -26,7 +26,7 @@ class Controls {
   }
 
   func buildable() -> [Item] {
-    return map.inventory.flatMap { k, v in
+    return map.inventory.compactMap { k, v in
       v > 0 && k != .none ? k : nil
     }
   }
