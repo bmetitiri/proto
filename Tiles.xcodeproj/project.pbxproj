@@ -89,6 +89,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 4ECA69B320D235EF0064FB41 /* Build configuration list for PBXNativeTarget "Tiles" */;
 			buildPhases = (
+				4E6442D620F5E1CF000DDD97 /* ShellScript */,
 				4ECA699D20D235EC0064FB41 /* Sources */,
 				4ECA699E20D235EC0064FB41 /* Frameworks */,
 				4ECA699F20D235EC0064FB41 /* Resources */,
@@ -148,6 +149,22 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		4E6442D620F5E1CF000DDD97 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "swiftformat .";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		4ECA699D20D235EC0064FB41 /* Sources */ = {
