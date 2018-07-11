@@ -24,6 +24,7 @@ enum TileType {
 class Tile: SKSpriteNode {
     static let sideLength = 20
     static let fallTime = 0.1
+    static let removeTime = 0.5
     let type: TileType
     var x: Int, y: Int
 
@@ -47,5 +48,13 @@ class Tile: SKSpriteNode {
         self.x = x
         self.y = y
         run(SKAction.move(to: point, duration: Tile.fallTime))
+    }
+
+    func remove() {
+        let angle = Double(arc4random_uniform(100)) / 100 - 0.5
+        run(SKAction.group([
+            SKAction.rotate(byAngle: CGFloat(Double.pi * angle), duration: Tile.removeTime),
+            SKAction.scale(by: -0.5, duration: Tile.removeTime),
+        ])) { self.removeFromParent() }
     }
 }

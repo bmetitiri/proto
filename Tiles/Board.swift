@@ -30,9 +30,15 @@ class Board: SKNode {
 
     func tick() {
         isUserInteractionEnabled = false
-        let delay = fall()
-        if delay > 0 {
-            run(SKAction.wait(forDuration: delay), completion: tick)
+        let fallDelay = fall()
+        if fallDelay > 0 {
+            run(SKAction.wait(forDuration: fallDelay), completion: tick)
+            return
+        }
+        let clearDelay = clear()
+        if clearDelay > 0 {
+            run(SKAction.wait(forDuration: clearDelay), completion: tick)
+            return
         }
         isUserInteractionEnabled = true
     }
@@ -58,6 +64,37 @@ class Board: SKNode {
                     }
                 }
             }
+        }
+        return delay
+    }
+
+    func clear() -> TimeInterval {
+        var delay = 0.0
+        var dead = Set<Tile>()
+        for x in 0 ..< width {
+            for y in 0 ..< height {
+                guard let tile = get(x: x, y: y) else { continue }
+                if let tile1 = get(x: x, y: y + 1),
+                    let tile2 = get(x: x, y: y + 2),
+                    tile.type == tile1.type && tile1.type == tile2.type {
+                    delay = Tile.removeTime
+                    dead.insert(tile)
+                    dead.insert(tile1)
+                    dead.insert(tile2)
+                }
+                if let tile1 = get(x: x + 1, y: y),
+                    let tile2 = get(x: x + 2, y: y),
+                    tile.type == tile1.type && tile1.type == tile2.type {
+                    delay = Tile.removeTime
+                    dead.insert(tile)
+                    dead.insert(tile1)
+                    dead.insert(tile2)
+                }
+            }
+        }
+        for tile in dead {
+            set(x: tile.x, y: tile.y, tile: nil)
+            tile.remove()
         }
         return delay
     }
