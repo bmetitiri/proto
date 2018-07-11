@@ -74,16 +74,17 @@ class Board: SKNode {
         for x in 0 ..< width {
             for y in 0 ..< height {
                 guard let tile = get(x: x, y: y) else { continue }
-                if let tile1 = get(x: x, y: y + 1),
-                    let tile2 = get(x: x, y: y + 2),
+                if let tile1 = get(x: x + 1, y: y),
+                    let tile2 = get(x: x + 2, y: y),
                     tile.type == tile1.type && tile1.type == tile2.type {
                     delay = Tile.removeTime
                     dead.insert(tile)
                     dead.insert(tile1)
                     dead.insert(tile2)
                 }
-                if let tile1 = get(x: x + 1, y: y),
-                    let tile2 = get(x: x + 2, y: y),
+                if y >= height - 2 { break }
+                if let tile1 = get(x: x, y: y + 1),
+                    let tile2 = get(x: x, y: y + 2),
                     tile.type == tile1.type && tile1.type == tile2.type {
                     delay = Tile.removeTime
                     dead.insert(tile)
