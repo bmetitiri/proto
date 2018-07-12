@@ -87,4 +87,24 @@ class Select: SKCropNode {
             }
         }
     }
+
+    func drop() {
+        removeFromParent()
+        for tile in tiles.children {
+            guard let tile = tile as? Tile else { continue }
+            var x = (tile.x + Int(round(tiles.position.x / CGFloat(Tile.sideLength)))) % board.width
+            if x < 0 {
+                x += board.width
+            }
+            var y = (tile.y + Int(round(tiles.position.y / CGFloat(Tile.sideLength)))) % board.height
+            if y < 0 {
+                y += board.height
+            }
+            print(x, y, tile.type)
+            if let old = board.get(x: x, y: y) {
+                old.removeFromParent()
+            }
+            board.set(x: x, y: y, tile: Tile(type: tile.type, x: x, y: y))
+        }
+    }
 }

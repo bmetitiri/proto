@@ -25,8 +25,10 @@ class Board: SKNode {
 
     func set(x: Int, y: Int, tile: Tile?) {
         let i = y * width + x
-        if 0 <= i && i < board.count {
-            board[y * width + x] = tile
+        guard 0 <= i && i < board.count else { return }
+        board[y * width + x] = tile
+        if let tile = tile, !children.contains(tile) {
+            addChild(tile)
         }
     }
 
@@ -49,21 +51,17 @@ class Board: SKNode {
         var delay = 0.0
         for x in 0 ..< width {
             for y in 0 ..< height {
-                if let tile = get(x: x, y: y) {
-                    if tile.type == .empty { print(tile) }
-                } else {
-                    if y == height - 1 {
-                        let sprite = Tile(type: TileType.random, x: x, y: y + 1)
-                        set(x: x, y: y, tile: sprite)
-                        addChild(sprite)
-                        sprite.move(x: x, y: y)
-                        delay = Tile.fallTime
-                    } else if let above = get(x: x, y: y + 1) {
-                        set(x: x, y: y + 1, tile: nil)
-                        set(x: x, y: y, tile: above)
-                        above.move(x: x, y: y)
-                        delay = Tile.fallTime
-                    }
+                guard get(x: x, y: y) == nil else { continue }
+                if y == height - 1 {
+                    let sprite = Tile(type: TileType.random, x: x, y: y + 1)
+                    set(x: x, y: y, tile: sprite)
+                    sprite.move(x: x, y: y)
+                    delay = Tile.fallTime
+                } else if let above = get(x: x, y: y + 1) {
+                    set(x: x, y: y + 1, tile: nil)
+                    set(x: x, y: y, tile: above)
+                    above.move(x: x, y: y)
+                    delay = Tile.fallTime
                 }
             }
         }
@@ -123,7 +121,8 @@ class Board: SKNode {
 
     override func touchesEnded(_: Set<UITouch>, with _: UIEvent?) {
         guard let select = select else { return }
-        select.removeFromParent()
+        select.drop()
         self.select = nil
+        tick()
     }
 }
