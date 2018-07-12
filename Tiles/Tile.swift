@@ -3,20 +3,26 @@ import SpriteKit
 enum TileType {
     case empty
     case red
-    case blue
+    case orange
+    case yellow
     case green
+    case blue
+    case violet
 
     var color: UIColor {
         switch self {
         case .empty: return UIColor.clear
         case .red: return UIColor.red
-        case .blue: return UIColor.blue
+        case .orange: return UIColor.orange
+        case .yellow: return UIColor.yellow
         case .green: return UIColor.green
+        case .blue: return UIColor.blue
+        case .violet: return UIColor.purple
         }
     }
 
     static var random: TileType {
-        let colors = [TileType.red, TileType.blue, TileType.green]
+        let colors = [TileType.red, TileType.yellow, TileType.green, TileType.blue]
         return colors[Int(arc4random_uniform(UInt32(colors.count)))]
     }
 }

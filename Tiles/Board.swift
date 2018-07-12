@@ -111,12 +111,14 @@ class Board: SKNode {
         guard let touch = touch, touches.contains(touch) else { return }
         let from = touch.previousLocation(in: self)
         let to = touch.location(in: self)
+        let dx = to.x - from.x
+        let dy = to.y - from.y
         if select == nil {
             guard let tile = atPoint(from) as? Tile else { return }
-            select = Select(board: self, start: tile)
+            select = Select(board: self, start: tile, direction: abs(dx) > abs(dy) ? .horizontal : .vertical)
             addChild(select!)
         }
-        select!.move(x: to.x - from.x, y: to.y - from.y)
+        select!.move(x: dx, y: dy)
     }
 
     override func touchesEnded(_: Set<UITouch>, with _: UIEvent?) {
