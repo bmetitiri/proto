@@ -4,6 +4,8 @@ class Board: SKNode {
     let width = 10
     let height = 10
     var board = [Tile?](repeating: nil, count: 10 * 10) // width * height
+    var touch: UITouch?
+    var selection: SKNode?
 
     required init?(coder: NSCoder) {
         super.init(coder: coder)
@@ -17,14 +19,14 @@ class Board: SKNode {
     }
 
     func get(x: Int, y: Int) -> Tile? {
-        let i = y * height + x
+        let i = y * width + x
         return 0 <= i && i < board.count ? board[i] : nil
     }
 
     func set(x: Int, y: Int, tile: Tile?) {
-        let i = y * height + x
+        let i = y * width + x
         if 0 <= i && i < board.count {
-            board[y * height + x] = tile
+            board[y * width + x] = tile
         }
     }
 
@@ -82,7 +84,7 @@ class Board: SKNode {
                     dead.insert(tile1)
                     dead.insert(tile2)
                 }
-                if y >= height - 2 { break }
+                guard y < height - 2 else { continue }
                 if let tile1 = get(x: x, y: y + 1),
                     let tile2 = get(x: x, y: y + 2),
                     tile.type == tile1.type && tile1.type == tile2.type {
@@ -98,5 +100,35 @@ class Board: SKNode {
             tile.remove()
         }
         return delay
+    }
+
+    override func touchesBegan(_ touches: Set<UITouch>, with _: UIEvent?) {
+        guard let touch = touches.first, atPoint(touch.location(in: self)) is Tile else { return }
+        self.touch = touch
+    }
+
+    override func touchesMoved(_ touches: Set<UITouch>, with _: UIEvent?) {
+        guard let touch = touch, touches.contains(touch) else { return }
+        let from = touch.previousLocation(in: self)
+        let to = touch.location(in: self)
+        if let selection = selection {
+            selection.position = CGPoint(
+                x: selection.position.x + to.x - from.x,
+                y: selection.position.y + to.y - from.y
+            )
+            return
+        }
+        if let tile = atPoint(from) as? Tile {
+            selection = SKNode()
+            guard let selection = selection else { return }
+            selection.addChild(Tile(copy: tile))
+            addChild(selection)
+        }
+    }
+
+    override func touchesEnded(_: Set<UITouch>, with _: UIEvent?) {
+        guard let selection = selection else { return }
+        selection.removeFromParent()
+        self.selection = nil
     }
 }

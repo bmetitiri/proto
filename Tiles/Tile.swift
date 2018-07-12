@@ -28,12 +28,12 @@ class Tile: SKSpriteNode {
     let type: TileType
     var x: Int, y: Int
 
-    required init?(coder _: NSCoder) {
-        fatalError("How did you get here?!")
-    }
-
     var point: CGPoint {
         return CGPoint(x: x * Tile.sideLength, y: y * Tile.sideLength)
+    }
+
+    required init?(coder _: NSCoder) {
+        fatalError("How did you get here?!")
     }
 
     init(type: TileType, x: Int, y: Int) {
@@ -42,6 +42,10 @@ class Tile: SKSpriteNode {
         self.type = type
         super.init(texture: nil, color: type.color, size: CGSize(width: Tile.sideLength, height: Tile.sideLength))
         position = point
+    }
+
+    convenience init(copy: Tile) {
+        self.init(type: copy.type, x: copy.x, y: copy.y)
     }
 
     func move(x: Int, y: Int) {
