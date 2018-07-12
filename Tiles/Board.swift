@@ -5,7 +5,7 @@ class Board: SKNode {
     let height = 10
     var board = [Tile?](repeating: nil, count: 10 * 10) // width * height
     var touch: UITouch?
-    var selection: SKNode?
+    var select: Select?
 
     required init?(coder: NSCoder) {
         super.init(coder: coder)
@@ -111,24 +111,17 @@ class Board: SKNode {
         guard let touch = touch, touches.contains(touch) else { return }
         let from = touch.previousLocation(in: self)
         let to = touch.location(in: self)
-        if let selection = selection {
-            selection.position = CGPoint(
-                x: selection.position.x + to.x - from.x,
-                y: selection.position.y + to.y - from.y
-            )
-            return
+        if select == nil {
+            guard let tile = atPoint(from) as? Tile else { return }
+            select = Select(board: self, start: tile)
+            addChild(select!)
         }
-        if let tile = atPoint(from) as? Tile {
-            selection = SKNode()
-            guard let selection = selection else { return }
-            selection.addChild(Tile(copy: tile))
-            addChild(selection)
-        }
+        select!.move(x: to.x - from.x, y: to.y - from.y)
     }
 
     override func touchesEnded(_: Set<UITouch>, with _: UIEvent?) {
-        guard let selection = selection else { return }
-        selection.removeFromParent()
-        self.selection = nil
+        guard let select = select else { return }
+        select.removeFromParent()
+        self.select = nil
     }
 }

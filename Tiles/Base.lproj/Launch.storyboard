@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
-    <device id="retina4_7" orientation="portrait">
+    <device id="retina5_9" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
-        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -15,22 +15,23 @@
             <objects>
                 <viewController id="01J-lp-oVM" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Ze5-6b-2t3">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" text="load load load load" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="sZR-52-qrr">
-                                <rect key="frame" x="74" y="315" width="226" height="36"/>
-                                <fontDescription key="fontDescription" type="system" weight="ultraLight" pointSize="30"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="loading" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6cv-yW-6Dj">
+                                <rect key="frame" x="233.66666666666666" y="709.66666666666663" width="95.333333333333343" height="38.333333333333371"/>
+                                <fontDescription key="fontDescription" type="system" weight="thin" pointSize="32"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
                         </subviews>
                         <color key="backgroundColor" red="0.26051741839999998" green="0.2605243921" blue="0.260520637" alpha="1" colorSpace="deviceRGB"/>
                         <constraints>
-                            <constraint firstItem="sZR-52-qrr" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="asH-99-AbD"/>
-                            <constraint firstItem="sZR-52-qrr" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="hgv-LG-5lK"/>
+                            <constraint firstItem="6cv-yW-6Dj" firstAttribute="top" secondItem="Ze5-6b-2t3" secondAttribute="topMargin" priority="250" constant="30" id="5nn-8u-lpa"/>
+                            <constraint firstItem="6cv-yW-6Dj" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leadingMargin" priority="250" constant="30" id="ddH-hy-77E"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="6cv-yW-6Dj" secondAttribute="trailing" constant="30" id="p2i-OU-9hg"/>
+                            <constraint firstAttribute="bottomMargin" secondItem="6cv-yW-6Dj" secondAttribute="bottom" constant="30" id="zvg-J8-7Va"/>
                         </constraints>
-                        <viewLayoutGuide key="safeArea" id="L5q-gR-LHd"/>
                     </view>
                     <extendedEdge key="edgesForExtendedLayout"/>
                 </viewController>
