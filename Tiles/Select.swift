@@ -107,6 +107,7 @@ class Select: SKCropNode {
             toPlace.append(tile)
         }
         removeFromParent()
+        guard (toPlace.contains { board.check(direction: direction, tile: $0) }) else { return }
         for tile in toPlace {
             if let old = board.get(x: tile.x, y: tile.y) {
                 old.removeFromParent()
