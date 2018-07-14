@@ -1,20 +1,20 @@
 import SpriteKit
 
 class Board: SKNode {
+    let slideMinimum = 2
     let width = 10
     let height = 10
     var board = [Tile?](repeating: nil, count: 10 * 10) // width * height
     var touch: UITouch?
     var select: Select?
 
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        if let data = userData, let board = data["board"] as? [Tile] {
-            self.board = board
-        }
-        position = CGPoint(
-            x: (Double(-width) + 0.5) * Double(Tile.sideLength) / 2,
-            y: (Double(-height) + 0.5) * Double(Tile.sideLength) / 2)
+    required init?(coder _: NSCoder) {
+        fatalError("This shouldn't be needed")
+    }
+
+    override init() {
+        super.init()
+        position = CGPoint(x: Tile.sideLength / 2, y: Tile.sideLength / 2)
         tick()
     }
 
@@ -111,6 +111,7 @@ class Board: SKNode {
         let dx = to.x - from.x
         let dy = to.y - from.y
         if select == nil {
+            guard max(abs(dx), abs(dy)) > CGFloat(slideMinimum) else { return }
             guard let tile = atPoint(from) as? Tile else { return }
             select = Select(board: self, start: tile, direction: abs(dx) > abs(dy) ? .horizontal : .vertical)
             addChild(select!)
