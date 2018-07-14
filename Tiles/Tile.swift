@@ -5,24 +5,22 @@ enum TileType {
     case red
     case orange
     case yellow
-    case green
     case blue
     case violet
 
     var color: UIColor {
         switch self {
         case .empty: return UIColor.clear
-        case .red: return UIColor.red
-        case .orange: return UIColor.orange
-        case .yellow: return UIColor.yellow
-        case .green: return UIColor.green
-        case .blue: return UIColor.blue
-        case .violet: return UIColor.purple
+        case .red: return UIColor(red: 0.92, green: 0.27, blue: 0.55, alpha: 1.0)
+        case .orange: return UIColor(red: 0.94, green: 0.44, blue: 0.18, alpha: 1.0)
+        case .yellow: return UIColor(red: 0.91, green: 0.83, blue: 0.38, alpha: 1.0)
+        case .blue: return UIColor(red: 0.11, green: 0.60, blue: 0.82, alpha: 1.0)
+        case .violet: return UIColor(red: 0.64, green: 0.42, blue: 0.74, alpha: 1.0)
         }
     }
 
     static var random: TileType {
-        let colors = [TileType.red, TileType.yellow, TileType.green, TileType.blue]
+        let colors = [TileType.red, TileType.orange, TileType.yellow, TileType.blue, TileType.violet]
         return colors[Int(arc4random_uniform(UInt32(colors.count)))]
     }
 }

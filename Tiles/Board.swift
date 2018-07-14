@@ -19,13 +19,12 @@ class Board: SKNode {
     }
 
     func get(x: Int, y: Int) -> Tile? {
-        let i = y * width + x
-        return 0 <= i && i < board.count ? board[i] : nil
+        guard 0 <= x, x < width, 0 <= y, y < height else { return nil }
+        return board[y * width + x]
     }
 
     func set(x: Int, y: Int, tile: Tile?) {
-        let i = y * width + x
-        guard 0 <= i && i < board.count else { return }
+        guard 0 <= x, x < width, 0 <= y, y < height else { return }
         board[y * width + x] = tile
         if let tile = tile, !children.contains(tile) {
             addChild(tile)

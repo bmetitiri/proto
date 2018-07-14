@@ -7,6 +7,7 @@
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -29,6 +30,7 @@
                             <constraint firstItem="LtA-aW-ktj" firstAttribute="trailing" secondItem="1wb-2r-YoT" secondAttribute="trailingMargin" id="mPb-2r-vh3"/>
                             <constraint firstItem="LtA-aW-ktj" firstAttribute="bottom" secondItem="1wb-2r-YoT" secondAttribute="bottomMargin" id="ydP-bD-iP5"/>
                         </constraints>
+                        <viewLayoutGuide key="safeArea" id="3zD-Tl-rM3"/>
                     </view>
                     <extendedEdge key="edgesForExtendedLayout"/>
                 </viewController>

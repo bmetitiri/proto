@@ -100,7 +100,6 @@ class Select: SKCropNode {
             if y < 0 {
                 y += board.height
             }
-            print(x, y, tile.type)
             if let old = board.get(x: x, y: y) {
                 old.removeFromParent()
             }
