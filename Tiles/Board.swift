@@ -4,7 +4,7 @@ class Board: SKNode {
     let slideMinimum = 2
     let width = 10
     let height = 10
-    var board = [Tile?](repeating: nil, count: 10 * 10) // width * height
+    var board: [Tile?]
     var touch: UITouch?
     var select: Select?
 
@@ -13,6 +13,7 @@ class Board: SKNode {
     }
 
     override init() {
+        board = [Tile?](repeating: nil, count: width * height)
         super.init()
         position = CGPoint(x: Tile.sideLength / 2, y: Tile.sideLength / 2)
         tick()

@@ -89,21 +89,30 @@ class Select: SKCropNode {
     }
 
     func drop() {
-        removeFromParent()
+        let dx = Int(round(tiles.position.x / CGFloat(Tile.sideLength)))
+        let dy = Int(round(tiles.position.y / CGFloat(Tile.sideLength)))
+        tiles.position = CGPoint(x: 0, y: 0)
+        var toPlace = [Tile]()
         for tile in tiles.children {
             guard let tile = tile as? Tile else { continue }
-            var x = (tile.x + Int(round(tiles.position.x / CGFloat(Tile.sideLength)))) % board.width
-            if x < 0 {
-                x += board.width
+            tile.x = (tile.x + dx) % board.width
+            if tile.x < 0 {
+                tile.x += board.width
             }
-            var y = (tile.y + Int(round(tiles.position.y / CGFloat(Tile.sideLength)))) % board.height
-            if y < 0 {
-                y += board.height
+            tile.y = (tile.y + dy) % board.height
+            if tile.y < 0 {
+                tile.y += board.height
             }
-            if let old = board.get(x: x, y: y) {
+            tile.position = tile.point
+            toPlace.append(tile)
+        }
+        removeFromParent()
+        for tile in toPlace {
+            if let old = board.get(x: tile.x, y: tile.y) {
                 old.removeFromParent()
             }
-            board.set(x: x, y: y, tile: Tile(type: tile.type, x: x, y: y))
+            tile.removeFromParent()
+            board.set(x: tile.x, y: tile.y, tile: tile)
         }
     }
 }
