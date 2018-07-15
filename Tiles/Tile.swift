@@ -19,9 +19,12 @@ enum TileType {
         }
     }
 
+    static var all: [TileType] {
+        return [TileType.red, TileType.orange, TileType.yellow, TileType.blue, TileType.violet]
+    }
+
     static var random: TileType {
-        let colors = [TileType.red, TileType.orange, TileType.yellow, TileType.blue, TileType.violet]
-        return colors[Int(arc4random_uniform(UInt32(colors.count)))]
+        return TileType.all[Int(arc4random_uniform(UInt32(TileType.all.count)))]
     }
 }
 
@@ -33,7 +36,7 @@ class Tile: SKSpriteNode {
     var x: Int, y: Int
 
     var point: CGPoint {
-        return CGPoint(x: x * Tile.sideLength, y: y * Tile.sideLength)
+        return CGPoint(x: x * Tile.sideLength + Tile.sideLength / 2, y: y * Tile.sideLength + Tile.sideLength / 2)
     }
 
     required init?(coder _: NSCoder) {
@@ -59,10 +62,9 @@ class Tile: SKSpriteNode {
     }
 
     func remove() {
-        let angle = Double(arc4random_uniform(100)) / 100 - 0.5
         run(SKAction.group([
-            SKAction.rotate(byAngle: CGFloat(Double.pi * angle), duration: Tile.removeTime),
-            SKAction.scale(by: -0.5, duration: Tile.removeTime),
+            SKAction.rotate(byAngle: CGFloat(Double.pi * drand48() - Double.pi / 2), duration: Tile.removeTime),
+            SKAction.scale(by: 0, duration: Tile.removeTime),
         ])) { self.removeFromParent() }
     }
 }

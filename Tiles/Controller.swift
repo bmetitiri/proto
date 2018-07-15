@@ -2,10 +2,12 @@ import SpriteKit
 import UIKit
 
 class Controller: UIViewController {
+    static let width = 200
+    static let height = 300
     let board = Board()
     override func viewDidLoad() {
         super.viewDidLoad()
-        let scene = SKScene(size: CGSize(width: 200, height: 300))
+        let scene = SKScene(size: CGSize(width: Controller.width, height: Controller.height))
         scene.backgroundColor = UIColor.black
         scene.scaleMode = .aspectFit
         scene.addChild(board)

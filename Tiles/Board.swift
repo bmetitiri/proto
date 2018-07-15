@@ -4,6 +4,7 @@ class Board: SKNode {
     let slideMinimum = 2
     let width = 10
     let height = 10
+    let turn = Score()
     var board: [Tile?]
     var touch: UITouch?
     var select: Select?
@@ -15,7 +16,8 @@ class Board: SKNode {
     override init() {
         board = [Tile?](repeating: nil, count: width * height)
         super.init()
-        position = CGPoint(x: Tile.sideLength / 2, y: Tile.sideLength / 2)
+        turn.position.y = 220
+        addChild(turn)
         tick()
     }
 
@@ -45,6 +47,7 @@ class Board: SKNode {
             return
         }
         isUserInteractionEnabled = true
+        turn.clear()
     }
 
     func fall() -> TimeInterval {
@@ -71,6 +74,7 @@ class Board: SKNode {
     func clear() -> TimeInterval {
         var delay = 0.0
         var dead = Set<Tile>()
+        var score = Set<Tile>()
         for x in 0 ..< width {
             for y in 0 ..< height {
                 guard let tile = get(x: x, y: y) else { continue }
@@ -81,6 +85,7 @@ class Board: SKNode {
                     dead.insert(tile)
                     dead.insert(tile1)
                     dead.insert(tile2)
+                    score.insert(tile1)
                 }
                 guard y < height - 2 else { continue }
                 if let tile1 = get(x: x, y: y + 1),
@@ -90,7 +95,14 @@ class Board: SKNode {
                     dead.insert(tile)
                     dead.insert(tile1)
                     dead.insert(tile2)
+                    score.insert(tile1)
                 }
+            }
+        }
+        for tile in score {
+            tile.zPosition += 1
+            tile.run(SKAction.move(to: turn.point(type: tile.type), duration: 0.3)) {
+                self.turn.add(type: tile.type)
             }
         }
         for tile in dead {
