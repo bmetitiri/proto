@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4E53B7F720ED553900C6550C /* Scene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 4E53B7F620ED553900C6550C /* Scene.sks */; };
 		4E53B7F920F165DE00C6550C /* Board.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E53B7F820F165DE00C6550C /* Board.swift */; };
 		4EA241A520F5B697008B473D /* Tile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA241A420F5B697008B473D /* Tile.swift */; };
 		4ECA69A520D235EC0064FB41 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ECA69A420D235EC0064FB41 /* AppDelegate.swift */; };
@@ -19,7 +18,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		4E53B7F620ED553900C6550C /* Scene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Scene.sks; sourceTree = "<group>"; };
 		4E53B7F820F165DE00C6550C /* Board.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Board.swift; sourceTree = "<group>"; };
 		4EA241A420F5B697008B473D /* Tile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tile.swift; sourceTree = "<group>"; };
 		4ECA69A120D235EC0064FB41 /* Tiles.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tiles.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -68,7 +66,6 @@
 				4ECA69AB20D235EF0064FB41 /* Assets.xcassets */,
 				4ECA69AD20D235EF0064FB41 /* Launch.storyboard */,
 				4ECA69B020D235EF0064FB41 /* Info.plist */,
-				4E53B7F620ED553900C6550C /* Scene.sks */,
 				4E53B7F820F165DE00C6550C /* Board.swift */,
 				4EA241A420F5B697008B473D /* Tile.swift */,
 				4EE510C520F70E15004A6615 /* Select.swift */,
@@ -146,7 +143,6 @@
 			files = (
 				4ECA69AF20D235EF0064FB41 /* Launch.storyboard in Resources */,
 				4ECA69AC20D235EF0064FB41 /* Assets.xcassets in Resources */,
-				4E53B7F720ED553900C6550C /* Scene.sks in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
