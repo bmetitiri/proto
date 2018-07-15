@@ -101,33 +101,30 @@ class Board: SKNode {
     }
 
     func check(direction: Select.Direction, tile: Tile) -> Bool {
+        let up = get(x: tile.x, y: tile.y - 1)?.type == tile.type
+        let right = get(x: tile.x + 1, y: tile.y)?.type == tile.type
+        let down = get(x: tile.x, y: tile.y + 1)?.type == tile.type
+        let left = get(x: tile.x - 1, y: tile.y)?.type == tile.type
+        // Check from the middle for along the axis.
+        if up && down {
+            return true
+        }
+        if left && right {
+            return true
+        }
         switch direction {
         case .horizontal:
-            let up = get(x: tile.x, y: tile.y - 1)
-            let down = get(x: tile.x, y: tile.y + 1)
-            if up?.type == tile.type {
-                if tile.type == down?.type {
-                    return true
-                }
-                if tile.type == get(x: tile.x, y: tile.y - 2)?.type {
-                    return true
-                }
+            if up && tile.type == get(x: tile.x, y: tile.y - 2)?.type {
+                return true
             }
-            if tile.type == down?.type && down?.type == get(x: tile.x, y: tile.y + 2)?.type {
+            if down && tile.type == get(x: tile.x, y: tile.y + 2)?.type {
                 return true
             }
         case .vertical:
-            let left = get(x: tile.x - 1, y: tile.y)
-            let right = get(x: tile.x + 1, y: tile.y)
-            if left?.type == tile.type {
-                if tile.type == right?.type {
-                    return true
-                }
-                if tile.type == get(x: tile.x - 2, y: tile.y)?.type {
-                    return true
-                }
+            if left && tile.type == get(x: tile.x - 2, y: tile.y)?.type {
+                return true
             }
-            if tile.type == right?.type && right?.type == get(x: tile.x + 2, y: tile.y)?.type {
+            if right && tile.type == get(x: tile.x + 2, y: tile.y)?.type {
                 return true
             }
         }
