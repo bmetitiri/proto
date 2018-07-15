@@ -7,7 +7,6 @@ struct Save: Codable {
 }
 
 class Board: SKNode {
-    static let tilesKey = "tile.dumb"
     static let slideMinimum = 2
     static let mergeTime = 0.3
     let width = 10
@@ -118,7 +117,9 @@ class Board: SKNode {
                     dead.insert(tile)
                     dead.insert(tile1)
                     dead.insert(tile2)
-                    score.insert(tile1)
+                    if let point = ([tile, tile1, tile2].filter { !score.contains($0) }).randomElement() {
+                        score.insert(point)
+                    }
                 }
                 guard y < height - 2 else { continue }
                 if let tile1 = get(x: x, y: y + 1),
@@ -128,7 +129,9 @@ class Board: SKNode {
                     dead.insert(tile)
                     dead.insert(tile1)
                     dead.insert(tile2)
-                    score.insert(tile1)
+                    if let point = ([tile, tile1, tile2].filter { !score.contains($0) }).randomElement() {
+                        score.insert(point)
+                    }
                 }
             }
         }

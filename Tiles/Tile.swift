@@ -24,7 +24,8 @@ enum TileType: Int, Codable {
     }
 
     static var random: TileType {
-        return TileType.all[Int(arc4random_uniform(UInt32(TileType.all.count)))]
+        guard let type = TileType.all.randomElement() else { return .empty }
+        return type
     }
 }
 

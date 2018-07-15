@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4E22CE1620FBF55F0097632D /* Array+randomElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E22CE1520FBF55F0097632D /* Array+randomElement.swift */; };
 		4E53B7F920F165DE00C6550C /* Board.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E53B7F820F165DE00C6550C /* Board.swift */; };
 		4EA241A520F5B697008B473D /* Tile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA241A420F5B697008B473D /* Tile.swift */; };
 		4ECA69A520D235EC0064FB41 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ECA69A420D235EC0064FB41 /* AppDelegate.swift */; };
@@ -19,6 +20,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4E22CE1520FBF55F0097632D /* Array+randomElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+randomElement.swift"; sourceTree = "<group>"; };
 		4E53B7F820F165DE00C6550C /* Board.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Board.swift; sourceTree = "<group>"; };
 		4EA241A420F5B697008B473D /* Tile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tile.swift; sourceTree = "<group>"; };
 		4ECA69A120D235EC0064FB41 /* Tiles.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tiles.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -73,6 +75,7 @@
 				4EE510C520F70E15004A6615 /* Select.swift */,
 				4EECF81220F9CEBD0072F301 /* Controller.swift */,
 				4EECF81420FB28960072F301 /* Score.swift */,
+				4E22CE1520FBF55F0097632D /* Array+randomElement.swift */,
 			);
 			path = Tiles;
 			sourceTree = "<group>";
@@ -176,6 +179,7 @@
 				4EA241A520F5B697008B473D /* Tile.swift in Sources */,
 				4E53B7F920F165DE00C6550C /* Board.swift in Sources */,
 				4ECA69A520D235EC0064FB41 /* AppDelegate.swift in Sources */,
+				4E22CE1620FBF55F0097632D /* Array+randomElement.swift in Sources */,
 				4EECF81520FB28960072F301 /* Score.swift in Sources */,
 				4EE510C620F70E15004A6615 /* Select.swift in Sources */,
 			);
