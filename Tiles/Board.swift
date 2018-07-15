@@ -1,9 +1,11 @@
 import SpriteKit
 
 class Board: SKNode {
-    let slideMinimum = 2
+    static let slideMinimum = 2
+    static let mergeTime = 0.3
     let width = 10
     let height = 10
+    let total = Score()
     let turn = Score()
     var board: [Tile?]
     var touch: UITouch?
@@ -16,7 +18,9 @@ class Board: SKNode {
     override init() {
         board = [Tile?](repeating: nil, count: width * height)
         super.init()
-        turn.position.y = 220
+        total.position.y = 280
+        addChild(total)
+        turn.position.y = 240
         addChild(turn)
         tick()
     }
@@ -47,7 +51,7 @@ class Board: SKNode {
             return
         }
         isUserInteractionEnabled = true
-        turn.clear()
+        turn.merge(into: total)
     }
 
     func fall() -> TimeInterval {
@@ -101,7 +105,7 @@ class Board: SKNode {
         }
         for tile in score {
             tile.zPosition += 1
-            tile.run(SKAction.move(to: turn.point(type: tile.type), duration: 0.3)) {
+            tile.run(SKAction.move(to: convert(turn.point(type: tile.type), from: turn), duration: Board.mergeTime)) {
                 self.turn.add(type: tile.type)
             }
         }
@@ -154,7 +158,7 @@ class Board: SKNode {
         let dx = to.x - from.x
         let dy = to.y - from.y
         if select == nil {
-            guard max(abs(dx), abs(dy)) > CGFloat(slideMinimum) else { return }
+            guard max(abs(dx), abs(dy)) > CGFloat(Board.slideMinimum) else { return }
             guard let tile = atPoint(from) as? Tile else { return }
             select = Select(board: self, start: tile, direction: abs(dx) > abs(dy) ? .horizontal : .vertical)
             addChild(select!)

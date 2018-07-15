@@ -25,7 +25,7 @@ class Select: SKCropNode {
                 color: UIColor.black,
                 size: CGSize(width: board.width * Tile.sideLength, height: Tile.sideLength)
             )
-            background.position.x = (CGFloat(board.width / 2) - 0.5) * CGFloat(Tile.sideLength)
+            background.position.x = CGFloat(board.width / 2 * Tile.sideLength)
             background.position.y = start.position.y
         case .vertical:
             background = SKSpriteNode(
@@ -33,7 +33,7 @@ class Select: SKCropNode {
                 size: CGSize(width: Tile.sideLength, height: board.height * Tile.sideLength)
             )
             background.position.x = start.position.x
-            background.position.y = (CGFloat(board.height / 2) - 0.5) * CGFloat(Tile.sideLength)
+            background.position.y = CGFloat(board.height / 2 * Tile.sideLength)
         }
         super.init()
         switch direction {
@@ -59,14 +59,14 @@ class Select: SKCropNode {
             tiles.position.x += x
             for tile in tiles.children {
                 guard let tile = tile as? Tile else { continue }
-                if tile.point.x + tiles.position.x < 0 {
+                if tile.point.x + tiles.position.x < CGFloat(Tile.sideLength / 2) {
                     tile.x += board.width
                     tile.position = tile.point
-                } else if tile.point.x + tiles.position.x > CGFloat(Tile.sideLength * board.width) {
+                } else if tile.point.x + tiles.position.x > CGFloat(Tile.sideLength) * (CGFloat(board.width) + 0.5) {
                     tile.x -= board.width
                     tile.position = tile.point
                 }
-                if tile.point.x + tiles.position.x > CGFloat(Tile.sideLength * (board.width - 1)) {
+                if tile.point.x + tiles.position.x > CGFloat(Tile.sideLength) * (CGFloat(board.width) - 0.5) {
                     background.color = tile.type.color
                 }
             }
@@ -74,14 +74,14 @@ class Select: SKCropNode {
             tiles.position.y += y
             for tile in tiles.children {
                 guard let tile = tile as? Tile else { continue }
-                if tile.point.y + tiles.position.y < 0 {
+                if tile.point.y + tiles.position.y < CGFloat(Tile.sideLength / 2) {
                     tile.y += board.height
                     tile.position = tile.point
-                } else if tile.point.y + tiles.position.y > CGFloat(Tile.sideLength * board.height) {
+                } else if tile.point.y + tiles.position.y > CGFloat(Tile.sideLength) * (CGFloat(board.height) + 0.5) {
                     tile.y -= board.height
                     tile.position = tile.point
                 }
-                if tile.point.y + tiles.position.y > CGFloat(Tile.sideLength * (board.height - 1)) {
+                if tile.point.y + tiles.position.y > CGFloat(Tile.sideLength) * (CGFloat(board.height) - 0.5) {
                     background.color = tile.type.color
                 }
             }
