@@ -12,4 +12,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window.makeKeyAndVisible()
         return true
     }
+
+    func applicationDidEnterBackground(_: UIApplication) {
+        guard let controller = window?.rootViewController as? Controller else { return }
+        controller.save()
+    }
 }

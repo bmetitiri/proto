@@ -1,6 +1,13 @@
 import SpriteKit
 
+struct Save: Codable {
+    let tiles: [TileType]
+    let total: [TileType: Int]
+    let turn: [TileType: Int]
+}
+
 class Board: SKNode {
+    static let tilesKey = "tile.dumb"
     static let slideMinimum = 2
     static let mergeTime = 0.3
     let width = 10
@@ -11,13 +18,35 @@ class Board: SKNode {
     var touch: UITouch?
     var select: Select?
 
-    required init?(coder _: NSCoder) {
-        fatalError("This shouldn't be needed")
+    func data() -> Save {
+        return Save(
+            tiles: board.map { $0?.type ?? .empty },
+            total: total.scores,
+            turn: turn.scores
+        )
     }
 
-    override init() {
+    required init?(coder _: NSCoder) {
+        fatalError("How did you get here?!")
+    }
+
+    init(save: Save?) {
         board = [Tile?](repeating: nil, count: width * height)
         super.init()
+        if let save = save {
+            board = save.tiles.enumerated().map { i, tile in
+                guard tile != .empty else { return nil }
+                let tile = Tile(type: tile, x: i % width, y: i / width)
+                addChild(tile)
+                return tile
+            }
+            for (type, count) in save.total {
+                total.add(type: type, count: count)
+            }
+            for (type, count) in save.turn {
+                turn.add(type: type, count: count)
+            }
+        }
         total.position.y = 280
         addChild(total)
         turn.position.y = 240

@@ -1,6 +1,6 @@
 import SpriteKit
 
-enum TileType {
+enum TileType: Int, Codable {
     case empty
     case red
     case orange

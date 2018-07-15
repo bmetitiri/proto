@@ -4,13 +4,24 @@ import UIKit
 class Controller: UIViewController {
     static let width = 200
     static let height = 300
-    let board = Board()
+    var board: Board?
+    var path: URL? {
+        return FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("tiles")
+    }
+
     override func viewDidLoad() {
+        let save: Save?
+        if let path = path {
+            save = try? PropertyListDecoder().decode(Save.self, from: Data(contentsOf: path))
+        } else {
+            save = nil
+        }
+        board = Board(save: save)
         super.viewDidLoad()
         let scene = SKScene(size: CGSize(width: Controller.width, height: Controller.height))
         scene.backgroundColor = UIColor.black
         scene.scaleMode = .aspectFit
-        scene.addChild(board)
+        scene.addChild(board!)
         let skView = SKView(frame: view.bounds)
         skView.ignoresSiblingOrder = true
         skView.translatesAutoresizingMaskIntoConstraints = false
@@ -22,5 +33,11 @@ class Controller: UIViewController {
             skView.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor),
         ])
         skView.presentScene(scene)
+    }
+
+    func save() {
+        if let board = board, let path = path {
+            try? PropertyListEncoder().encode(board.data()).write(to: path)
+        }
     }
 }
