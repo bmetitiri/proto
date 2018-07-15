@@ -93,6 +93,10 @@ class Select: SKCropNode {
         let dy = Int(round(tiles.position.y / CGFloat(Tile.sideLength)))
         tiles.position = CGPoint(x: 0, y: 0)
         var toPlace = [Tile]()
+        var types = [TileType](
+            repeating: TileType.empty,
+            count: direction == .horizontal ? board.width : board.height
+        )
         for tile in tiles.children {
             guard let tile = tile as? Tile else { continue }
             tile.x = (tile.x + dx) % board.width
@@ -105,9 +109,23 @@ class Select: SKCropNode {
             }
             tile.position = tile.point
             toPlace.append(tile)
+            types[direction == .horizontal ? tile.x : tile.y] = tile.type
         }
         removeFromParent()
-        guard (toPlace.contains { board.check(direction: direction, tile: $0) }) else { return }
+        var last = TileType.empty
+        var count: Int = 0
+        for t in types {
+            if last == t && t != TileType.empty {
+                count += 1
+                if count > 1 {
+                    break
+                }
+            } else {
+                last = t
+                count = 0
+            }
+        }
+        guard (count > 1 || toPlace.contains { board.check(direction: direction, tile: $0) }) else { return }
         for tile in toPlace {
             if let old = board.get(x: tile.x, y: tile.y) {
                 old.removeFromParent()
