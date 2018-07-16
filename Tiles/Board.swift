@@ -7,12 +7,14 @@ struct Save: Codable {
 }
 
 class Board: SKNode {
+    weak var menu: MenuPresenter?
     static let slideMinimum = 2
     static let mergeTime = 0.3
     let width = 10
     let height = 10
     let total = Score()
     let turn = Score()
+    let buttons = SKNode()
     var board: [Tile?]
     var touch: UITouch?
     var select: Select?
@@ -29,7 +31,8 @@ class Board: SKNode {
         fatalError("How did you get here?!")
     }
 
-    init(save: Save?) {
+    init(menu: MenuPresenter, save: Save?) {
+        self.menu = menu
         board = [Tile?](repeating: nil, count: width * height)
         super.init()
         if let save = save {
@@ -46,6 +49,7 @@ class Board: SKNode {
                 turn.add(type: type, count: count)
             }
         }
+        addChild(buttons)
         total.position.y = 280
         addChild(total)
         turn.position.y = 240
@@ -67,6 +71,7 @@ class Board: SKNode {
     }
 
     func tick() {
+        buttons.removeAllChildren()
         isUserInteractionEnabled = false
         let fallDelay = fall()
         if fallDelay > 0 {
@@ -79,7 +84,27 @@ class Board: SKNode {
             return
         }
         isUserInteractionEnabled = true
+        addButtons()
         turn.merge(into: total)
+    }
+
+    func addButtons() {
+        for x in 0 ..< width - 1 {
+            for y in 0 ..< height - 1 {
+                if let tile = get(x: x, y: y),
+                    tile.type == get(x: x, y: y + 1)?.type,
+                    tile.type == get(x: x + 1, y: y)?.type,
+                    tile.type == get(x: x + 1, y: y + 1)?.type {
+                    let button = Button(menu: menu, type: tile.type)
+                    button.position = CGPoint(
+                        x: tile.position.x + CGFloat(Tile.sideLength / 2),
+                        y: tile.position.y + CGFloat(Tile.sideLength / 2)
+                    )
+                    button.zRotation = CGFloat(Double.pi / 4)
+                    buttons.addChild(button)
+                }
+            }
+        }
     }
 
     func fall() -> TimeInterval {
@@ -179,6 +204,7 @@ class Board: SKNode {
     }
 
     override func touchesBegan(_ touches: Set<UITouch>, with _: UIEvent?) {
+        buttons.isHidden = true
         guard let touch = touches.first, atPoint(touch.location(in: self)) is Tile else { return }
         self.touch = touch
     }
@@ -199,6 +225,7 @@ class Board: SKNode {
     }
 
     override func touchesEnded(_: Set<UITouch>, with _: UIEvent?) {
+        buttons.isHidden = false
         guard let select = select else { return }
         select.drop()
         self.select = nil

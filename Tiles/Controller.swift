@@ -1,7 +1,7 @@
 import SpriteKit
 import UIKit
 
-class Controller: UIViewController {
+class Controller: UIViewController, MenuPresenter {
     static let width = 200
     static let height = 300
     var board: Board?
@@ -16,7 +16,7 @@ class Controller: UIViewController {
         } else {
             save = nil
         }
-        board = Board(save: save)
+        board = Board(menu: self, save: save)
         super.viewDidLoad()
         let scene = SKScene(size: CGSize(width: Controller.width, height: Controller.height))
         scene.backgroundColor = UIColor.black
@@ -33,6 +33,13 @@ class Controller: UIViewController {
             skView.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor),
         ])
         skView.presentScene(scene)
+    }
+
+    func show() {
+        present(
+            UIStoryboard(name: "Menu", bundle: nil).instantiateViewController(withIdentifier: "Menu"),
+            animated: true
+        )
     }
 
     func save() {
