@@ -10,7 +10,7 @@ class Menu: UIViewController {
     }
 
     @IBAction func close() {
-        dismiss(animated: true)
+        navigationController?.popViewController(animated: true)
     }
 }
 
