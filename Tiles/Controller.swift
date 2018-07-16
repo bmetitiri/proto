@@ -35,11 +35,13 @@ class Controller: UIViewController, MenuPresenter {
         skView.presentScene(scene)
     }
 
-    func show() {
-        present(
-            UIStoryboard(name: "Menu", bundle: nil).instantiateViewController(withIdentifier: "Menu"),
-            animated: true
-        )
+    func show(type: TileType) {
+        guard let menu = UIStoryboard(
+            name: "Menu",
+            bundle: nil
+        ).instantiateViewController(withIdentifier: "Menu") as? Menu else { return }
+        menu.type = type
+        present(menu, animated: true)
     }
 
     func save() {

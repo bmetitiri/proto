@@ -28,6 +28,6 @@ class Button: SKSpriteNode {
 
     override func touchesEnded(_ touches: Set<UITouch>, with _: UIEvent?) {
         guard let touch = touch, touches.contains(touch), let menu = menu else { return }
-        menu.show()
+        menu.show(type: type)
     }
 }
