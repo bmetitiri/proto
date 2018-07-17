@@ -110,49 +110,43 @@ class Board: SKNode {
         return delay
     }
 
+    func handleMatch(tiles: Tile...) -> Set<Tile> {
+        guard tiles.count > 0 else { return Set<Tile>() }
+        let tile = Tile(copy: tiles[tiles.count / 2])
+        addChild(tile)
+        tile.zPosition += 1
+        tile.run(SKAction.move(
+            to: convert(turn.point(type: tile.type),
+                        from: turn), duration: Board.mergeTime)) {
+            self.turn.add(type: tile.type)
+        }
+        tile.remove()
+        return Set<Tile>(tiles)
+    }
+
     func clear() -> TimeInterval {
-        var delay = 0.0
         var dead = Set<Tile>()
-        var score = Set<Tile>()
         for x in 0 ..< width {
             for y in 0 ..< height {
                 guard let tile = get(x: x, y: y) else { continue }
                 if let tile1 = get(x: x + 1, y: y),
                     let tile2 = get(x: x + 2, y: y),
                     tile.type == tile1.type && tile1.type == tile2.type {
-                    delay = Tile.removeTime
-                    dead.insert(tile)
-                    dead.insert(tile1)
-                    dead.insert(tile2)
-                    if let point = ([tile, tile1, tile2].filter { !score.contains($0) }).randomElement() {
-                        score.insert(point)
-                    }
+                    dead.formUnion(handleMatch(tiles: tile, tile1, tile2))
                 }
                 guard y < height - 2 else { continue }
                 if let tile1 = get(x: x, y: y + 1),
                     let tile2 = get(x: x, y: y + 2),
                     tile.type == tile1.type && tile1.type == tile2.type {
-                    delay = Tile.removeTime
-                    dead.insert(tile)
-                    dead.insert(tile1)
-                    dead.insert(tile2)
-                    if let point = ([tile, tile1, tile2].filter { !score.contains($0) }).randomElement() {
-                        score.insert(point)
-                    }
+                    dead.formUnion(handleMatch(tiles: tile, tile1, tile2))
                 }
-            }
-        }
-        for tile in score {
-            tile.zPosition += 1
-            tile.run(SKAction.move(to: convert(turn.point(type: tile.type), from: turn), duration: Board.mergeTime)) {
-                self.turn.add(type: tile.type)
             }
         }
         for tile in dead {
             set(x: tile.x, y: tile.y, tile: nil)
             tile.remove()
         }
-        return delay
+        return dead.count > 0 ? Tile.removeTime : 0
     }
 
     func check(direction: Select.Direction, tile: Tile) -> Bool {
