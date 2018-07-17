@@ -1,6 +1,6 @@
 import SpriteKit
 
-class Score: SKNode {
+class ScoreDisplay: SKNode, Score {
     var scores: [TileType: Int] = [:]
     var displays: [TileType: SKLabelNode] = [:]
 
@@ -23,17 +23,19 @@ class Score: SKNode {
     }
 
     func merge(into: Score) {
-        for (type, count) in scores {
-            into.add(type: type, count: count)
+        for (type, value) in scores {
+            into.add(type: type, value: value)
         }
         scores.removeAll()
-        for (type, display) in displays {
+        for (_, display) in displays {
             if let copy = display.copy() as? SKNode {
                 addChild(copy)
                 copy.run(SKAction.group([
-                    SKAction.move(to: convert(into.point(type: type), from: into), duration: Board.mergeTime),
+                    SKAction.moveTo(y: 40, duration: Board.mergeTime),
                     SKAction.scale(by: 0.1, duration: Board.mergeTime),
-                ])) { copy.removeFromParent() }
+                ])) {
+                    copy.removeFromParent()
+                }
             }
             display.text = ""
         }
@@ -43,8 +45,8 @@ class Score: SKNode {
         return displays[type]?.position ?? CGPoint.zero
     }
 
-    func add(type: TileType, count: Int = 1) {
-        scores[type] = (scores[type] ?? 0) + count
+    func add(type: TileType, value: Int = 1) {
+        scores[type] = (scores[type] ?? 0) + value
         guard let display = displays[type], let score = scores[type] else { return }
         display.text = String(score)
     }
