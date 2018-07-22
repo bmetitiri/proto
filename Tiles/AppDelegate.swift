@@ -13,7 +13,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationDidEnterBackground(_: UIApplication) {
-        guard let controller = window?.rootViewController as? Controller else { return }
-        controller.save()
+        Save.active.save()
     }
 }

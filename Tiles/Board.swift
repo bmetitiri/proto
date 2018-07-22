@@ -1,57 +1,33 @@
 import SpriteKit
 
-struct Save: Codable {
-    let tiles: [TileType]
-    let total: [TileType: Int]
-    let turn: [TileType: Int]
-    let upgrades: [Upgrade: Int]
-}
-
 class Board: SKNode {
     weak var menu: MenuPresenter?
     static let slideMinimum = 2
     static let mergeTime = 0.3
     let width = 10
     let height = 10
-    let total = Score()
-    let turn = Score()
+    let total = Score(source: .total)
+    let turn = Score(source: .turn)
     let buttons = SKNode()
-    var upgrades = [Upgrade: Int]()
     var board: [Tile?]
     var touch: UITouch?
     var select: Select?
-
-    func data() -> Save {
-        return Save(
-            tiles: board.map { $0?.type ?? .empty },
-            total: total.scores,
-            turn: turn.scores,
-            upgrades: upgrades
-        )
-    }
 
     required init?(coder _: NSCoder) {
         fatalError("How did you get here?!")
     }
 
-    init(menu: MenuPresenter, save: Save?) {
+    init(menu: MenuPresenter) {
         self.menu = menu
         board = [Tile?](repeating: nil, count: width * height)
         super.init()
-        if let save = save {
-            board = save.tiles.enumerated().map { i, tile in
+        if Save.active.tiles.count == width * height {
+            board = Save.active.tiles.enumerated().map { i, tile in
                 guard tile != .empty else { return nil }
                 let tile = Tile(type: tile, x: i % width, y: i / width)
                 addChild(tile)
                 return tile
             }
-            for (type, count) in save.total {
-                total.add(type: type, count: count)
-            }
-            for (type, count) in save.turn {
-                turn.add(type: type, count: count)
-            }
-            upgrades = save.upgrades
         }
         addChild(buttons)
         total.position.y = 280
@@ -87,9 +63,10 @@ class Board: SKNode {
             run(SKAction.wait(forDuration: clearDelay), completion: tick)
             return
         }
+        turn.merge(into: total)
+        Save.active.commit(tiles: board.map { $0?.type ?? .empty })
         isUserInteractionEnabled = true
         addButtons()
-        turn.merge(into: total)
     }
 
     func addButtons() {
@@ -134,15 +111,16 @@ class Board: SKNode {
 
     func handleMatch(tiles: Tile...) -> Set<Tile> {
         guard tiles.count > 0 else { return Set<Tile>() }
-        let tile = Tile(copy: tiles[tiles.count / 2])
-        addChild(tile)
-        tile.zPosition += 1
-        tile.run(SKAction.move(
-            to: convert(turn.point(type: tile.type),
-                        from: turn), duration: Board.mergeTime)) {
-            self.turn.add(type: tile.type, count: 1 + (self.upgrades[Upgrade.matchBase(tile.type)] ?? 0))
+        let scoreTile = Tile(copy: tiles[tiles.count / 2])
+        addChild(scoreTile)
+        scoreTile.zPosition += 1
+        scoreTile.run(SKAction.move(
+            to: convert(turn.point(type: scoreTile.type), from: turn),
+            duration: Board.mergeTime)
+        ) {
+            Save.active.add(match: scoreTile.type)
         }
-        tile.remove()
+        scoreTile.remove()
         return Set<Tile>(tiles)
     }
 
@@ -202,8 +180,8 @@ class Board: SKNode {
     }
 
     override func touchesBegan(_ touches: Set<UITouch>, with _: UIEvent?) {
-        buttons.isHidden = true
         guard let touch = touches.first, atPoint(touch.location(in: self)) is Tile else { return }
+        buttons.isHidden = true
         self.touch = touch
     }
 

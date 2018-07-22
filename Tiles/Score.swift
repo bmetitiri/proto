@@ -1,14 +1,37 @@
 import SpriteKit
 
 class Score: SKNode {
-    var scores: [TileType: Int] = [:]
+    enum Source {
+        case turn, total
+
+        var name: NSNotification.Name {
+            switch self {
+            case .total:
+                return Save.totalName
+            case .turn:
+                return Save.turnName
+            }
+        }
+
+        var scores: [TileType: Int] {
+            switch self {
+            case .total:
+                return Save.active.total
+            case .turn:
+                return Save.active.turn
+            }
+        }
+    }
+
+    let source: Source
     var displays: [TileType: SKLabelNode] = [:]
 
     required init?(coder _: NSCoder) {
-        fatalError("This shouldn't be needed")
+        fatalError("How did you get here?!")
     }
 
-    override init() {
+    init(source: Source) {
+        self.source = source
         super.init()
         for (i, type) in TileType.all.enumerated() {
             let per = Controller.width / TileType.all.count
@@ -20,13 +43,12 @@ class Score: SKNode {
             displays[type] = display
             addChild(display)
         }
+        NotificationCenter.default.addObserver(forName: source.name, object: nil, queue: nil) { _ in
+            self.reloadData()
+        }
     }
 
     func merge(into: Score) {
-        for (type, count) in scores {
-            into.add(type: type, count: count)
-        }
-        scores.removeAll()
         for (type, display) in displays {
             if let copy = display.copy() as? SKNode {
                 addChild(copy)
@@ -43,9 +65,10 @@ class Score: SKNode {
         return displays[type]?.position ?? CGPoint.zero
     }
 
-    func add(type: TileType, count: Int = 1) {
-        scores[type] = (scores[type] ?? 0) + count
-        guard let display = displays[type], let score = scores[type] else { return }
-        display.text = String(score)
+    func reloadData() {
+        for (type, count) in source.scores {
+            guard let display = displays[type] else { continue }
+            display.text = String(count)
+        }
     }
 }
