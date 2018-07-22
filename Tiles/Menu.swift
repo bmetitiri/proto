@@ -11,7 +11,7 @@ class Menu: UIViewController, UITableViewDataSource, UITableViewDelegate {
         dismiss(animated: true)
     }
 
-    var board: Board?
+    weak var board: Board?
     var type: TileType = .empty
     var available = [Upgrade]()
     var purchased = [Upgrade]()
