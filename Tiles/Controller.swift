@@ -1,13 +1,13 @@
 import SpriteKit
 import UIKit
 
-class Main: UIViewController, MenuPresenter {
+class Controller: UIViewController, MenuPresenter {
     static let width = 200
     static let height = 300
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        let scene = SKScene(size: CGSize(width: Main.width, height: Main.height))
+        let scene = SKScene(size: CGSize(width: Controller.width, height: Controller.height))
         scene.backgroundColor = UIColor.black
         scene.scaleMode = .aspectFit
         scene.addChild(Board(menu: self))

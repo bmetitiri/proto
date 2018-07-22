@@ -22,7 +22,7 @@ class Menu: UIViewController, UITableViewDataSource, UITableViewDelegate {
         table.dataSource = self
         table.delegate = self
         reloadData()
-        NotificationCenter.default.addObserver(forName: Save.total, object: nil, queue: nil) { _ in
+        NotificationCenter.default.addObserver(forName: Save.totalName, object: nil, queue: nil) { _ in
             self.reloadData()
         }
     }

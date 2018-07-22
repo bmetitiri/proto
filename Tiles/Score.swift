@@ -7,9 +7,9 @@ class Score: SKNode {
         var name: NSNotification.Name {
             switch self {
             case .total:
-                return Save.total
+                return Save.totalName
             case .turn:
-                return Save.turn
+                return Save.turnName
             }
         }
 
@@ -34,7 +34,7 @@ class Score: SKNode {
         self.source = source
         super.init()
         for (i, type) in TileType.all.enumerated() {
-            let per = Main.width / TileType.all.count
+            let per = Controller.width / TileType.all.count
             let display = SKLabelNode(fontNamed: "Chalkduster")
             display.fontColor = type.color
             display.fontSize = 20
