@@ -37,7 +37,7 @@ enum Upgrade: Codable, Hashable {
     }
 
     func cost(count: Int) -> Int {
-        return Int(pow(10, Double(count + 1)))
+        return 20 * Int(pow(5, Double(count)))
     }
 
     static func of(type: TileType) -> [Upgrade] {

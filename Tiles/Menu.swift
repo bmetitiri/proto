@@ -11,7 +11,6 @@ class Menu: UIViewController, UITableViewDataSource, UITableViewDelegate {
         dismiss(animated: true)
     }
 
-    weak var board: Board?
     var type: TileType = .empty
     var available = [Upgrade]()
     var purchased = [Upgrade]()
@@ -22,34 +21,27 @@ class Menu: UIViewController, UITableViewDataSource, UITableViewDelegate {
         table.backgroundColor = UIColor.black
         table.dataSource = self
         table.delegate = self
-        load()
+        reloadData()
+        NotificationCenter.default.addObserver(forName: Save.total, object: nil, queue: nil) { _ in
+            self.reloadData()
+        }
     }
 
-    func load() {
-        guard let board = board else { return }
+    func reloadData() {
         available = Upgrade.of(type: type)
-        purchased = Upgrade.of(type: type).filter { (board.upgrades[$0] ?? 0) > 0 }
+        purchased = Upgrade.of(type: type).filter { (Save.active.upgrades[$0] ?? 0) > 0 }
         table.reloadData()
     }
 
     func numberOfSections(in _: UITableView) -> Int {
-        // Number of Section cases.
-        return purchased.count > 0 ? 3 : 2
+        return (purchased.count > 0 ? Section.purchased.rawValue : Section.available.rawValue) + 1
     }
 
     func tableView(_: UITableView, didSelectRowAt index: IndexPath) {
-        guard let section = Section(rawValue: index.section), let board = board else { return }
+        guard let section = Section(rawValue: index.section) else { return }
         switch section {
         case .available:
-            let upgrade = available[index.row]
-            let count = board.upgrades[upgrade] ?? 0
-            let cost = upgrade.cost(count: count)
-            let current = board.total.scores[type] ?? 0
-            if current >= cost {
-                board.upgrades[upgrade] = count + 1
-                board.total.add(type: type, count: -cost)
-            }
-            load()
+            Save.active.purchase(upgrade: available[index.row], from: type)
         default:
             return
         }
@@ -83,16 +75,16 @@ class Menu: UIViewController, UITableViewDataSource, UITableViewDelegate {
         let cell = table.dequeueReusableCell(withIdentifier: "cell", for: index)
         cell.backgroundColor = UIColor.clear
         cell.textLabel?.textColor = type.color
-        guard let section = Section(rawValue: index.section), let board = board else { return cell }
+        guard let section = Section(rawValue: index.section) else { return cell }
         switch section {
         case .score:
-            let current = board.total.scores[type] ?? 0
+            let current = Save.active.total[type] ?? 0
             cell.textLabel?.text = "Points: \(current)"
         case .available:
-            let upgrade = available[index.row], count = board.upgrades[upgrade] ?? 0
+            let upgrade = available[index.row], count = Save.active.upgrades[upgrade] ?? 0
             cell.textLabel?.text = "\(upgrade.name) for \(upgrade.cost(count: count))"
         case .purchased:
-            let upgrade = purchased[index.row], count = board.upgrades[upgrade] ?? 0
+            let upgrade = purchased[index.row], count = Save.active.upgrades[upgrade] ?? 0
             cell.textLabel?.text = "\(upgrade.name) (\(count))"
         }
         return cell
