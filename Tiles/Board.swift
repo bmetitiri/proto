@@ -4,6 +4,7 @@ struct Save: Codable {
     let tiles: [TileType]
     let total: [TileType: Int]
     let turn: [TileType: Int]
+    let upgrades: [Upgrade: Int]
 }
 
 class Board: SKNode {
@@ -15,6 +16,7 @@ class Board: SKNode {
     let total = Score()
     let turn = Score()
     let buttons = SKNode()
+    var upgrades = [Upgrade: Int]()
     var board: [Tile?]
     var touch: UITouch?
     var select: Select?
@@ -23,7 +25,8 @@ class Board: SKNode {
         return Save(
             tiles: board.map { $0?.type ?? .empty },
             total: total.scores,
-            turn: turn.scores
+            turn: turn.scores,
+            upgrades: upgrades
         )
     }
 
@@ -48,6 +51,7 @@ class Board: SKNode {
             for (type, count) in save.turn {
                 turn.add(type: type, count: count)
             }
+            upgrades = save.upgrades
         }
         addChild(buttons)
         total.position.y = 280
@@ -136,7 +140,7 @@ class Board: SKNode {
         tile.run(SKAction.move(
             to: convert(turn.point(type: tile.type),
                         from: turn), duration: Board.mergeTime)) {
-            self.turn.add(type: tile.type)
+            self.turn.add(type: tile.type, count: 1 + (self.upgrades[Upgrade.matchBase(tile.type)] ?? 0))
         }
         tile.remove()
         return Set<Tile>(tiles)
