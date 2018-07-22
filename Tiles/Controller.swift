@@ -36,10 +36,11 @@ class Controller: UIViewController, MenuPresenter {
     }
 
     func show(type: TileType) {
-        guard let menu = UIStoryboard(
+        guard let board = board, let menu = UIStoryboard(
             name: "Menu",
             bundle: nil
         ).instantiateViewController(withIdentifier: "Menu") as? Menu else { return }
+        menu.board = board
         menu.type = type
         present(menu, animated: true)
     }
