@@ -51,7 +51,7 @@ enum Upgrade: Codable, Hashable {
         case .matchBase:
             return Int(20.0 * pow(1.1, Double(count)))
         case .rainbowAdapter:
-            return Int(50.0 * pow(1.1, Double(count)))
+            return Int(50.0 * pow(1.15, Double(count)))
         default:
             return 0
         }
