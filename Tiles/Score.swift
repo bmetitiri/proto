@@ -37,7 +37,7 @@ class Score: SKNode {
             let per = Controller.width / TileType.all.count
             let display = SKLabelNode(fontNamed: "Chalkduster")
             display.fontColor = type.color
-            display.fontSize = 20
+            display.fontSize = 15
             display.horizontalAlignmentMode = .center
             display.position.x = CGFloat(i * per + per / 2)
             displays[type] = display
@@ -68,6 +68,15 @@ class Score: SKNode {
     func reloadData() {
         for (type, count) in source.scores {
             guard let display = displays[type] else { continue }
+            if case source = Source.turn {
+                let rainbow = Save.active.rainbowMultiplier
+                if rainbow > 1 {
+                    display.fontColor = UIColor.white
+                    display.text = String(count * rainbow)
+                    continue
+                }
+            }
+            display.fontColor = type.color
             display.text = String(count)
         }
     }
