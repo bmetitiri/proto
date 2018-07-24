@@ -26,6 +26,7 @@ class Save: Codable {
     var turn = [TileType: Int]()
     var upgrades = [Upgrade: Int]()
     var rainbowMultiplier: Int {
+        // Check for all tile colors being used in a turn, then find least upgraded rainbow adapter.
         if turn.count == TileType.all.count {
             return TileType.all.map { upgrades[Upgrade.rainbowAdapter($0)] ?? 1 }.min() ?? 1
         }
