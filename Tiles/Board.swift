@@ -82,13 +82,14 @@ class Board: SKNode {
                     let tile2 = get(x: x, y: y + 1), tile.type == tile2.type,
                     let tile3 = get(x: x + 1, y: y), tile.type == tile3.type,
                     let tile4 = get(x: x + 1, y: y + 1), tile.type == tile4.type {
-                    let button = Button(menu: menu, type: tile.type) {
+                    let button = Button(menu: menu, type: tile.type) { [weak self] in
+                        guard let board = self else { return }
                         for tile in [tile, tile2, tile3, tile4] {
-                            self.set(x: tile.x, y: tile.y, tile: nil)
+                            board.set(x: tile.x, y: tile.y, tile: nil)
                             tile.remove()
                         }
-                        self.tickDelay = Tile.removeTime
-                        self.tick()
+                        board.tickDelay = Tile.removeTime
+                        board.tick()
                     }
                     button.position = CGPoint(
                         x: tile.position.x + CGFloat(Tile.sideLength / 2),
