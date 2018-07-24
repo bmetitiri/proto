@@ -24,12 +24,13 @@ class Controller: UIViewController, MenuPresenter {
         skView.presentScene(scene)
     }
 
-    func show(type: TileType) {
+    func show(type: TileType, after: @escaping () -> Void) {
         guard let menu = UIStoryboard(
             name: "Menu",
             bundle: nil
         ).instantiateViewController(withIdentifier: "Menu") as? Menu else { return }
         menu.type = type
+        menu.after = after
         present(menu, animated: true)
     }
 }

@@ -4,14 +4,16 @@ class Button: SKSpriteNode {
     weak var menu: MenuPresenter?
     var touch: UITouch?
     let type: TileType
+    let close: () -> Void
 
     required init?(coder _: NSCoder) {
         fatalError("How did you get here?!")
     }
 
-    init(menu: MenuPresenter?, type: TileType) {
+    init(menu: MenuPresenter?, type: TileType, close: @escaping () -> Void) {
         self.menu = menu
         self.type = type
+        self.close = close
         super.init(
             texture: nil,
             color: UIColor.white,
@@ -28,6 +30,6 @@ class Button: SKSpriteNode {
 
     override func touchesEnded(_ touches: Set<UITouch>, with _: UIEvent?) {
         guard let touch = touch, touches.contains(touch), let menu = menu else { return }
-        menu.show(type: type)
+        menu.show(type: type, after: close)
     }
 }
