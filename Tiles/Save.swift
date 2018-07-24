@@ -25,6 +25,13 @@ class Save: Codable {
     var total = [TileType: Int]()
     var turn = [TileType: Int]()
     var upgrades = [Upgrade: Int]()
+    var rainbowMultiplier: Int {
+        // Check for all tile colors being used in a turn, then find least upgraded rainbow adapter.
+        if turn.count == TileType.all.count {
+            return TileType.all.map { upgrades[Upgrade.rainbowAdapter($0)] ?? 1 }.min() ?? 1
+        }
+        return 1
+    }
 
     func save() {
         if let path = Save.path {
@@ -40,7 +47,7 @@ class Save: Codable {
     func commit(tiles: [TileType]) {
         self.tiles = tiles
         for (type, count) in turn {
-            total[type] = (total[type] ?? 0) + count
+            total[type] = (total[type] ?? 0) + count * rainbowMultiplier
         }
         turn.removeAll()
         NotificationCenter.default.post(name: Save.totalName, object: total)
