@@ -33,6 +33,11 @@ class Save: Codable {
         return 1
     }
 
+    func capacity(type: TileType) -> Int {
+        let upgrade = Upgrade.capacity(type)
+        return upgrade.cost(count: (upgrades[upgrade] ?? 0)) * Upgrade.capacityMultiplier
+    }
+
     func save() {
         if let path = Save.path {
             try? PropertyListEncoder().encode(self).write(to: path)
@@ -47,7 +52,7 @@ class Save: Codable {
     func commit(tiles: [TileType]) {
         self.tiles = tiles
         for (type, count) in turn {
-            total[type] = (total[type] ?? 0) + count * rainbowMultiplier
+            total[type] = min((total[type] ?? 0) + count * rainbowMultiplier, capacity(type: type))
         }
         turn.removeAll()
         NotificationCenter.default.post(name: Save.totalName, object: total)
