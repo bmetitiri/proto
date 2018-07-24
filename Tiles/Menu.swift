@@ -8,12 +8,13 @@ class Menu: UIViewController, UITableViewDataSource, UITableViewDelegate {
     @IBOutlet var table: UITableView!
 
     @IBAction func close() {
-        dismiss(animated: true)
+        dismiss(animated: true, completion: after)
     }
 
     var type: TileType = .empty
     var available = [Upgrade]()
     var purchased = [Upgrade]()
+    var after: () -> Void = {}
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -92,5 +93,5 @@ class Menu: UIViewController, UITableViewDataSource, UITableViewDelegate {
 }
 
 protocol MenuPresenter: class {
-    func show(type: TileType)
+    func show(type: TileType, after: @escaping () -> Void)
 }

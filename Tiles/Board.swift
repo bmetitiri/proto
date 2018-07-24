@@ -12,6 +12,7 @@ class Board: SKNode {
     var board: [Tile?]
     var touch: UITouch?
     var select: Select?
+    var tickDelay = 0.0
 
     required init?(coder _: NSCoder) {
         fatalError("How did you get here?!")
@@ -53,6 +54,11 @@ class Board: SKNode {
     func tick() {
         buttons.removeAllChildren()
         isUserInteractionEnabled = false
+        if tickDelay > 0 {
+            run(SKAction.wait(forDuration: tickDelay), completion: tick)
+            tickDelay = 0
+            return
+        }
         let fallDelay = fall()
         if fallDelay > 0 {
             run(SKAction.wait(forDuration: fallDelay), completion: tick)
@@ -73,10 +79,18 @@ class Board: SKNode {
         for x in 0 ..< width - 1 {
             for y in 0 ..< height - 1 {
                 if let tile = get(x: x, y: y),
-                    tile.type == get(x: x, y: y + 1)?.type,
-                    tile.type == get(x: x + 1, y: y)?.type,
-                    tile.type == get(x: x + 1, y: y + 1)?.type {
-                    let button = Button(menu: menu, type: tile.type)
+                    let tile2 = get(x: x, y: y + 1), tile.type == tile2.type,
+                    let tile3 = get(x: x + 1, y: y), tile.type == tile3.type,
+                    let tile4 = get(x: x + 1, y: y + 1), tile.type == tile4.type {
+                    let button = Button(menu: menu, type: tile.type) { [weak self] in
+                        guard let board = self else { return }
+                        for tile in [tile, tile2, tile3, tile4] {
+                            board.set(x: tile.x, y: tile.y, tile: nil)
+                            tile.remove()
+                        }
+                        board.tickDelay = Tile.removeTime
+                        board.tick()
+                    }
                     button.position = CGPoint(
                         x: tile.position.x + CGFloat(Tile.sideLength / 2),
                         y: tile.position.y + CGFloat(Tile.sideLength / 2)
