@@ -81,7 +81,9 @@ class Menu: UIViewController, UITableViewDataSource, UITableViewDelegate {
         switch section {
         case .score:
             let current = Save.active.total[type] ?? 0
-            cell.textLabel?.text = "Points: \(current)"
+            let upgrade = Upgrade.capacity(type)
+            let capacity = upgrade.cost(count: (Save.active.upgrades[upgrade] ?? 0)) * Upgrade.capacityMultiplier
+            cell.textLabel?.text = "Points: \(current) out of \(capacity)"
         case .available:
             let upgrade = available[index.row], count = Save.active.upgrades[upgrade] ?? 0
             cell.textLabel?.text = "\(upgrade.name) for \(upgrade.cost(count: count))"

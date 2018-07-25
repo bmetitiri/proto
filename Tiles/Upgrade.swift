@@ -43,7 +43,7 @@ enum Upgrade: Codable, Hashable {
     case rainbowAdapter(TileType)
     case capacity(TileType)
 
-    static let capacityMultiplier = 4
+    static let capacityMultiplier = 5
 
     static func of(type: TileType) -> [Upgrade] {
         switch type {
