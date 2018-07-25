@@ -8,7 +8,8 @@ class Menu: UIViewController, UITableViewDataSource, UITableViewDelegate {
     @IBOutlet var table: UITableView!
 
     @IBAction func close() {
-        dismiss(animated: true, completion: after)
+        dismiss(animated: true)
+        after()
     }
 
     var type: TileType = .empty

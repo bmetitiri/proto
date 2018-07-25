@@ -112,6 +112,7 @@ class Select: SKCropNode {
             types[direction == .horizontal ? tile.x : tile.y] = tile.type
         }
         removeFromParent()
+        // Check for three in a row on the selection.
         var last = TileType.empty
         var count: Int = 0
         for t in types {
@@ -125,7 +126,7 @@ class Select: SKCropNode {
                 count = 0
             }
         }
-        guard (count > 1 || toPlace.contains { board.check(direction: direction, tile: $0) }) else { return }
+        guard (count > 1 || toPlace.contains { board.check(direction: direction, tile: $0, dx: dx, dy: dy) }) else { return }
         for tile in toPlace {
             if let old = board.get(x: tile.x, y: tile.y) {
                 old.removeFromParent()

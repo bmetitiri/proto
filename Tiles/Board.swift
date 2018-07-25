@@ -163,7 +163,7 @@ class Board: SKNode {
         return dead.count > 0 ? Tile.removeTime : 0
     }
 
-    func check(direction: Select.Direction, tile: Tile) -> Bool {
+    func check(direction: Select.Direction, tile: Tile, dx: Int = 0, dy: Int = 0) -> Bool {
         switch direction {
         case .horizontal:
             let up = get(x: tile.x, y: tile.y - 1)?.type == tile.type
@@ -171,22 +171,46 @@ class Board: SKNode {
             if up && down {
                 return true
             }
-            if up && tile.type == get(x: tile.x, y: tile.y - 2)?.type {
+            if up && get(x: tile.x, y: tile.y - 2)?.type == tile.type {
                 return true
             }
-            if down && tile.type == get(x: tile.x, y: tile.y + 2)?.type {
+            if down && get(x: tile.x, y: tile.y + 2)?.type == tile.type {
+                return true
+            }
+            // Apply dx for checking along selection for buttons.
+            var x = (tile.x - 1 - dx) % width
+            if x < 0 {
+                x += width
+            }
+            guard get(x: x, y: tile.y)?.type == tile.type else { return false }
+            if up && get(x: tile.x - 1, y: tile.y - 1)?.type == tile.type {
+                return true
+            }
+            if down && get(x: tile.x - 1, y: tile.y + 1)?.type == tile.type {
                 return true
             }
         case .vertical:
-            let right = get(x: tile.x + 1, y: tile.y)?.type == tile.type
             let left = get(x: tile.x - 1, y: tile.y)?.type == tile.type
+            let right = get(x: tile.x + 1, y: tile.y)?.type == tile.type
             if left && right {
                 return true
             }
-            if left && tile.type == get(x: tile.x - 2, y: tile.y)?.type {
+            if left && get(x: tile.x - 2, y: tile.y)?.type == tile.type {
                 return true
             }
-            if right && tile.type == get(x: tile.x + 2, y: tile.y)?.type {
+            if right && get(x: tile.x + 2, y: tile.y)?.type == tile.type {
+                return true
+            }
+            // Apply dy for checking along selection for buttons.
+            var y = (tile.y - 1 - dy) % height
+            if y < 0 {
+                y += width
+            }
+            guard get(x: tile.x, y: y)?.type == tile.type else { return false }
+            if left && get(x: tile.x - 1, y: tile.y - 1)?.type == tile.type {
+                return true
+            }
+            if right && get(x: tile.x + 1, y: tile.y - 1)?.type == tile.type {
                 return true
             }
         }
