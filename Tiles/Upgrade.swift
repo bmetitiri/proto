@@ -3,15 +3,24 @@ import Foundation
 enum Upgrade: Codable, Hashable {
     enum Key: CodingKey {
         case matchBase
+        case comboBonus
         case rainbowAdapter
         case capacity
     }
+
+    case empty
+    case matchBase(TileType)
+    case comboBonus(TileType)
+    case rainbowAdapter(TileType)
+    case capacity(TileType)
 
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: Key.self)
         switch self {
         case let .matchBase(tile):
             try container.encode(tile, forKey: Key.matchBase)
+        case let .comboBonus(tile):
+            try container.encode(tile, forKey: Key.comboBonus)
         case let .rainbowAdapter(tile):
             try container.encode(tile, forKey: Key.rainbowAdapter)
         case let .capacity(tile):
@@ -27,6 +36,10 @@ enum Upgrade: Codable, Hashable {
             self = .matchBase(tile)
             return
         }
+        if let tile = try? container.decode(TileType.self, forKey: Key.comboBonus) {
+            self = .comboBonus(tile)
+            return
+        }
         if let tile = try? container.decode(TileType.self, forKey: Key.rainbowAdapter) {
             self = .rainbowAdapter(tile)
             return
@@ -38,17 +51,13 @@ enum Upgrade: Codable, Hashable {
         self = .empty
     }
 
-    case empty
-    case matchBase(TileType)
-    case rainbowAdapter(TileType)
-    case capacity(TileType)
-
+    static let comboBase = 1.01
     static let capacityMultiplier = 5
 
     static func of(type: TileType) -> [Upgrade] {
         switch type {
         default:
-            return [.matchBase(type), .rainbowAdapter(type), .capacity(type)]
+            return [.matchBase(type), .comboBonus(type), .rainbowAdapter(type), .capacity(type)]
         }
     }
 
@@ -56,6 +65,8 @@ enum Upgrade: Codable, Hashable {
         switch self {
         case .empty:
             return "How did you get here?!"
+        case .comboBonus:
+            return "Combo + 1%"
         case .matchBase:
             return "Match + 1"
         case .rainbowAdapter:
@@ -71,11 +82,13 @@ enum Upgrade: Codable, Hashable {
         switch self {
         case .matchBase:
             return Int(20.0 * pow(1.1, Double(count)))
-        case .rainbowAdapter:
+        case .comboBonus:
             return Int(50.0 * pow(1.15, Double(count)))
-        case .capacity:
+        case .rainbowAdapter:
             return Int(100.0 * pow(1.2, Double(count)))
-        default:
+        case .capacity:
+            return Int(200.0 * pow(1.3, Double(count)))
+        case .empty:
             return 0
         }
     }

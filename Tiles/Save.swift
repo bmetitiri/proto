@@ -38,6 +38,11 @@ class Save: Codable {
         return upgrade.cost(count: (upgrades[upgrade] ?? 0)) * Upgrade.capacityMultiplier
     }
 
+    func comboMultiplier(type: TileType) -> Double {
+        guard let count = turn[type], count > 1 else { return 1 }
+        return pow(Upgrade.comboBase, Double(upgrades[Upgrade.comboBonus(type)] ?? 0))
+    }
+
     func save() {
         if let path = Save.path {
             try? PropertyListEncoder().encode(self).write(to: path)
@@ -52,7 +57,10 @@ class Save: Codable {
     func commit(tiles: [TileType]) {
         self.tiles = tiles
         for (type, count) in turn {
-            total[type] = min((total[type] ?? 0) + count * rainbowMultiplier, capacity(type: type))
+            total[type] = min(
+                (total[type] ?? 0) + Int(Double(count) * comboMultiplier(type: type)) * rainbowMultiplier,
+                capacity(type: type)
+            )
         }
         turn.removeAll()
         NotificationCenter.default.post(name: Save.totalName, object: total)
