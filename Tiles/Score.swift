@@ -68,7 +68,14 @@ class Score: SKNode {
     func reloadData() {
         for (type, count) in source.scores {
             guard let display = displays[type] else { continue }
-            if case source = Source.turn {
+            switch source {
+            case .total:
+                if count == Save.active.capacity(type: type) {
+                    display.fontColor = UIColor.white
+                    display.text = String(count)
+                    continue
+                }
+            case .turn:
                 let rainbow = Save.active.rainbowMultiplier
                 if rainbow > 1 {
                     display.fontColor = UIColor.white

@@ -8,7 +8,8 @@ class Menu: UIViewController, UITableViewDataSource, UITableViewDelegate {
     @IBOutlet var table: UITableView!
 
     @IBAction func close() {
-        dismiss(animated: true, completion: after)
+        dismiss(animated: true)
+        after()
     }
 
     var type: TileType = .empty
@@ -80,7 +81,7 @@ class Menu: UIViewController, UITableViewDataSource, UITableViewDelegate {
         switch section {
         case .score:
             let current = Save.active.total[type] ?? 0
-            cell.textLabel?.text = "Points: \(current)"
+            cell.textLabel?.text = "Points: \(current) out of \(Save.active.capacity(type: type))"
         case .available:
             let upgrade = available[index.row], count = Save.active.upgrades[upgrade] ?? 0
             cell.textLabel?.text = "\(upgrade.name) for \(upgrade.cost(count: count))"
