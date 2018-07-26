@@ -21,6 +21,15 @@ class Button: SKSpriteNode {
         )
         isUserInteractionEnabled = true
         zPosition += 1
+        let count = Upgrade.of(type: type).filter {
+            $0.cost(count: Save.active.upgrades[$0] ?? 0) < Save.active.total[type] ?? 0
+        }.count
+        let label = SKLabelNode(fontNamed: "Chalkduster")
+        label.fontColor = UIColor.black
+        label.fontSize = 13
+        label.text = "\(count)"
+        label.verticalAlignmentMode = .center
+        addChild(label)
     }
 
     override func touchesBegan(_ touches: Set<UITouch>, with _: UIEvent?) {
