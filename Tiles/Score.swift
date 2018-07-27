@@ -77,15 +77,12 @@ class Score: SKNode {
                 }
                 display.text = String(count)
             case .turn:
-                let count = Int(Double(count) * Save.active.comboMultiplier(type: type))
-                let rainbow = Save.active.rainbowMultiplier
-                if rainbow > 1 {
+                if source.scores.count == TileType.all.count {
                     display.fontColor = UIColor.white
-                    display.text = String(count * rainbow)
-                    continue
+                } else {
+                    display.fontColor = type.color
                 }
-                display.fontColor = type.color
-                display.text = String(count)
+                display.text = String(Save.active.score(type: type, count: count))
             }
         }
     }

@@ -34,7 +34,7 @@ enum Upgrade: Codable, Hashable {
         }
         self = .empty
     }
-    
+
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: Key.self)
         switch self {
@@ -63,18 +63,16 @@ enum Upgrade: Codable, Hashable {
 
     var name: String {
         switch self {
-        case .empty:
-            return "How did you get here?!"
-        case .comboBonus:
-            return "Combo + 1%"
         case .matchBase:
             return "Match + 1"
+        case .comboBonus:
+            return "Combo + 1%"
         case .rainbowAdapter:
             return "Rainbow Adapter"
         case .capacity:
-            // TODO: Show current / next capacity.
-            // let cap = cost(count: (Save.active.upgrades[self] ?? 0) + 1) * Upgrade.capacityMultiplier
             return "Capacity ↑"
+        case .empty:
+            return "How did you get here?!"
         }
     }
 
