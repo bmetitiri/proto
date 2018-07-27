@@ -7,20 +7,6 @@ enum Upgrade: Codable, Hashable {
         case capacity
     }
 
-    func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: Key.self)
-        switch self {
-        case let .matchBase(tile):
-            try container.encode(tile, forKey: Key.matchBase)
-        case let .rainbowAdapter(tile):
-            try container.encode(tile, forKey: Key.rainbowAdapter)
-        case let .capacity(tile):
-            try container.encode(tile, forKey: Key.capacity)
-        case .empty:
-            return
-        }
-    }
-
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: Key.self)
         if let tile = try? container.decode(TileType.self, forKey: Key.matchBase) {
@@ -36,6 +22,20 @@ enum Upgrade: Codable, Hashable {
             return
         }
         self = .empty
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: Key.self)
+        switch self {
+        case let .matchBase(tile):
+            try container.encode(tile, forKey: Key.matchBase)
+        case let .rainbowAdapter(tile):
+            try container.encode(tile, forKey: Key.rainbowAdapter)
+        case let .capacity(tile):
+            try container.encode(tile, forKey: Key.capacity)
+        case .empty:
+            return
+        }
     }
 
     case empty
