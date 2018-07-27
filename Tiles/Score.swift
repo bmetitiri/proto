@@ -72,19 +72,21 @@ class Score: SKNode {
             case .total:
                 if count == Save.active.capacity(type: type) {
                     display.fontColor = UIColor.white
-                    display.text = String(count)
-                    continue
+                } else {
+                    display.fontColor = type.color
                 }
+                display.text = String(count)
             case .turn:
+                let count = Int(Double(count) * Save.active.comboMultiplier(type: type))
                 let rainbow = Save.active.rainbowMultiplier
                 if rainbow > 1 {
                     display.fontColor = UIColor.white
                     display.text = String(count * rainbow)
                     continue
                 }
+                display.fontColor = type.color
+                display.text = String(count)
             }
-            display.fontColor = type.color
-            display.text = String(count)
         }
     }
 }
