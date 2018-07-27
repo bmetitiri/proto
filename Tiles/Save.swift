@@ -50,15 +50,20 @@ class Save: Codable {
     }
 
     func add(match: TileType) {
-        turn[match] = (turn[match] ?? 0) + (upgrades[Upgrade.matchBase(match)] ?? 0) + 1
+        turn[match] = (turn[match] ?? 0) + 1
         NotificationCenter.default.post(name: Save.turnName, object: turn)
+    }
+
+    func score(type: TileType, count: Int) -> Int {
+        let perMatch = 1 + (upgrades[Upgrade.matchBase(type)] ?? 0)
+        return Int(Double(count * perMatch) * comboMultiplier(type: type)) * rainbowMultiplier
     }
 
     func commit(tiles: [TileType]) {
         self.tiles = tiles
         for (type, count) in turn {
             total[type] = min(
-                (total[type] ?? 0) + Int(Double(count) * comboMultiplier(type: type)) * rainbowMultiplier,
+                (total[type] ?? 0) + score(type: type, count: count),
                 capacity(type: type)
             )
         }
