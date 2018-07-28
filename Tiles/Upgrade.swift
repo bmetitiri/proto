@@ -14,6 +14,24 @@ enum Upgrade: Codable, Hashable {
     case rainbowAdapter(TileType)
     case capacity(TileType)
 
+    static var rainbowLevel: Int {
+        return TileType.all.map { Save.active.upgrades[Upgrade.rainbowAdapter($0)] ?? 0 }.min() ?? 0
+    }
+
+    var available: Bool {
+        switch self {
+        case let .rainbowAdapter(tile):
+            return Save.active.upgrades[.matchBase(tile)] ?? 0 >= 5
+        case .comboBonus:
+            return Upgrade.rainbowLevel >= 5
+        case let .capacity(tile):
+            return Save.active.upgrades[.capacity(tile)] != nil ||
+                Save.active.total[tile] ?? 0 > Save.active.capacity(type: tile) / 2
+        default:
+            return true
+        }
+    }
+
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: Key.self)
         if let tile = try? container.decode(TileType.self, forKey: Key.matchBase) {
@@ -55,9 +73,17 @@ enum Upgrade: Codable, Hashable {
     static let capacityMultiplier = 5
 
     static func of(type: TileType) -> [Upgrade] {
+        let base: [Upgrade] = [
+            .matchBase(type),
+            .rainbowAdapter(type),
+            .comboBonus(type),
+            .capacity(type),
+        ].filter { $0.available }
         switch type {
+        case .red:
+            return base + [.empty]
         default:
-            return [.matchBase(type), .comboBonus(type), .rainbowAdapter(type), .capacity(type)]
+            return base
         }
     }
 
@@ -72,7 +98,7 @@ enum Upgrade: Codable, Hashable {
         case .capacity:
             return "Capacity ↑"
         case .empty:
-            return "How did you get here?!"
+            return "RESET GAME"
         }
     }
 
@@ -80,14 +106,14 @@ enum Upgrade: Codable, Hashable {
         switch self {
         case .matchBase:
             return Int(20.0 * pow(1.1, Double(count)))
-        case .comboBonus:
-            return Int(50.0 * pow(1.15, Double(count)))
         case .rainbowAdapter:
             return Int(100.0 * pow(1.2, Double(count)))
+        case .comboBonus:
+            return Int(200.0 * pow(1.15, Double(count)))
         case .capacity:
             return Int(200.0 * pow(1.3, Double(count)))
         case .empty:
-            return 0
+            return Save.active.capacity(type: .red)
         }
     }
 }

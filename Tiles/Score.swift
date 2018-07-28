@@ -66,8 +66,13 @@ class Score: SKNode {
     }
 
     func reloadData() {
-        for (type, count) in source.scores {
+        for type in TileType.all {
             guard let display = displays[type] else { continue }
+            let count = source.scores[type] ?? 0
+            if count == 0 {
+                display.text = ""
+                continue
+            }
             switch source {
             case .total:
                 if count == Save.active.capacity(type: type) {
@@ -77,7 +82,7 @@ class Score: SKNode {
                 }
                 display.text = String(count)
             case .turn:
-                if source.scores.count == TileType.all.count {
+                if source.scores.count == TileType.all.count && Upgrade.rainbowLevel > 0 {
                     display.fontColor = UIColor.white
                 } else {
                     display.fontColor = type.color
