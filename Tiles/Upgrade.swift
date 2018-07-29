@@ -14,8 +14,25 @@ enum Upgrade: Codable, Hashable {
     case rainbowAdapter(TileType)
     case capacity(TileType)
 
+    static let comboBase = 0.1
+    static let capacityMultiplier = 5
     static var rainbowLevel: Int {
         return TileType.all.map { Save.active.upgrades[Upgrade.rainbowAdapter($0)] ?? 0 }.min() ?? 0
+    }
+
+    static func of(type: TileType) -> [Upgrade] {
+        let base: [Upgrade] = [
+            .matchBase(type),
+            .rainbowAdapter(type),
+            .comboBonus(type),
+            .capacity(type),
+        ].filter { $0.available }
+        switch type {
+        case .red:
+            return base + [.empty]
+        default:
+            return base
+        }
     }
 
     var available: Bool {
@@ -29,6 +46,36 @@ enum Upgrade: Codable, Hashable {
                 Save.active.total[tile] ?? 0 > Save.active.capacity(type: tile) / 2
         default:
             return true
+        }
+    }
+
+    var name: String {
+        switch self {
+        case .matchBase:
+            return "Match + 1"
+        case .comboBonus:
+            return "Combo + 10%"
+        case .rainbowAdapter:
+            return "Rainbow Adapter"
+        case .capacity:
+            return "Capacity ↑"
+        case .empty:
+            return "RESET GAME"
+        }
+    }
+
+    var description: String {
+        switch self {
+        case .matchBase:
+            return "Increase base match amount"
+        case .comboBonus:
+            return "Add 10% to total per combo"
+        case .rainbowAdapter:
+            return "Collect all colors to unlock multiplier"
+        case .capacity:
+            return "Raise max amount"
+        case .empty:
+            return "No refunds!"
         }
     }
 
@@ -69,39 +116,6 @@ enum Upgrade: Codable, Hashable {
         }
     }
 
-    static let comboBase = 0.1
-    static let capacityMultiplier = 5
-
-    static func of(type: TileType) -> [Upgrade] {
-        let base: [Upgrade] = [
-            .matchBase(type),
-            .rainbowAdapter(type),
-            .comboBonus(type),
-            .capacity(type),
-        ].filter { $0.available }
-        switch type {
-        case .red:
-            return base + [.empty]
-        default:
-            return base
-        }
-    }
-
-    var name: String {
-        switch self {
-        case .matchBase:
-            return "Match + 1"
-        case .comboBonus:
-            return "Combo + 10%"
-        case .rainbowAdapter:
-            return "Rainbow Adapter"
-        case .capacity:
-            return "Capacity ↑"
-        case .empty:
-            return "RESET GAME"
-        }
-    }
-
     func cost(count: Int) -> Int {
         switch self {
         case .matchBase:
@@ -114,6 +128,16 @@ enum Upgrade: Codable, Hashable {
             return Int(200.0 * pow(1.3, Double(count)))
         case .empty:
             return Save.active.capacity(type: .red)
+        }
+    }
+
+    func to(type: TileType) -> Upgrade {
+        switch self {
+        case .matchBase: return .matchBase(type)
+        case .rainbowAdapter: return .rainbowAdapter(type)
+        case .comboBonus: return .comboBonus(type)
+        case .capacity: return .capacity(type)
+        default: return self
         }
     }
 }
