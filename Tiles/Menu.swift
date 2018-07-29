@@ -84,7 +84,12 @@ class Menu: UIViewController, UITableViewDataSource, UITableViewDelegate {
     }
 
     func tableView(_: UITableView, cellForRowAt index: IndexPath) -> UITableViewCell {
-        let cell = table.dequeueReusableCell(withIdentifier: "cell", for: index)
+        let cell: UITableViewCell
+        if index.section == Section.available.rawValue {
+            cell = table.dequeueReusableCell(withIdentifier: "cell", for: index)
+        } else {
+            cell = table.dequeueReusableCell(withIdentifier: "right", for: index)
+        }
         cell.backgroundColor = UIColor.clear
         cell.textLabel?.textColor = type.color
         cell.detailTextLabel?.textColor = type.color
@@ -93,7 +98,7 @@ class Menu: UIViewController, UITableViewDataSource, UITableViewDelegate {
         case .score:
             let current = Save.active.total[type] ?? 0
             cell.textLabel?.text = String(current)
-            cell.detailTextLabel?.text = "Out of \(Save.active.capacity(type: type))"
+            cell.detailTextLabel?.text = "out of \(Save.active.capacity(type: type))"
         case .available:
             let upgrade = available[index.row], count = Save.active.upgrades[upgrade] ?? 0
             cell.textLabel?.text = "\(upgrade.name) for \(upgrade.cost(count: count))"
