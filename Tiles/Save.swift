@@ -11,7 +11,8 @@ class Save: Codable {
             loaded = save
             return save
         }
-        return Save()
+        loaded = Save()
+        return loaded!
     }
 
     static let totalName = Notification.Name("total")
@@ -40,7 +41,7 @@ class Save: Codable {
 
     func comboMultiplier(type: TileType) -> Double {
         guard let count = turn[type], count > 1 else { return 1 }
-        return pow(Upgrade.comboBase, Double(upgrades[Upgrade.comboBonus(type)] ?? 0))
+        return 1 + Upgrade.comboBase * Double(upgrades[Upgrade.comboBonus(type)] ?? 0) * Double(count - 1)
     }
 
     func save() {

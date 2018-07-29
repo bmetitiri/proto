@@ -22,8 +22,8 @@ enum Upgrade: Codable, Hashable {
         switch self {
         case let .rainbowAdapter(tile):
             return Save.active.upgrades[.matchBase(tile)] ?? 0 >= 5
-        case .comboBonus:
-            return Upgrade.rainbowLevel >= 5
+        case let .comboBonus(tile):
+            return Save.active.upgrades[.matchBase(tile)] ?? 0 >= 10
         case let .capacity(tile):
             return Save.active.upgrades[.capacity(tile)] != nil ||
                 Save.active.total[tile] ?? 0 > Save.active.capacity(type: tile) / 2
@@ -69,7 +69,7 @@ enum Upgrade: Codable, Hashable {
         }
     }
 
-    static let comboBase = 1.01
+    static let comboBase = 0.1
     static let capacityMultiplier = 5
 
     static func of(type: TileType) -> [Upgrade] {
@@ -92,7 +92,7 @@ enum Upgrade: Codable, Hashable {
         case .matchBase:
             return "Match + 1"
         case .comboBonus:
-            return "Combo + 1%"
+            return "Combo + 10%"
         case .rainbowAdapter:
             return "Rainbow Adapter"
         case .capacity:
