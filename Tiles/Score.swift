@@ -48,6 +48,19 @@ class Score: SKNode {
         }
     }
 
+    func format(score: Int) -> String {
+        if score > 1_000_000 {
+            return String(score / 1_000_000) + "M"
+        }
+        if score > 10000 {
+            return String(score / 1000) + "k"
+        }
+        if score > 1000 {
+            return String(Double(score) / 1000.0).prefix(3) + "k"
+        }
+        return String(score)
+    }
+
     func merge(into: Score) {
         for (type, display) in displays {
             if let copy = display.copy() as? SKNode {
@@ -80,14 +93,14 @@ class Score: SKNode {
                 } else {
                     display.fontColor = type.color
                 }
-                display.text = String(count)
+                display.text = format(score: count)
             case .turn:
                 if source.scores.count == TileType.all.count && Upgrade.rainbowLevel > 0 {
                     display.fontColor = UIColor.white
                 } else {
                     display.fontColor = type.color
                 }
-                display.text = String(Save.active.score(type: type, count: count))
+                display.text = format(score: Save.active.score(type: type, count: count))
             }
         }
     }

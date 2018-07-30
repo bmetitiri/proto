@@ -126,7 +126,9 @@ class Select: SKCropNode {
                 count = 0
             }
         }
-        guard (count > 1 || toPlace.contains { board.check(direction: direction, tile: $0, dx: dx, dy: dy) }) else { return }
+        guard (count > 1 || toPlace.contains {
+            board.check(direction: direction, tile: $0, dx: dx, dy: dy)
+        }) else { return }
         for tile in toPlace {
             if let old = board.get(x: tile.x, y: tile.y) {
                 old.removeFromParent()
