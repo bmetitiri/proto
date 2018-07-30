@@ -11,7 +11,8 @@ class Save: Codable {
             loaded = save
             return save
         }
-        return Save()
+        loaded = Save()
+        return loaded!
     }
 
     static let totalName = Notification.Name("total")
@@ -28,7 +29,7 @@ class Save: Codable {
     var rainbowMultiplier: Int {
         // Check for all tile colors being used in a turn, then find least upgraded rainbow adapter.
         if turn.count == TileType.all.count {
-            return TileType.all.map { upgrades[Upgrade.rainbowAdapter($0)] ?? 1 }.min() ?? 1
+            return Upgrade.rainbowLevel + 1
         }
         return 1
     }
@@ -40,7 +41,7 @@ class Save: Codable {
 
     func comboMultiplier(type: TileType) -> Double {
         guard let count = turn[type], count > 1 else { return 1 }
-        return pow(Upgrade.comboBase, Double(upgrades[Upgrade.comboBonus(type)] ?? 0))
+        return 1 + Upgrade.comboBase * Double(upgrades[Upgrade.comboBonus(type)] ?? 0) * Double(count - 1)
     }
 
     func save() {
@@ -79,6 +80,12 @@ class Save: Codable {
         if current >= cost {
             total[from] = current - cost
             upgrades[upgrade] = count + 1
+            if upgrade == Upgrade.empty {
+                total.removeAll()
+                turn.removeAll()
+                upgrades.removeAll()
+                NotificationCenter.default.post(name: Save.turnName, object: turn)
+            }
         }
         NotificationCenter.default.post(name: Save.totalName, object: total)
     }

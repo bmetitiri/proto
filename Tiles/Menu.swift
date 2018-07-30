@@ -14,7 +14,6 @@ class Menu: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        table.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         table.backgroundColor = UIColor.black
         table.dataSource = self
         table.delegate = self
@@ -32,6 +31,22 @@ class Menu: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
     func numberOfSections(in _: UITableView) -> Int {
         return (purchased.count > 0 ? Section.purchased.rawValue : Section.available.rawValue) + 1
+    }
+
+    func counts(upgrade: Upgrade) -> NSAttributedString {
+        let base = NSMutableAttributedString(string: " ")
+        switch upgrade {
+        case .empty:
+            base.append(NSAttributedString(string: "No refunds!"))
+        default:
+            TileType.all.forEach { base.append(
+                NSAttributedString(
+                    string: String(Save.active.upgrades[upgrade.to(type: $0)] ?? 0) + " ",
+                    attributes: [NSAttributedStringKey.foregroundColor: $0.color]
+                )
+            ) }
+        }
+        return base
     }
 
     func tableView(_: UITableView, didSelectRowAt index: IndexPath) {
@@ -69,20 +84,29 @@ class Menu: UIViewController, UITableViewDataSource, UITableViewDelegate {
     }
 
     func tableView(_: UITableView, cellForRowAt index: IndexPath) -> UITableViewCell {
-        let cell = table.dequeueReusableCell(withIdentifier: "cell", for: index)
+        let cell: UITableViewCell
+        if index.section == Section.available.rawValue {
+            cell = table.dequeueReusableCell(withIdentifier: "cell", for: index)
+        } else {
+            cell = table.dequeueReusableCell(withIdentifier: "right", for: index)
+        }
         cell.backgroundColor = UIColor.clear
         cell.textLabel?.textColor = type.color
+        cell.detailTextLabel?.textColor = type.color
         guard let section = Section(rawValue: index.section) else { return cell }
         switch section {
         case .score:
             let current = Save.active.total[type] ?? 0
-            cell.textLabel?.text = "Points: \(current) out of \(Save.active.capacity(type: type))"
+            cell.textLabel?.text = String(current)
+            cell.detailTextLabel?.text = "out of \(Save.active.capacity(type: type))"
         case .available:
             let upgrade = available[index.row], count = Save.active.upgrades[upgrade] ?? 0
             cell.textLabel?.text = "\(upgrade.name) for \(upgrade.cost(count: count))"
+            cell.detailTextLabel?.text = upgrade.description
         case .purchased:
-            let upgrade = purchased[index.row], count = Save.active.upgrades[upgrade] ?? 0
-            cell.textLabel?.text = "\(upgrade.name) (\(count))"
+            let upgrade = purchased[index.row]
+            cell.textLabel?.text = upgrade.name
+            cell.detailTextLabel?.attributedText = counts(upgrade: upgrade)
         }
         return cell
     }
