@@ -12,6 +12,7 @@
 		4E22CE1A20FC25C30097632D /* Menu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E22CE1920FC25C30097632D /* Menu.swift */; };
 		4E22CE1C20FC27360097632D /* Menu.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4E22CE1B20FC27360097632D /* Menu.storyboard */; };
 		4E53B7F920F165DE00C6550C /* Board.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E53B7F820F165DE00C6550C /* Board.swift */; };
+		4E6D784421104ACA00B99AD2 /* TilesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E6D784321104ACA00B99AD2 /* TilesTests.swift */; };
 		4EA241A520F5B697008B473D /* Tile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA241A420F5B697008B473D /* Tile.swift */; };
 		4EA6198B21040E5A005C8981 /* Upgrade.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA6198A21040E5A005C8981 /* Upgrade.swift */; };
 		4ECA69A520D235EC0064FB41 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ECA69A420D235EC0064FB41 /* AppDelegate.swift */; };
@@ -24,12 +25,25 @@
 		4EECF81520FB28960072F301 /* Score.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EECF81420FB28960072F301 /* Score.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		4E6D784621104ACA00B99AD2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4ECA699920D235EC0064FB41 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4ECA69A020D235EC0064FB41;
+			remoteInfo = Tiles;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		4E22CE1520FBF55F0097632D /* Array+randomElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+randomElement.swift"; sourceTree = "<group>"; };
 		4E22CE1720FC16030097632D /* Button.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Button.swift; sourceTree = "<group>"; };
 		4E22CE1920FC25C30097632D /* Menu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Menu.swift; sourceTree = "<group>"; };
 		4E22CE1B20FC27360097632D /* Menu.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Menu.storyboard; sourceTree = "<group>"; };
 		4E53B7F820F165DE00C6550C /* Board.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Board.swift; sourceTree = "<group>"; };
+		4E6D784121104ACA00B99AD2 /* TilesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TilesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		4E6D784321104ACA00B99AD2 /* TilesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TilesTests.swift; sourceTree = "<group>"; };
+		4E6D784521104ACA00B99AD2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4EA241A420F5B697008B473D /* Tile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tile.swift; sourceTree = "<group>"; };
 		4EA6198A21040E5A005C8981 /* Upgrade.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Upgrade.swift; sourceTree = "<group>"; };
 		4ECA69A120D235EC0064FB41 /* Tiles.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tiles.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -45,6 +59,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		4E6D783E21104ACA00B99AD2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4ECA699E20D235EC0064FB41 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -56,10 +77,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4E6D784221104ACA00B99AD2 /* TilesTests */ = {
+			isa = PBXGroup;
+			children = (
+				4E6D784321104ACA00B99AD2 /* TilesTests.swift */,
+				4E6D784521104ACA00B99AD2 /* Info.plist */,
+			);
+			path = TilesTests;
+			sourceTree = "<group>";
+		};
 		4ECA699820D235EC0064FB41 = {
 			isa = PBXGroup;
 			children = (
 				4ECA69A320D235EC0064FB41 /* Tiles */,
+				4E6D784221104ACA00B99AD2 /* TilesTests */,
 				4ECA69A220D235EC0064FB41 /* Products */,
 				4ECA69DC20D247D30064FB41 /* Frameworks */,
 			);
@@ -69,6 +100,7 @@
 			isa = PBXGroup;
 			children = (
 				4ECA69A120D235EC0064FB41 /* Tiles.app */,
+				4E6D784121104ACA00B99AD2 /* TilesTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -106,6 +138,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		4E6D784021104ACA00B99AD2 /* TilesTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4E6D784821104ACA00B99AD2 /* Build configuration list for PBXNativeTarget "TilesTests" */;
+			buildPhases = (
+				4E6D783D21104ACA00B99AD2 /* Sources */,
+				4E6D783E21104ACA00B99AD2 /* Frameworks */,
+				4E6D783F21104ACA00B99AD2 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4E6D784721104ACA00B99AD2 /* PBXTargetDependency */,
+			);
+			name = TilesTests;
+			productName = TilesTests;
+			productReference = 4E6D784121104ACA00B99AD2 /* TilesTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		4ECA69A020D235EC0064FB41 /* Tiles */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 4ECA69B320D235EF0064FB41 /* Build configuration list for PBXNativeTarget "Tiles" */;
@@ -134,6 +184,10 @@
 				LastUpgradeCheck = 0940;
 				ORGANIZATIONNAME = Jon;
 				TargetAttributes = {
+					4E6D784021104ACA00B99AD2 = {
+						CreatedOnToolsVersion = 9.4.1;
+						TestTargetID = 4ECA69A020D235EC0064FB41;
+					};
 					4ECA69A020D235EC0064FB41 = {
 						CreatedOnToolsVersion = 9.4;
 					};
@@ -153,11 +207,19 @@
 			projectRoot = "";
 			targets = (
 				4ECA69A020D235EC0064FB41 /* Tiles */,
+				4E6D784021104ACA00B99AD2 /* TilesTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		4E6D783F21104ACA00B99AD2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4ECA699F20D235EC0064FB41 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -187,6 +249,14 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		4E6D783D21104ACA00B99AD2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4E6D784421104ACA00B99AD2 /* TilesTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4ECA699D20D235EC0064FB41 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -207,6 +277,14 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		4E6D784721104ACA00B99AD2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4ECA69A020D235EC0064FB41 /* Tiles */;
+			targetProxy = 4E6D784621104ACA00B99AD2 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin PBXVariantGroup section */
 		4ECA69AD20D235EF0064FB41 /* Launch.storyboard */ = {
 			isa = PBXVariantGroup;
@@ -219,6 +297,44 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		4E6D784921104ACA00B99AD2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = TilesTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.yourcompany.TilesTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Tiles.app/Tiles";
+			};
+			name = Debug;
+		};
+		4E6D784A21104ACA00B99AD2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = TilesTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.yourcompany.TilesTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Tiles.app/Tiles";
+			};
+			name = Release;
+		};
 		4ECA69B120D235EF0064FB41 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -372,6 +488,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		4E6D784821104ACA00B99AD2 /* Build configuration list for PBXNativeTarget "TilesTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4E6D784921104ACA00B99AD2 /* Debug */,
+				4E6D784A21104ACA00B99AD2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		4ECA699C20D235EC0064FB41 /* Build configuration list for PBXProject "Tiles" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

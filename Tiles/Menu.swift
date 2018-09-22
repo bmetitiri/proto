@@ -2,7 +2,7 @@ import UIKit
 
 class Menu: UIViewController, UITableViewDataSource, UITableViewDelegate {
     enum Section: Int {
-        case score, available, purchased
+        case purchased, score, available
     }
 
     @IBOutlet var table: UITableView!
@@ -30,7 +30,7 @@ class Menu: UIViewController, UITableViewDataSource, UITableViewDelegate {
     }
 
     func numberOfSections(in _: UITableView) -> Int {
-        return (purchased.count > 0 ? Section.purchased.rawValue : Section.available.rawValue) + 1
+        return 2 + (purchased.count > 0 ? 1 : 0)
     }
 
     func counts(upgrade: Upgrade) -> NSAttributedString {
@@ -67,7 +67,7 @@ class Menu: UIViewController, UITableViewDataSource, UITableViewDelegate {
         case .purchased:
             return "Purchased"
         default:
-            return ""
+            return "Score"
         }
     }
 
