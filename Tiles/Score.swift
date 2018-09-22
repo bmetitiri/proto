@@ -23,6 +23,22 @@ class Score: SKNode {
         }
     }
 
+    static let metric = ["", "k", "M", "G", "T", "P", "E", "Z", "Y"]
+
+    static func format(score: Int) -> String {
+        let digits = log10(Double(score)).rounded(.down)
+        let rem = digits.truncatingRemainder(dividingBy: 3)
+        let round = Int(pow(10, digits - rem))
+        let base = Int(score / round)
+        let unit = metric[Int(digits / 3)]
+        if rem == 0 && digits > 0 {
+            let subround = Int(pow(10, digits - 1))
+            let sub = (score - base * round) / subround
+            return "\(base).\(sub)\(unit)"
+        }
+        return "\(base)\(unit)"
+    }
+
     let source: Source
     var displays: [TileType: SKLabelNode] = [:]
 
@@ -37,7 +53,7 @@ class Score: SKNode {
             let per = Controller.width / TileType.all.count
             let display = SKLabelNode(fontNamed: "Chalkduster")
             display.fontColor = type.color
-            display.fontSize = 15
+            display.fontSize = 13
             display.horizontalAlignmentMode = .center
             display.position.x = CGFloat(i * per + per / 2)
             displays[type] = display
@@ -46,19 +62,6 @@ class Score: SKNode {
         NotificationCenter.default.addObserver(forName: source.name, object: nil, queue: nil) { _ in
             self.reloadData()
         }
-    }
-
-    func format(score: Int) -> String {
-        if score > 1_000_000 {
-            return String(score / 1_000_000) + "M"
-        }
-        if score > 10000 {
-            return String(score / 1000) + "k"
-        }
-        if score > 1000 {
-            return String(Double(score) / 1000.0).prefix(3) + "k"
-        }
-        return String(score)
     }
 
     func merge(into: Score) {
@@ -93,14 +96,14 @@ class Score: SKNode {
                 } else {
                     display.fontColor = type.color
                 }
-                display.text = format(score: count)
+                display.text = Score.format(score: count)
             case .turn:
                 if source.scores.count == TileType.all.count && Upgrade.rainbowLevel > 0 {
                     display.fontColor = UIColor.white
                 } else {
                     display.fontColor = type.color
                 }
-                display.text = format(score: Save.active.score(type: type, count: count))
+                display.text = Score.format(score: Save.active.score(type: type, count: count))
             }
         }
     }
