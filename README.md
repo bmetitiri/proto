@@ -38,6 +38,8 @@ This repo contains a number of disparate code sketches with history in branches 
    Web framework development, yeah! Reinventing the wheel, yeah! (Supports appengine, tornado.py)
  - [node.no.de](https://github.com/arkie/proto/tree/node.no.de)
    Sampling of the Twitter firehose, from when [no.de](http://no.de) was a thing.
+ - [pipes](https://github.com/arkie/proto/tree/pipes)
+   ⚙️ Factorio style Swift prototype.
  - [pokelist](https://github.com/arkie/proto/tree/pokelist)
    A tracking list of Pokémon optimized for the 3DS browser.
  - [read](https://github.com/arkie/proto/tree/read)
