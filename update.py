@@ -66,7 +66,7 @@ def identify():
     out = subprocess.check_output("git remote -v".split(" "))
   except:
     return None, None
-  remote = re.search("github.com:(.*)/(.*).git \(fetch\)", out)
+  remote = re.search("github.com[:/](.*)/(.*)(.git)? \(fetch\)", out)
   user = remote.group(1)
   repo = remote.group(2)
   return user, repo
