@@ -16,6 +16,8 @@ This repo contains a number of disparate code sketches with history in branches 
    Webkit with transparency
  - [bacon](https://github.com/arkie/proto/tree/bacon)
    Wiki Game style movie traversal use Rovi data apis.
+ - [bookmarklets](https://github.com/arkie/proto/tree/bookmarklets)
+   🔖 A collection of bookmarklets.
  - [common](https://github.com/arkie/proto/tree/common)
    Common \*nix configs, helper scripts.
  - [fastauth](https://github.com/arkie/proto/tree/fastauth)
