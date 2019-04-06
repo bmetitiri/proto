@@ -6,6 +6,8 @@ This repo contains a number of disparate code sketches with history in branches 
    Node.js twitter stream, predates node.joncaldwell.com
  - [Gems](https://github.com/arkie/proto/tree/Gems)
    Simple tile-matching game written in [Swift](https://developer.apple.com/swift/) using [SpriteKit](https://developer.apple.com/library/ios/documentation/GraphicsAnimation/Conceptual/SpriteKit_PG/Introduction/Introduction.html).
+ - [Tiles](https://github.com/arkie/proto/tree/Tiles)
+   ◻️Tile matching incremental game.
  - [app.joncaldwell.com](https://github.com/arkie/proto/tree/app.joncaldwell.com)
    Python/App Engine image aggregator previously at app.joncaldwell.com
  - [arkie.github.com](https://github.com/arkie/proto/tree/arkie.github.com)
